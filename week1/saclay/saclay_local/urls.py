@@ -16,8 +16,13 @@ Including another URLconf
 """
 from django.conf import settings
 from django.urls import include, path
+from django.urls import re_path
+import store.views
 
-urlpatterns = []
+urlpatterns = [
+    path('store/', include('store.urls')),
+    path('', store.views.index, name='index'),
+]
 
 if settings.DEBUG:
     import debug_toolbar
