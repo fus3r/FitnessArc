@@ -61,7 +61,7 @@ ROOT_URLCONF = 'fitness_arc.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # ← VÉRIFIER CETTE LIGNE
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
