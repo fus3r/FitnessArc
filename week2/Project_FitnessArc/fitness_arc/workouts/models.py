@@ -15,8 +15,10 @@ class Exercise(models.Model):
     slug = models.SlugField(unique=True)
     muscle_group = models.CharField(max_length=20, choices=MUSCLE)
     equipment = models.CharField(max_length=20, choices=EQUIP)
-    difficulty = models.PositiveSmallIntegerField(default=3)  # 1..5
+    difficulty = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(blank=True)
+    image = models.URLField(blank=True, null=True, help_text="URL de l'image de démonstration")  # ← NOUVEAU
+    
     def __str__(self): return self.name
 
 class WorkoutTemplate(models.Model):
