@@ -3,60 +3,157 @@
 {% block content %}
 <div style="text-align:center;padding:3rem 0">
   <h1 style="font-size:3rem;margin-bottom:1rem">💪 Fitness Arc</h1>
-  <p style="font-size:1.25rem;color:#666;margin-bottom:2rem">
+  <p style="font-size:1.25rem;color:var(--text-dim);margin-bottom:2rem">
     Votre compagnon pour l'entraînement et la nutrition
   </p>
   
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem">
     {% if user.is_authenticated %}
-    <div class="card" style="text-align:left;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff">
-      <h3>📊 Dashboard</h3>
-      <p>Vue d'ensemble de vos calories, volume et progrès.</p>
-      <a href="{% url 'dashboard:index' %}" class="btn" style="background:#fff;color:#667eea">Voir le dashboard →</a>
-    </div>
+    <a href="{% url 'dashboard:index' %}" class="card clickable-card" style="text-align:left;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.4);position:relative;overflow:hidden;text-decoration:none;cursor:pointer">
+      <div style="position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,0.1),transparent 50%);pointer-events:none"></div>
+      <div style="position:relative;z-index:1">
+        <h3 style="margin:0 0 0.75rem">Dashboard</h3>
+        <p style="color:var(--text-dim);margin:0">Vue d'ensemble de vos calories, volume et progrès</p>
+      </div>
+      <span class="hover-indicator">Ouvrir →</span>
+    </a>
     {% endif %}
     
-    <div class="card" style="text-align:left">
-      <h3>🏋️ Entraînements</h3>
-      <p>Gérez vos exercices, créez des templates et loggez vos séances.</p>
-      <a href="{% url 'workouts:exercise_list' %}" class="btn">Voir les exercices →</a>
-      <a href="{% url 'workouts:template_list' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Mes templates →</a>
+    <div class="card" style="text-align:left;position:relative">
+      <h3 style="margin:0 0 0.75rem">Entraînements</h3>
+      <p style="color:var(--text-dim);margin:0 0 1.25rem">Gérez vos exercices, créez des templates et loggez vos séances</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+        <a href="{% url 'workouts:exercise_list' %}" class="mini-link">
+          Exercices
+        </a>
+        <a href="{% url 'workouts:template_list' %}" class="mini-link secondary">
+          Templates
+        </a>
+      </div>
     </div>
     
-    <div class="card" style="text-align:left">
-      <h3>🥗 Nutrition</h3>
-      <p>Suivez votre alimentation quotidienne et vos macros.</p>
-      <a href="{% url 'nutrition_today' %}" class="btn">Journal du jour →</a>
-    </div>
+    <a href="{% url 'nutrition_today' %}" class="card clickable-card" style="text-align:left;text-decoration:none;cursor:pointer;position:relative">
+      <h3 style="margin:0 0 0.75rem">Nutrition</h3>
+      <p style="color:var(--text-dim);margin:0">Suivez votre alimentation quotidienne et vos macros</p>
+      <span class="hover-indicator">Ouvrir →</span>
+    </a>
     
     {% if user.is_authenticated %}
-    <div class="card" style="text-align:left">
-      <h3>👤 Mon Profil</h3>
-      <p>Gérez vos informations personnelles et vos objectifs.</p>
-      <a href="{% url 'accounts:profile' %}" class="btn">Mon profil →</a>
-    </div>
+    <a href="{% url 'accounts:profile' %}" class="card clickable-card" style="text-align:left;text-decoration:none;cursor:pointer;position:relative">
+      <h3 style="margin:0 0 0.75rem">Mon Profil</h3>
+      <p style="color:var(--text-dim);margin:0">Gérez vos informations personnelles et vos objectifs</p>
+      <span class="hover-indicator">Ouvrir →</span>
+    </a>
     {% else %}
-    <div class="card" style="text-align:left">
-      <h3>🚀 Commencer</h3>
-      <p>Créez un compte pour commencer à suivre vos progrès.</p>
-      <a href="{% url 'accounts:signup' %}" class="btn">S'inscrire →</a>
-      <a href="{% url 'accounts:login' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Se connecter →</a>
+    <div class="card" style="text-align:left;position:relative">
+      <h3 style="margin:0 0 0.75rem">Commencer</h3>
+      <p style="color:var(--text-dim);margin:0 0 1.25rem">Créez un compte pour commencer à suivre vos progrès</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+        <a href="{% url 'accounts:signup' %}" class="mini-link primary">
+          S'inscrire
+        </a>
+        <a href="{% url 'accounts:login' %}" class="mini-link secondary">
+          Se connecter
+        </a>
+      </div>
     </div>
     {% endif %}
   </div>
   
   {% if user.is_authenticated %}
-  <div style="margin-top:3rem;padding:2rem;background:#f8f9fa;border-radius:12px">
-    <h2>Bienvenue, {{ user.username }} ! 👋</h2>
-    <p style="color:#666;margin-top:0.5rem">
-      Vous avez {{ templates_count }} template(s) d'entraînement
-      {% if today_logs_count > 0 %}
-      et {{ today_logs_count }} entrée(s) nutritionnelle(s) aujourd'hui.
-      {% else %}
-      Aucune entrée nutritionnelle aujourd'hui.
-      {% endif %}
-    </p>
+  <div class="card" style="margin-top:3rem;background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.08));border:1px solid rgba(99,102,241,0.3);position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(circle,rgba(236,72,153,0.15),transparent 70%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1">
+      <h2 style="margin:0 0 0.75rem;display:flex;align-items:center;gap:0.75rem">
+        <span>Bienvenue, {{ user.username }} !</span>
+        <span style="font-size:1.75rem">👋</span>
+      </h2>
+      <p style="color:var(--text-dim);margin:0;font-size:1.05rem">
+        Vous avez <strong style="color:var(--primary);font-size:1.15rem">{{ templates_count }}</strong> template(s) d'entraînement
+        {% if today_logs_count > 0 %}
+        et <strong style="color:var(--success);font-size:1.15rem">{{ today_logs_count }}</strong> entrée(s) nutritionnelle(s) aujourd'hui.
+        {% else %}
+        • <span style="opacity:0.7">Aucune entrée nutritionnelle aujourd'hui</span>
+        {% endif %}
+      </p>
+    </div>
   </div>
   {% endif %}
 </div>
+
+<style>
+/* Hover indicator pour blocs cliquables */
+.hover-indicator {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+
+.clickable-card:hover .hover-indicator {
+  opacity: 0.8;
+  transform: translateX(0);
+}
+
+/* Cards cliquables */
+a.clickable-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  border-color: rgba(99,102,241,0.5);
+}
+
+/* Mini links dans les blocs non-cliquables */
+.mini-link {
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.3);
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: block;
+  position: relative;
+}
+
+.mini-link.secondary {
+  background: rgba(71,85,105,0.8);
+  border: 1px solid rgba(100,116,139,0.3);
+}
+
+.mini-link.primary {
+  background: linear-gradient(135deg,var(--primary),var(--secondary));
+  border: none;
+  color: #fff;
+}
+
+.mini-link:hover {
+  background: rgba(99,102,241,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+
+.mini-link.secondary:hover {
+  background: rgba(71,85,105,0.95);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.mini-link.primary:hover {
+  box-shadow: 0 6px 16px rgba(99,102,241,0.5);
+}
+
+/* Cursor pointer pour tous les liens */
+.mini-link, .clickable-card {
+  cursor: pointer;
+}
+</style>
 {% endblock %}

@@ -2,37 +2,43 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h1>📊 Tableau de bord</h1>
-<p style="color:#666;margin-bottom:2rem">Vue d'ensemble de votre activité du {{ today|date:"l d M" }}</p>
+<p style="color:var(--text-dim);margin-bottom:2rem">Vue d'ensemble de votre activité du {{ today|date:"l d M" }}</p>
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem">
-  <div class="card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff">
-    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9">Calories Consommées</h3>
-    <p style="font-size:2.5rem;margin:0;font-weight:bold">{{ calories_consumed }}</p>
-    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem">Protéines : {{ protein_consumed }}g</p>
+  <div class="stat-card" style="background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.3)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Calories Consommées</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:var(--text)">{{ calories_consumed }}</p>
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem;color:var(--text-dim)">Protéines : {{ protein_consumed }}g</p>
   </div>
   
-  <div class="card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:#fff">
-    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9">Calories Brûlées</h3>
-    <p style="font-size:2.5rem;margin:0;font-weight:bold">{{ calories_burned }}</p>
-    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem">Séances : {{ sessions_count }}</p>
+  <div class="stat-card" style="background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(220,38,38,0.15));border:1px solid rgba(239,68,68,0.3)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Calories Brûlées</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:var(--danger)">{{ calories_burned }}</p>
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem;color:var(--text-dim)">Séances : {{ sessions_count }}</p>
   </div>
   
   {% if calorie_balance > 0 %}
-  <div class="card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:#fff">
+  <div class="stat-card" style="background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(5,150,105,0.15));border:1px solid rgba(16,185,129,0.3)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Balance Calorique</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:var(--success)">+{{ calorie_balance|floatformat:0 }}</p>
+  {% elif calorie_balance < 0 %}
+  <div class="stat-card" style="background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(217,119,6,0.15));border:1px solid rgba(245,158,11,0.3)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Balance Calorique</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:var(--warning)">{{ calorie_balance|floatformat:0 }}</p>
   {% else %}
-  <div class="card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:#fff">
+  <div class="stat-card" style="background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.3)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Balance Calorique</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:var(--text)">{{ calorie_balance|floatformat:0 }}</p>
   {% endif %}
-    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9">Balance Calorique</h3>
-    <p style="font-size:2.5rem;margin:0;font-weight:bold">{{ calorie_balance|floatformat:0 }}</p>
-    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem">
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem;color:var(--text-dim)">
       {% if calorie_balance > 0 %}Surplus{% elif calorie_balance < 0 %}Déficit{% else %}Équilibre{% endif %}
     </p>
   </div>
   
-  <div class="card" style="background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%)">
-    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;color:#666">Volume (7 jours)</h3>
-    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:#333">{{ weekly_volume|floatformat:0 }}</p>
-    <p style="margin:0.5rem 0 0;color:#666;font-size:0.85rem">kg × reps</p>
+  <div class="stat-card" style="background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(219,39,119,0.15));border:1px solid rgba(236,72,153,0.3)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Volume (7 jours)</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:var(--accent)">{{ weekly_volume|floatformat:0 }}</p>
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem;color:var(--text-dim)">kg × reps</p>
   </div>
 </div>
 

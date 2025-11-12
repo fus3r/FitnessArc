@@ -21,7 +21,14 @@
 ### Documentation
 - [ ] Dessiner wireframes (main, 5 pages clés) → commit images dans `WorkingDocs/wireframes/`
 - [x] Page d'accueil (/) avec navigation vers toutes les apps ✅
-- [x] Navbar ultra classy avec pills, active states, avatar, et gradient brand ✅
+- [x] Navbar ultra moderne style Dashboard Invoice (logo, pills, avatar, dropdown) ✅
+- [x] Design glassmorphism complet avec backdrop-filter et shadows avancées ✅
+- [x] Background dégradé futuriste avec reflets animés (rotate 60s + float 15s) ✅
+- [x] Harmonisation complète page d'accueil (cards uniformes, effets subtils) ✅
+- [x] Boutons minimalistes : padding réduit, border-radius 8px, font-size 13px ✅
+- [x] Stat-cards Dashboard harmonisées (glassmorphism + couleurs thème) ✅
+- [x] Blocs page d'accueil entièrement cliquables (sans boutons, sans émojis) ✅
+- [x] Indicateur "Ouvrir →" au hover (font-size 0.95rem, traduction FR) ✅
 - [ ] Créer `requirements.txt` (Django 5.x, pytest-django, flake8, black)
 - [ ] Rédiger conventions de code (fichier `CONVENTIONS.md`)
 
