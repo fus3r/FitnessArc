@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Exercices{% endblock %}
+{% block content %}
+<h1>Exercices</h1>
+
+<p>Nombre d'exercices : {{ exercises.count }}</p>
+
+<form method="get" style="margin-bottom:1rem">
+  <label>Muscle:
+    <select name="muscle">
+      <option value="">-- Tous --</option>
+      <option value="chest" {% if request.GET.muscle == 'chest' %}selected{% endif %}>Pectoraux</option>
+      <option value="back" {% if request.GET.muscle == 'back' %}selected{% endif %}>Dos</option>
+      <option value="legs" {% if request.GET.muscle == 'legs' %}selected{% endif %}>Jambes</option>
+      <option value="shoulders" {% if request.GET.muscle == 'shoulders' %}selected{% endif %}>Épaules</option>
+      <option value="arms" {% if request.GET.muscle == 'arms' %}selected{% endif %}>Bras</option>
+      <option value="core" {% if request.GET.muscle == 'core' %}selected{% endif %}>Abdos</option>
+    </select>
+  </label>
+  <label>Équipement:
+    <select name="equip">
+      <option value="">-- Tous --</option>
+      <option value="barbell" {% if request.GET.equip == 'barbell' %}selected{% endif %}>Barre</option>
+      <option value="dumbbell" {% if request.GET.equip == 'dumbbell' %}selected{% endif %}>Haltères</option>
+      <option value="machine" {% if request.GET.equip == 'machine' %}selected{% endif %}>Machine</option>
+      <option value="bodyweight" {% if request.GET.equip == 'bodyweight' %}selected{% endif %}>Poids du corps</option>
+    </select>
+  </label>
+  <button type="submit" class="btn">Filtrer</button>
+  <a href="{% url 'workouts:exercise_list' %}" class="btn">Réinitialiser</a>
+</form>
+
+<div class="card">
+  {% if exercises %}
+    <table style="width:100%">
+      <thead>
+        <tr><th>Nom</th><th>Muscle</th><th>Équipement</th><th>Difficulté</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        {% for ex in exercises %}
+          <tr>
+            <td><strong>{{ ex.name }}</strong></td>
+            <td>{{ ex.get_muscle_group_display }}</td>
+            <td>{{ ex.get_equipment_display }}</td>
+            <td>{{ ex.difficulty }}/5</td>
+            <td>{{ ex.description|default:"—" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="padding:1rem; text-align:center; color:#999;">
+      ❌ Aucun exercice trouvé. 
+      <br><br>
+      Chargez les fixtures avec : <code>python manage.py loaddata fixtures/exercices.json</code>
+    </p>
+  {% endif %}
+</div>
+{% endblock %}

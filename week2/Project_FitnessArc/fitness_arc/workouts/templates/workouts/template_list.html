@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Mes templates{% endblock %}
+{% block content %}
+<h1>Mes templates</h1>
+
+<p><a class="btn" href="{% url 'workouts:template_create' %}">+ Nouveau template</a></p>
+
+<table>
+  <thead><tr><th>Nom</th><th>Items</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for tpl in templates %}
+      <tr>
+        <td>{{ tpl.name }}</td>
+        <td>{{ tpl.items.count }}</td>
+        <td>
+          {% if tpl.items.count %}
+            <a class="btn" href="{% url 'workouts:start_session' tpl.pk %}">Démarrer une séance</a>
+          {% else %}
+            <em>Ajoute des items via l'admin pour tester</em>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3">Aucun template.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

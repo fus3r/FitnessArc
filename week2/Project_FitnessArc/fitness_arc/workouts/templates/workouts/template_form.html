@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Nouveau template{% endblock %}
+{% block content %}
+<h1>Nouveau template</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <label>Nom :
+    <input type="text" name="name" placeholder="Push/Pull/Legs">
+  </label>
+  <button type="submit" class="btn">Créer</button>
+</form>
+
+<p style="margin-top:1rem">
+  Après création, ajoute quelques items (exos/sets/reps) via l’admin pour pouvoir démarrer une séance.
+</p>
+{% endblock %}
