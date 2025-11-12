@@ -5,9 +5,9 @@
 
 <p>Nombre d'exercices : {{ exercises.count }}</p>
 
-<form method="get" style="margin-bottom:1rem">
+<form method="get" id="filterForm" style="margin-bottom:1rem">
   <label>Muscle:
-    <select name="muscle">
+    <select name="muscle" onchange="document.getElementById('filterForm').submit()">
       <option value="">-- Tous --</option>
       <option value="chest" {% if request.GET.muscle == 'chest' %}selected{% endif %}>Pectoraux</option>
       <option value="back" {% if request.GET.muscle == 'back' %}selected{% endif %}>Dos</option>
@@ -18,7 +18,7 @@
     </select>
   </label>
   <label>Équipement:
-    <select name="equip">
+    <select name="equip" onchange="document.getElementById('filterForm').submit()">
       <option value="">-- Tous --</option>
       <option value="barbell" {% if request.GET.equip == 'barbell' %}selected{% endif %}>Barre</option>
       <option value="dumbbell" {% if request.GET.equip == 'dumbbell' %}selected{% endif %}>Haltères</option>
@@ -26,8 +26,9 @@
       <option value="bodyweight" {% if request.GET.equip == 'bodyweight' %}selected{% endif %}>Poids du corps</option>
     </select>
   </label>
-  <button type="submit" class="btn">Filtrer</button>
-  <a href="{% url 'workouts:exercise_list' %}" class="btn">Réinitialiser</a>
+  {% if request.GET.muscle or request.GET.equip %}
+    <a href="{% url 'workouts:exercise_list' %}" class="btn" style="background:#6c757d">Réinitialiser</a>
+  {% endif %}
 </form>
 
 <div class="card">
