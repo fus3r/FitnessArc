@@ -39,15 +39,16 @@
 
 - [x] **App `workouts`** (Personne B)
   - [x] Modèles : `Exercise`, `WorkoutTemplate`, `TemplateItem`, `WorkoutSession`, `SetLog`, `PR`
-  - [x] Migrations appliquées
+  - [x] Migrations appliquées (+ ImageField pour images locales)
   - [x] Admin : inline TemplateItems + SetLogs, filtres Exercise
-  - [x] Fixtures : `exercices.json` (10 exercices) ✅
+  - [x] Fixtures : `exercices.json` (10 exercices avec images) ✅
+  - [x] Images : 2 locales (barbell_bench_press.webp, squat.webp) + 8 URLs ExRx.net ✅
   - [x] Tests : créer template avec 3 items ✅
   - [x] Views : exercise_list (filtres muscle/equip), template CRUD, session logging ✅
-  - [x] Templates : exercise_list.html, template_list.html, template_form.html, session_detail.html ✅
+  - [x] Templates : exercise_list.html (avec MEDIA_URL), template_list.html, template_form.html, session_detail.html ✅
   - [x] URLs : /workouts/exercises/, /workouts/templates/, /workouts/sessions/ (avec namespace) ✅
   - [x] Base template créé dans templates/base.html avec navigation ✅
-  - [x] Commit final prêt pour rebase + MR ✅
+  - [x] Configuration MEDIA : settings.py + urls.py ✅
   - [ ] **CRÉER MR sur GitLab** (après push)
 
 - [ ] **App `nutrition`** (Personne D)
