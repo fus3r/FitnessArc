@@ -8,6 +8,14 @@
   </p>
   
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem">
+    {% if user.is_authenticated %}
+    <div class="card" style="text-align:left;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff">
+      <h3>📊 Dashboard</h3>
+      <p>Vue d'ensemble de vos calories, volume et progrès.</p>
+      <a href="{% url 'dashboard:index' %}" class="btn" style="background:#fff;color:#667eea">Voir le dashboard →</a>
+    </div>
+    {% endif %}
+    
     <div class="card" style="text-align:left">
       <h3>🏋️ Entraînements</h3>
       <p>Gérez vos exercices, créez des templates et loggez vos séances.</p>

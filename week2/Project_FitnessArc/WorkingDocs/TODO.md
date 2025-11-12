@@ -122,14 +122,17 @@
 
 ### Jour 4 (Jeudi) - Dashboard & Agrégations
 
-- [ ] **App `dashboard`** (Personne E - démarre après merges workouts/nutrition)
-  - [ ] Service : `calculate_weekly_volume(user)` (somme weight*reps 7 derniers jours)
-  - [ ] Service : `get_recent_prs(user, limit=5)`
-  - [ ] Service : `get_today_nutrition_summary(user)`
-  - [ ] View : `dashboard_index` (3 cards : volume, PRs, kcal)
-  - [ ] Template : `dashboard/index.html`
-  - [ ] URL : `/` (racine)
+- [x] **App `dashboard`** (Personne E - démarre après merges workouts/nutrition)
+  - [x] Service : `calculate_weekly_volume(user)` (somme weight*reps 7 derniers jours) ✅
+  - [x] Service : `get_recent_prs(user, limit=5)` ✅
+  - [x] Service : `get_today_nutrition_summary(user)` ✅
+  - [x] View : `dashboard_index` (4 cards : calories consommées/brûlées, balance, volume) ✅
+  - [x] Template : `dashboard/index.html` ✅
+  - [x] URL : `/dashboard/` ✅
+  - [x] Intégration : Lien dans navbar + page d'accueil ✅
+  - [x] Calcul calories workout basé sur durée × 5 kcal/min ✅
   - [ ] Test : dashboard affiche volume correct
+  - [ ] **PRÊT POUR MR** (après tests)
 
 - [ ] **App `workouts`** (Personne C)
   - [ ] Signal : `post_save` sur `SetLog` → détecter PR (charge max) → créer `PR`

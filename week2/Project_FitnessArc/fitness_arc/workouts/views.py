@@ -51,6 +51,13 @@ def start_session(request, pk):
 def session_detail(request, pk):
     sess = get_object_or_404(WorkoutSession, pk=pk, owner=request.user)
     if request.method == "POST":
+        duration_minutes = request.POST.get("duration_minutes", 0)
+        try:
+            sess.duration_minutes = int(duration_minutes)
+            sess.save()
+        except ValueError:
+            pass
+        
         SetLog.objects.create(
             session=sess,
             exercise_id=int(request.POST["exercise_id"]),
@@ -58,7 +65,7 @@ def session_detail(request, pk):
             reps=int(request.POST["reps"]),
             weight_kg=request.POST["weight_kg"],
         )
-        return redirect("workouts:session_detail", pk=pk)  # ← Ajout namespace
+        return redirect("workouts:session_detail", pk=pk)
     return render(request, "workouts/session_detail.html", {"session": sess})
 
 #Ajouts exercices template
@@ -111,3 +118,49 @@ def template_delete(request, pk):
         messages.success(request, f"Template '{template_name}' supprimé avec succès.")
         return redirect("workouts:template_list")
     return render(request, "workouts/template_confirm_delete.html", {"template": tpl})
+
+@login_required
+def complete_session(request, pk):
+    """Terminer une séance et afficher le récapitulatif"""
+    sess = get_object_or_404(WorkoutSession, pk=pk, owner=request.user)
+    
+    if request.method == "POST":
+        duration_minutes = request.POST.get("duration_minutes", 0)
+        try:
+            sess.duration_minutes = int(duration_minutes)
+        except ValueError:
+            pass
+        
+        sess.is_completed = True
+        sess.save()
+        messages.success(request, f"Séance terminée ! Durée : {sess.duration_minutes} min | Calories : {sess.estimated_calories_burned} kcal")
+        return redirect("workouts:session_summary", pk=sess.pk)
+    
+    return redirect("workouts:session_detail", pk=pk)
+
+@login_required
+def session_summary(request, pk):
+    """Afficher le récapitulatif d'une séance terminée"""
+    sess = get_object_or_404(WorkoutSession, pk=pk, owner=request.user)
+    
+    # Calculer les statistiques
+    total_sets = sess.set_logs.count()
+    total_reps = sum(log.reps for log in sess.set_logs.all())
+    
+    # Grouper les logs par exercice
+    exercises_data = {}
+    for log in sess.set_logs.select_related('exercise'):
+        ex_name = log.exercise.name
+        if ex_name not in exercises_data:
+            exercises_data[ex_name] = {'sets': 0, 'total_reps': 0, 'total_volume': 0}
+        exercises_data[ex_name]['sets'] += 1
+        exercises_data[ex_name]['total_reps'] += log.reps
+        exercises_data[ex_name]['total_volume'] += log.volume
+    
+    context = {
+        'session': sess,
+        'total_sets': total_sets,
+        'total_reps': total_reps,
+        'exercises_data': exercises_data,
+    }
+    return render(request, "workouts/session_summary.html", context)
