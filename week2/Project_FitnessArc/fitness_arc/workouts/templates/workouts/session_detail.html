@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Séance{% endblock %}
+{% block content %}
+<h1>Séance du {{ session.date }}</h1>
+
+<h3>Ajouter une série</h3>
+<form method="post" style="margin-bottom:1rem">
+  {% csrf_token %}
+  <label>Exercice :
+    <select name="exercise_id" required>
+      {% if session.from_template %}
+        {% for item in session.from_template.items.all %}
+          <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
+        {% endfor %}
+      {% else %}
+        {# fallback si la séance n’est pas issue d’un template : rien #}
+      {% endif %}
+    </select>
+  </label>
+  <label>Série # :
+    <input type="number" name="set_number" min="1" value="{{ session.set_logs.count|add:'1' }}">
+  </label>
+  <label>Reps :
+    <input type="number" name="reps" min="1" required>
+  </label>
+  <label>Poids (kg) :
+    <input type="number" name="weight_kg" step="0.5" min="0" required>
+  </label>
+  <button type="submit" class="btn">Ajouter</button>
+</form>
+
+<h3>Logs</h3>
+<table>
+  <thead><tr><th>#</th><th>Exercice</th><th>Reps</th><th>Poids</th><th>Volume</th></tr></thead>
+  <tbody>
+    {% for s in session.set_logs.all %}
+      <tr>
+        <td>{{ s.set_number }}</td>
+        <td>{{ s.exercise.name }}</td>
+        <td>{{ s.reps }}</td>
+        <td>{{ s.weight_kg }} kg</td>
+        <td>{{ s.volume }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">Aucune série pour le moment.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

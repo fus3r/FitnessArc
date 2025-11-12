@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Fitness Arc{% endblock %}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f6f7fb}
+    header{background:#111;color:#fff;padding:12px 16px}
+    a{color:#0b5ed7;text-decoration:none}
+    .container{max-width:960px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:12px 0}
+    input,select,button{font:inherit;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px}
+    button,.btn{background:#0b5ed7;color:#fff;border:none;cursor:pointer;padding:8px 16px;text-decoration:none;display:inline-block}
+    table{width:100%;border-collapse:collapse;margin:12px 0}
+    th,td{border:1px solid #ddd;padding:8px;text-align:left}
+    th{background:#f0f0f0}
+    nav a{color:#fff;margin-right:12px;font-weight:bold}
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<header>
+  <nav>
+    <a href="/">Accueil</a>
+    <a href="/workouts/exercises/">Exercices</a>
+    <a href="/workouts/templates/">Mes Templates</a>
+    {% if user.is_authenticated %}
+      <a href="/accounts/profile/">Mon profil</a>
+      <a href="/accounts/logout/">Déconnexion</a>
+    {% else %}
+      <a href="/accounts/login/">Connexion</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="container">
+  {% if messages %}
+    <ul style="list-style:none;padding:0">
+      {% for message in messages %}
+        <li style="background:#eef6ff;border:1px solid #cfe3ff;padding:8px;border-radius:8px;margin:8px 0">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
