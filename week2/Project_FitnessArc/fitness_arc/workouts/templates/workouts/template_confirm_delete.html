@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Supprimer le template{% endblock %}
+{% block content %}
+<div class="card" style="max-width:600px;margin:2rem auto">
+  <h1>⚠️ Supprimer le template ?</h1>
+  
+  <p style="color:#666;margin:1rem 0">
+    Êtes-vous sûr de vouloir supprimer le template <strong>{{ template.name }}</strong> ?
+  </p>
+  
+  <p style="background:#fff3cd;border:1px solid #ffc107;padding:1rem;border-radius:8px;margin:1rem 0">
+    <strong>Attention :</strong> Cette action est irréversible. 
+    Le template et tous ses items ({{ template.items.count }} exercice(s)) seront définitivement supprimés.
+  </p>
+  
+  <form method="post" style="display:flex;gap:1rem;margin-top:1.5rem">
+    {% csrf_token %}
+    <button type="submit" class="btn" style="background:#dc3545">Oui, supprimer</button>
+    <a href="{% url 'workouts:template_detail' template.pk %}" class="btn" style="background:#6c757d">Annuler</a>
+  </form>
+</div>
+{% endblock %}
