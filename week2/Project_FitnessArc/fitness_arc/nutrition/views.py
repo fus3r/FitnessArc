@@ -2,6 +2,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Sum
 from django.utils import timezone
 from .models import Food, FoodLog
@@ -65,6 +66,7 @@ def delete_food_log(request, pk):
         owner=request.user # SECURITE: Assure que l'utilisateur ne supprime que ses propres logs
     )
     
+    food_name = log_to_delete.food.name
     # La suppression se fait généralement via POST pour des raisons de sécurité, 
     # mais pour un MVP, nous allons la traiter directement si le lien est cliqué (GET)
     
@@ -72,7 +74,7 @@ def delete_food_log(request, pk):
     log_to_delete.delete()
     
     # Affichage d'un message de succès (nécessite l'utilisation du framework messages dans base.html)
-    messages.success(request, f"L'entrée '{log_to_delete.food.name}' a été supprimée.")
+    messages.success(request, f"L'entrée '{food_name}' a été supprimée.")
     
     # Redirection vers la page du journal du jour
     return redirect('nutrition_today')
