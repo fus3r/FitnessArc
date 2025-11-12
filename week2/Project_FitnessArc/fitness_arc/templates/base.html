@@ -22,14 +22,15 @@
 <body>
 <header>
   <nav>
-    <a href="/">Accueil</a>
-    <a href="/workouts/exercises/">Exercices</a>
-    <a href="/workouts/templates/">Mes Templates</a>
+    <a href="{% url 'common:index' %}">🏠 Accueil</a>
+    <a href="{% url 'workouts:exercise_list' %}">Exercices</a>
+    <a href="{% url 'workouts:template_list' %}">Mes Templates</a>
+    <a href="{% url 'nutrition_today' %}">Nutrition</a>
     {% if user.is_authenticated %}
-      <a href="/accounts/profile/">Mon profil</a>
-      <a href="/accounts/logout/">Déconnexion</a>
+      <a href="{% url 'accounts:profile' %}">Mon profil</a>
+      <a href="{% url 'accounts:logout' %}">Déconnexion</a>
     {% else %}
-      <a href="/accounts/login/">Connexion</a>
+      <a href="{% url 'accounts:login' %}">Connexion</a>
     {% endif %}
   </nav>
 </header>

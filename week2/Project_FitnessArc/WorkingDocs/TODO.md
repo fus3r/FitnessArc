@@ -20,6 +20,7 @@
 
 ### Documentation
 - [ ] Dessiner wireframes (main, 5 pages clés) → commit images dans `WorkingDocs/wireframes/`
+- [x] Page d'accueil (/) avec navigation vers toutes les apps ✅
 - [ ] Créer `requirements.txt` (Django 5.x, pytest-django, flake8, black)
 - [ ] Rédiger conventions de code (fichier `CONVENTIONS.md`)
 

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Accueil - Fitness Arc{% endblock %}
+{% block content %}
+<div style="text-align:center;padding:3rem 0">
+  <h1 style="font-size:3rem;margin-bottom:1rem">💪 Fitness Arc</h1>
+  <p style="font-size:1.25rem;color:#666;margin-bottom:2rem">
+    Votre compagnon pour l'entraînement et la nutrition
+  </p>
+  
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem">
+    <div class="card" style="text-align:left">
+      <h3>🏋️ Entraînements</h3>
+      <p>Gérez vos exercices, créez des templates et loggez vos séances.</p>
+      <a href="{% url 'workouts:exercise_list' %}" class="btn">Voir les exercices →</a>
+      <a href="{% url 'workouts:template_list' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Mes templates →</a>
+    </div>
+    
+    <div class="card" style="text-align:left">
+      <h3>🥗 Nutrition</h3>
+      <p>Suivez votre alimentation quotidienne et vos macros.</p>
+      <a href="{% url 'nutrition_today' %}" class="btn">Journal du jour →</a>
+    </div>
+    
+    {% if user.is_authenticated %}
+    <div class="card" style="text-align:left">
+      <h3>👤 Mon Profil</h3>
+      <p>Gérez vos informations personnelles et vos objectifs.</p>
+      <a href="{% url 'accounts:profile' %}" class="btn">Mon profil →</a>
+    </div>
+    {% else %}
+    <div class="card" style="text-align:left">
+      <h3>🚀 Commencer</h3>
+      <p>Créez un compte pour commencer à suivre vos progrès.</p>
+      <a href="{% url 'accounts:signup' %}" class="btn">S'inscrire →</a>
+      <a href="{% url 'accounts:login' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Se connecter →</a>
+    </div>
+    {% endif %}
+  </div>
+  
+  {% if user.is_authenticated %}
+  <div style="margin-top:3rem;padding:2rem;background:#f8f9fa;border-radius:12px">
+    <h2>Bienvenue, {{ user.username }} ! 👋</h2>
+    <p style="color:#666;margin-top:0.5rem">
+      Vous avez {{ templates_count }} template(s) d'entraînement
+      {% if today_logs_count > 0 %}
+      et {{ today_logs_count }} entrée(s) nutritionnelle(s) aujourd'hui.
+      {% else %}
+      Aucune entrée nutritionnelle aujourd'hui.
+      {% endif %}
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
