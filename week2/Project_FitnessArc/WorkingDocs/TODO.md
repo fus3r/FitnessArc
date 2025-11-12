@@ -19,18 +19,12 @@
   - [ ] Personne E : `git checkout -b feature/dashboard`
 
 ### Documentation
-- [ ] Dessiner wireframes (main, 5 pages clés) → commit images dans `WorkingDocs/wireframes/`
-- [x] Page d'accueil (/) avec navigation vers toutes les apps ✅
-- [x] Navbar ultra moderne style Dashboard Invoice (logo, pills, avatar, dropdown) ✅
-- [x] Design glassmorphism complet avec backdrop-filter et shadows avancées ✅
-- [x] Background dégradé futuriste avec reflets animés (rotate 60s + float 15s) ✅
-- [x] Harmonisation complète page d'accueil (cards uniformes, effets subtils) ✅
-- [x] Boutons minimalistes : padding réduit, border-radius 8px, font-size 13px ✅
-- [x] Stat-cards Dashboard harmonisées (glassmorphism + couleurs thème) ✅
-- [x] Blocs page d'accueil entièrement cliquables (sans boutons, sans émojis) ✅
-- [x] Indicateur "Ouvrir →" au hover (font-size 0.95rem, traduction FR) ✅
-- [ ] Créer `requirements.txt` (Django 5.x, pytest-django, flake8, black)
-- [ ] Rédiger conventions de code (fichier `CONVENTIONS.md`)
+- [x] Système d'amis complet avec demandes/acceptation/rejet ✅
+- [x] Icône Friends fancy dans navbar avec compteur de notifications ✅
+- [x] Dashboard ami visible uniquement si amis acceptés ✅
+- [x] Recherche utilisateurs en temps réel ✅
+- [x] **Commande `create_demo_users` pour partager les comptes entre collaborateurs** ✅
+- [x] **README.md complet avec setup et comptes de test** ✅
 
 ---
 

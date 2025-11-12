@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Mes Amis{% endblock %}
+{% block content %}
+<h1>👥 Mes Amis</h1>
+
+<!-- Demandes en attente -->
+{% if pending_requests %}
+<div class="card" style="background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(220,38,38,0.08));border:1px solid rgba(239,68,68,0.3);margin-bottom:2rem">
+  <h3>🔔 Demandes d'amis en attente ({{ pending_requests.count }})</h3>
+  {% for req in pending_requests %}
+  <div class="item-card" style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <strong style="font-size:1.1rem">{{ req.from_user.username }}</strong>
+      <p style="color:var(--text-dim);margin:0.25rem 0">{{ req.created_at|timesince }} ago</p>
+    </div>
+    <div style="display:flex;gap:0.5rem">
+      <form method="post" action="{% url 'accounts:accept_friend_request' req.pk %}" style="margin:0">
+        {% csrf_token %}
+        <button class="btn" type="submit">✓ Accepter</button>
+      </form>
+      <form method="post" action="{% url 'accounts:reject_friend_request' req.pk %}" style="margin:0">
+        {% csrf_token %}
+        <button class="btn btn-secondary" type="submit">✗ Refuser</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Mes amis -->
+<div class="card">
+  <h3>✅ Mes Amis ({{ friends.count }})</h3>
+  {% if friends %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+    {% for friend in friends %}
+    <div class="item-card" style="text-align:center">
+      <div style="width:60px;height:60px;margin:0 auto 1rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-weight:700">
+        {{ friend.username.0|upper }}
+      </div>
+      <h4 style="margin:0 0 0.5rem">{{ friend.username }}</h4>
+      <p style="color:var(--text-dim);font-size:0.85rem;margin:0 0 1rem">Objectif: {{ friend.profile.get_goal_display }}</p>
+      <div style="display:flex;gap:0.5rem;justify-content:center">
+        <a href="{% url 'accounts:friend_dashboard' friend.pk %}" class="btn" style="padding:0.5rem 1rem;font-size:0.85rem">Voir Dashboard</a>
+        <form method="post" action="{% url 'accounts:remove_friend' friend.pk %}" style="margin:0">
+          {% csrf_token %}
+          <button class="btn btn-danger" type="submit" style="padding:0.5rem 1rem;font-size:0.85rem">Retirer</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p style="color:var(--text-dim);text-align:center;padding:2rem">Aucun ami pour l'instant</p>
+  {% endif %}
+</div>
+
+<!-- Rechercher des amis -->
+<div class="card" style="margin-top:2rem">
+  <h3>🔍 Ajouter des Amis</h3>
+  <input type="text" id="searchUsers" placeholder="Rechercher un utilisateur..." style="margin-bottom:1rem">
+  <div id="usersList">
+    {% for u in all_users %}
+    <div class="item-card user-item" data-username="{{ u.username|lower }}" style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong>{{ u.username }}</strong>
+        {% if u in friends %}
+        <span style="color:var(--success);margin-left:0.5rem">✓ Ami</span>
+        {% endif %}
+      </div>
+      {% if u not in friends %}
+      <form method="post" action="{% url 'accounts:send_friend_request' u.pk %}" style="margin:0">
+        {% csrf_token %}
+        <button class="btn" type="submit">+ Ajouter</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+// Recherche en temps réel
+document.getElementById('searchUsers').addEventListener('input', function(e) {
+  const query = e.target.value.toLowerCase();
+  document.querySelectorAll('.user-item').forEach(item => {
+    const username = item.getAttribute('data-username');
+    item.style.display = username.includes(query) ? 'flex' : 'none';
+  });
+});
+</script>
+{% endblock %}

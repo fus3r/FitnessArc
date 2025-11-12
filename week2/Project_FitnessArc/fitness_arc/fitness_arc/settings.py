@@ -68,7 +68,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',  # ← AJOUTER CETTE LIGNE
+                'django.template.context_processors.media',
+                'accounts.context_processors.friends_requests_count',  # ← AJOUTER
             ],
         },
     },

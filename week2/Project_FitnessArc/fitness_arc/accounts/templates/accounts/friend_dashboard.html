@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Dashboard de {{ friend.username }}{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem">
+  <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;font-weight:700">
+    {{ friend.username.0|upper }}
+  </div>
+  <div>
+    <h1 style="margin:0">Dashboard de {{ friend.username }}</h1>
+    <p style="color:var(--text-dim);margin:0.25rem 0">Objectif: {{ friend.profile.get_goal_display }}</p>
+  </div>
+  <a href="{% url 'accounts:friends_list' %}" class="btn" style="margin-left:auto">← Retour aux amis</a>
+</div>
+
+<!-- Réutiliser le template dashboard existant -->
+{% include "dashboard/index.html" %}
+{% endblock %}
