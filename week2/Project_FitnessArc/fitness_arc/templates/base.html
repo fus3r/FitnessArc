@@ -27,7 +27,7 @@
       <a href="{% url 'dashboard:index' %}">📊 Dashboard</a>
     {% endif %}
     <a href="{% url 'workouts:exercise_list' %}">Exercices</a>
-    <a href="{% url 'workouts:template_list' %}">Mes Templates</a>
+    <a href="{% url 'workouts:template_list' %}">Mes Workouts</a>
     <a href="{% url 'nutrition_today' %}">Nutrition</a>
     {% if user.is_authenticated %}
       <a href="{% url 'accounts:profile' %}">Mon profil</a>
