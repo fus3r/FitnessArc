@@ -19,8 +19,13 @@ def exercise_list(request):
 
 @login_required
 def template_list(request):
-    templates = WorkoutTemplate.objects.filter(owner=request.user)
-    return render(request, "workouts/template_list.html", {"templates": templates})
+    my_templates = WorkoutTemplate.objects.filter(owner=request.user, is_public=False)
+    public_templates = WorkoutTemplate.objects.filter(is_public=True)
+    
+    return render(request, "workouts/template_list.html", {
+        "my_templates": my_templates,
+        "public_templates": public_templates
+    })
 
 @login_required
 def template_create(request):
@@ -32,7 +37,13 @@ def template_create(request):
 
 @login_required
 def start_session(request, pk):
-    tpl = get_object_or_404(WorkoutTemplate, pk=pk, owner=request.user)
+    tpl = get_object_or_404(WorkoutTemplate, pk=pk)
+    
+    # Vérifier que l'utilisateur a le droit d'utiliser ce template
+    if not (tpl.owner == request.user or tpl.is_public):
+        messages.error(request, "Vous n'avez pas accès à ce template.")
+        return redirect("workouts:template_list")
+    
     sess = WorkoutSession.objects.create(owner=request.user, from_template=tpl)
     return redirect("workouts:session_detail", pk=sess.pk)  # ← Ajout namespace
 
@@ -53,9 +64,14 @@ def session_detail(request, pk):
 #Ajouts exercices template
 @login_required
 def template_detail(request, pk):
-    tpl = get_object_or_404(WorkoutTemplate, pk=pk, owner=request.user)
-
+    tpl = get_object_or_404(WorkoutTemplate, pk=pk)
+    is_owner = tpl.owner == request.user
+    
     if request.method == "POST":
+        if not is_owner:
+            messages.error(request, "Vous ne pouvez pas modifier un template public.")
+            return redirect("workouts:template_detail", pk=tpl.pk)
+        
         form = TemplateItemForm(request.POST)
         if form.is_valid():
             item = form.save(commit=False)
@@ -64,11 +80,16 @@ def template_detail(request, pk):
             item.order = last + 1
             item.save()
             messages.success(request, "Exercice ajouté au template.")
-            return redirect("workouts:template_detail", pk=tpl.pk)  # ← Ajouter namespace
+            return redirect("workouts:template_detail", pk=tpl.pk)
     else:
         form = TemplateItemForm()
 
-    ctx = {"template": tpl, "form": form, "items": tpl.items.select_related("exercise")}
+    ctx = {
+        "template": tpl,
+        "form": form,
+        "items": tpl.items.select_related("exercise"),
+        "is_owner": is_owner
+    }
     return render(request, "workouts/template_detail.html", ctx)
 
 @login_required

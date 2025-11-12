@@ -5,12 +5,13 @@
 
 <p><a class="btn" href="{% url 'workouts:template_create' %}">+ Nouveau template</a></p>
 
+<h2 style="margin-top:2rem">📝 Mes templates personnalisés</h2>
 <table>
   <thead>
     <tr><th>Nom</th><th>Items</th><th>Actions</th></tr>
   </thead>
   <tbody>
-    {% for tpl in templates %}
+    {% for tpl in my_templates %}
       <tr>
         <td><a href="{% url 'workouts:template_detail' tpl.pk %}">{{ tpl.name }}</a></td>
         <td>{{ tpl.items.count }}</td>
@@ -25,7 +26,31 @@
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="3">Aucun template.</td></tr>
+      <tr><td colspan="3"><em>Aucun template personnel. Créez-en un ou utilisez les templates publics ci-dessous.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2 style="margin-top:3rem">🌟 Templates publics (Push/Pull/Legs)</h2>
+<table>
+  <thead>
+    <tr><th>Nom</th><th>Items</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for tpl in public_templates %}
+      <tr>
+        <td>
+          <a href="{% url 'workouts:template_detail' tpl.pk %}">{{ tpl.name }}</a>
+          <span style="background:#ffc107;color:#000;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-left:0.5rem">PUBLIC</span>
+        </td>
+        <td>{{ tpl.items.count }}</td>
+        <td>
+          <a class="btn" href="{% url 'workouts:start_session' tpl.pk %}">Démarrer une séance</a>
+          <a class="btn" style="background:#6c757d" href="{% url 'workouts:template_detail' tpl.pk %}">Voir le détail</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3"><em>Aucun template public disponible.</em></td></tr>
     {% endfor %}
   </tbody>
 </table>

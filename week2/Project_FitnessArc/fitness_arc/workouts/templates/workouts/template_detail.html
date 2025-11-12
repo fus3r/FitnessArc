@@ -1,18 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Template · {{ template.name }}{% endblock %}
 {% block content %}
-<h1>Template : {{ template.name }}</h1>
+<h1>
+  Template : {{ template.name }}
+  {% if template.is_public %}
+    <span style="background:#ffc107;color:#000;padding:4px 10px;border-radius:6px;font-size:0.9rem;margin-left:0.5rem">PUBLIC</span>
+  {% endif %}
+</h1>
 
 <p style="margin:.5rem 0 1rem">
   <a class="btn" href="{% url 'workouts:start_session' template.pk %}">Démarrer une séance</a>
   <a class="btn" href="{% url 'workouts:template_list' %}">← Retour à mes templates</a>
-  <a href="{% url 'workouts:template_delete' template.pk %}" class="btn" style="background:#dc3545;margin-left:0.5rem">Supprimer ce template</a>
+  {% if is_owner %}
+    <a href="{% url 'workouts:template_delete' template.pk %}" class="btn" style="background:#dc3545;margin-left:0.5rem">Supprimer ce template</a>
+  {% endif %}
 </p>
+
+{% if not is_owner and template.is_public %}
+  <div style="background:#fff3cd;border:1px solid #ffc107;padding:1rem;border-radius:8px;margin:1rem 0">
+    ℹ️ <strong>Template public :</strong> Vous pouvez démarrer une séance mais ne pouvez pas modifier ce template.
+  </div>
+{% endif %}
 
 <h3>Items du template</h3>
 <table>
   <thead>
-    <tr><th>#</th><th>Exercice</th><th>Sets</th><th>Reps</th><th>Repos (s)</th><th></th></tr>
+    <tr><th>#</th><th>Exercice</th><th>Sets</th><th>Reps</th><th>Repos (s)</th>
+    {% if is_owner %}<th></th>{% endif %}
+    </tr>
   </thead>
   <tbody>
     {% for it in items %}
@@ -22,19 +37,22 @@
         <td>{{ it.sets }}</td>
         <td>{{ it.reps }}</td>
         <td>{{ it.rest_seconds }}</td>
+        {% if is_owner %}
         <td>
           <form method="post" action="{% url 'workouts:template_item_delete' template.pk it.pk %}">
             {% csrf_token %}
             <button class="btn" type="submit">Supprimer</button>
           </form>
         </td>
+        {% endif %}
       </tr>
     {% empty %}
-      <tr><td colspan="6"><em>Aucun item pour l'instant.</em></td></tr>
+      <tr><td colspan="{% if is_owner %}6{% else %}5{% endif %}"><em>Aucun item pour l'instant.</em></td></tr>
     {% endfor %}
   </tbody>
 </table>
 
+{% if is_owner %}
 <h3 style="margin-top:1.5rem">Ajouter un item</h3>
 <form method="post">
   {% csrf_token %}
@@ -46,4 +64,5 @@
     <button class="btn" type="submit">Ajouter</button>
   </div>
 </form>
+{% endif %}
 {% endblock %}
