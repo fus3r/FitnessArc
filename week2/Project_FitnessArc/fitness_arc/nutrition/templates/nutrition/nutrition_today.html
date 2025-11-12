@@ -108,7 +108,13 @@
                     <td class="text-end">{{ log.carbs|floatformat:1 }}</td>
                     <td class="text-end">{{ log.fat|floatformat:1 }}</td>
                     <td>
-                        </td>
+                        <a href="{% url 'delete_food_log' log.pk %}" 
+                           class="btn" 
+                           style="background:#dc3545;color:white;font-size:0.875rem;padding:4px 8px"
+                           onclick="return confirm('Supprimer {{ log.food.name }} ({{ log.grams }}g) ?')">
+                           🗑️ Supprimer
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -122,27 +128,6 @@
                     <td></td>
                 </tr>
             </tfoot>
-            <tbody>
-                {% for log in logs %}
-                <tr>
-                    <td>{{ log.get_meal_type_display }}</td>
-                    <td>{{ log.food.name }}</td>
-                    <td class="text-end">{{ log.grams|floatformat:1 }}</td>
-                    <td class="text-end fw-bold">{{ log.kcal|floatformat:1 }}</td>
-                    <td class="text-end">{{ log.protein|floatformat:1 }}</td>
-                    <td class="text-end">{{ log.carbs|floatformat:1 }}</td>
-                    <td class="text-end">{{ log.fat|floatformat:1 }}</td>
-                    <td>
-                        <a href="{% url 'delete_food_log' log.pk %}" 
-                           class="btn btn-sm btn-danger" 
-                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')">
-                           <i class="bi bi-trash"></i> Supprimer
-                        </a>
-                        </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-
         </table>
     {% else %}
         <p class="alert alert-info">Aucun aliment enregistré pour aujourd'hui. Ajoutez votre premier repas !</p>
