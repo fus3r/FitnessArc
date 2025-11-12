@@ -9,6 +9,10 @@
   <p><strong>Taille (cm) :</strong> {{ profile.height_cm|default:"—" }}</p>
   <p><strong>Poids (kg) :</strong> {{ profile.weight_kg|default:"—" }}</p>
   <p><strong>Objectif :</strong> {{ profile.get_goal_display }}</p>
-  <a href="{% url 'accounts:profile_edit' %}">Modifier mon profil</a>
+  
+  <div style="margin-top:1.5rem">
+    <a href="{% url 'accounts:profile_edit' %}" class="btn">Modifier mon profil</a>
+    <a href="{% url 'accounts:password_change' %}" class="btn" style="background:#ffc107;margin-left:0.5rem">🔒 Changer mon mot de passe</a>
+  </div>
 </div>
 {% endblock %}
