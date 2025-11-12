@@ -3,6 +3,16 @@
 {% block content %}
 <h1>Séance du {{ session.date }}</h1>
 
+<!-- Chronomètre -->
+<div class="card" style="text-align:center;margin-bottom:2rem;background:#f8f9fa">
+  <h2 style="font-size:3rem;margin:1rem 0;font-weight:bold;font-family:monospace" id="timer">00:00:00</h2>
+  <div>
+    <button class="btn" id="pauseBtn" onclick="pauseTimer()" style="background:#ffc107">⏸ Pause</button>
+    <button class="btn" id="resumeBtn" onclick="resumeTimer()" style="display:none">▶️ Reprendre</button>
+    <button class="btn" onclick="resetTimer()" style="background:#6c757d">🔄 Réinitialiser</button>
+  </div>
+</div>
+
 <h3>Ajouter une série</h3>
 <form method="post" style="margin-bottom:1rem">
   {% csrf_token %}
@@ -12,8 +22,6 @@
         {% for item in session.from_template.items.all %}
           <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
         {% endfor %}
-      {% else %}
-        {# fallback si la séance n’est pas issue d’un template : rien #}
       {% endif %}
     </select>
   </label>
@@ -46,4 +54,72 @@
     {% endfor %}
   </tbody>
 </table>
+
+<style>
+  #timer {
+    color: #0b5ed7;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  }
+  .card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+</style>
+
+<script>
+let seconds = 0;
+let interval = null;
+let isRunning = false;
+
+// Récupérer le temps sauvegardé dans localStorage
+const sessionKey = 'session_{{ session.pk }}_time';
+const savedTime = localStorage.getItem(sessionKey);
+if (savedTime) {
+  seconds = parseInt(savedTime);
+  updateDisplay();
+}
+
+function startTimer() {
+  if (isRunning) return;
+  
+  isRunning = true;
+  document.getElementById('pauseBtn').style.display = 'inline-block';
+  document.getElementById('resumeBtn').style.display = 'none';
+  
+  interval = setInterval(() => {
+    seconds++;
+    updateDisplay();
+    localStorage.setItem(sessionKey, seconds);
+  }, 1000);
+}
+
+function pauseTimer() {
+  isRunning = false;
+  clearInterval(interval);
+  document.getElementById('pauseBtn').style.display = 'none';
+  document.getElementById('resumeBtn').style.display = 'inline-block';
+}
+
+function resumeTimer() {
+  startTimer();
+}
+
+function resetTimer() {
+  pauseTimer();
+  seconds = 0;
+  updateDisplay();
+  localStorage.removeItem(sessionKey);
+}
+
+function updateDisplay() {
+  const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+  const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+  const secs = (seconds % 60).toString().padStart(2, '0');
+  document.getElementById('timer').textContent = `${hrs}:${mins}:${secs}`;
+}
+
+// Auto-démarrage au chargement de la page
+window.addEventListener('load', () => {
+  startTimer();
+});
+</script>
 {% endblock %}
