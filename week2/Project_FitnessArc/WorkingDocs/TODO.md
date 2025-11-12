@@ -30,19 +30,25 @@
 ### Jour 1 (Lundi) - Fondations
 
 #### Modèles & Migrations
-- [ ] **App `accounts`** (Personne A)
-  - [ ] Modèle `Profile` (height_cm, weight_kg, goal)
-  - [ ] Migration
-  - [ ] Admin : enregistrer Profile
-  - [ ] Test : créer profile via signal User.post_save
-  - [ ] **MERGE EN PREMIER** (dépendance critique)
+- [x] **App `accounts`** (Personne A)
+  - [x] Modèle `Profile` (height_cm, weight_kg, goal)
+  - [x] Migration
+  - [x] Admin : enregistrer Profile
+  - [x] Test : créer profile via signal User.post_save
+  - [x] **MERGÉ DANS MAIN** ✅
 
-- [ ] **App `workouts`** (Personne B)
-  - [ ] Modèles : `Exercise`, `WorkoutTemplate`, `TemplateItem`
-  - [ ] Migrations
-  - [ ] Admin : inline TemplateItems
-  - [ ] Fixtures : `exercises.json` (60 entrées)
-  - [ ] Test : créer template avec 3 items
+- [x] **App `workouts`** (Personne B)
+  - [x] Modèles : `Exercise`, `WorkoutTemplate`, `TemplateItem`, `WorkoutSession`, `SetLog`, `PR`
+  - [x] Migrations appliquées
+  - [x] Admin : inline TemplateItems + SetLogs, filtres Exercise
+  - [x] Fixtures : `exercices.json` (10 exercices) ✅
+  - [x] Tests : créer template avec 3 items ✅
+  - [x] Views : exercise_list (filtres muscle/equip), template CRUD, session logging ✅
+  - [x] Templates : exercise_list.html, template_list.html, template_form.html, session_detail.html ✅
+  - [x] URLs : /workouts/exercises/, /workouts/templates/, /workouts/sessions/ (avec namespace) ✅
+  - [x] Base template créé dans templates/base.html avec navigation ✅
+  - [x] Commit final prêt pour rebase + MR ✅
+  - [ ] **CRÉER MR sur GitLab** (après push)
 
 - [ ] **App `nutrition`** (Personne D)
   - [ ] Modèles : `Food`, `FoodLog`
