@@ -53,7 +53,7 @@
   - [x] Fixtures : `exercices.json` (150+ exercices complets par groupe musculaire) ✅
   - [x] Fixtures : `templates_public.json` (3 templates Push/Pull/Legs publics) ✅
   - [x] Images : Convention exercises/{slug}.webp pour tous les exercices ✅
-  - [x] Tests : créer template avec 3 items ✅
+  - [x] Page exercices : filtres muscle/équipement + barre de recherche fancy ✅
   - [x] Views : exercise_list (filtres muscle/equip auto), template CRUD (list avec publics, create, detail, delete), session logging ✅
   - [x] Templates : exercise_list.html, template_list.html (avec section publics), template_detail.html (lecture seule pour publics), template_form.html, template_confirm_delete.html, session_detail.html ✅
   - [x] URLs : /workouts/exercises/, /workouts/templates/, /workouts/templates/<id>/delete/, /workouts/sessions/ (avec namespace workouts:) ✅
