@@ -130,8 +130,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/accounts/profile/"
-LOGOUT_REDIRECT_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"  # ← Rediriger vers dashboard après connexion
+LOGOUT_REDIRECT_URL = "/accounts/login/"  # ← Rediriger vers login après déconnexion
 
 # Media files (uploaded content)
 MEDIA_URL = '/media/'
