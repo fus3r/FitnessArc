@@ -1,5 +1,12 @@
 [
-  {"model":"workouts.exercise","pk":1,"fields":{"name":"Développé couché","slug":"developpe-couche","muscle_group":"chest","equipment":"barbell","difficulty":3,"description":""}},
-  {"model":"workouts.exercise","pk":2,"fields":{"name":"Squat","slug":"squat","muscle_group":"legs","equipment":"barbell","difficulty":4,"description":""}},
-  {"model":"workouts.exercise","pk":3,"fields":{"name":"Tractions","slug":"tractions","muscle_group":"back","equipment":"bodyweight","difficulty":3,"description":""}}
+  {"model":"workouts.exercise","pk":1,"fields":{"name":"Développé couché","slug":"developpe-couche","muscle_group":"chest","equipment":"barbell","difficulty":3,"description":"Exercice de base pour les pectoraux"}},
+  {"model":"workouts.exercise","pk":2,"fields":{"name":"Squat","slug":"squat","muscle_group":"legs","equipment":"barbell","difficulty":4,"description":"Roi des exercices pour les jambes"}},
+  {"model":"workouts.exercise","pk":3,"fields":{"name":"Tractions","slug":"tractions","muscle_group":"back","equipment":"bodyweight","difficulty":3,"description":"Exercice de base pour le dos"}},
+  {"model":"workouts.exercise","pk":4,"fields":{"name":"Développé militaire","slug":"developpe-militaire","muscle_group":"shoulders","equipment":"barbell","difficulty":3,"description":"Exercice de base pour les épaules"}},
+  {"model":"workouts.exercise","pk":5,"fields":{"name":"Soulevé de terre","slug":"souleve-de-terre","muscle_group":"back","equipment":"barbell","difficulty":5,"description":"Exercice complet pour le dos et les jambes"}},
+  {"model":"workouts.exercise","pk":6,"fields":{"name":"Curl biceps","slug":"curl-biceps","muscle_group":"arms","equipment":"dumbbell","difficulty":2,"description":"Isolation des biceps"}},
+  {"model":"workouts.exercise","pk":7,"fields":{"name":"Dips","slug":"dips","muscle_group":"chest","equipment":"bodyweight","difficulty":3,"description":"Pectoraux et triceps"}},
+  {"model":"workouts.exercise","pk":8,"fields":{"name":"Leg press","slug":"leg-press","muscle_group":"legs","equipment":"machine","difficulty":2,"description":"Alternative au squat"}},
+  {"model":"workouts.exercise","pk":9,"fields":{"name":"Rowing barre","slug":"rowing-barre","muscle_group":"back","equipment":"barbell","difficulty":3,"description":"Épaisseur du dos"}},
+  {"model":"workouts.exercise","pk":10,"fields":{"name":"Crunch","slug":"crunch","muscle_group":"core","equipment":"bodyweight","difficulty":1,"description":"Abdominaux de base"}}
 ]
