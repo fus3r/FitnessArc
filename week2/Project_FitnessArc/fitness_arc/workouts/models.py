@@ -17,7 +17,7 @@ class Exercise(models.Model):
     equipment = models.CharField(max_length=20, choices=EQUIP)
     difficulty = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(blank=True)
-    image = models.URLField(blank=True, null=True, help_text="URL de l'image de démonstration")  # ← NOUVEAU
+    image = models.ImageField(upload_to='exercises/', blank=True, null=True, help_text="Image de démonstration")
     
     def __str__(self): return self.name
 
