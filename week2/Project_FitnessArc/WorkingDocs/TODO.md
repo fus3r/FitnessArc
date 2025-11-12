@@ -55,6 +55,9 @@
   - [x] Fonctionnalité : Suppression de templates avec confirmation ✅
   - [x] Fonctionnalité : Chronomètre auto-start avec Pause/Reprendre + persistance localStorage ✅
   - [x] Fonctionnalité : Templates publics préfaits (Push/Pull/Legs) accessibles à tous ✅
+  - [x] Fonctionnalité : Bouton "Terminer la séance" avec récapitulatif (durée, calories, volume) ✅
+  - [x] Fonctionnalité : Page récapitulatif après fin de séance ✅
+  - [x] Renommage : "Mes Templates" → "Mes Workouts" dans toute l'app ✅
   - [ ] **PRÊT POUR MR sur GitLab** (après dernier push)
 
 - [x] **App `nutrition`** (Personne D)
@@ -131,6 +134,8 @@
   - [x] URL : `/dashboard/` ✅
   - [x] Intégration : Lien dans navbar + page d'accueil ✅
   - [x] Calcul calories workout basé sur durée × 5 kcal/min ✅
+  - [x] Historique des workouts : 10 dernières séances avec détails (exos, temps, calories, PRs) ✅
+  - [x] Lien vers récapitulatif détaillé depuis l'historique ✅
   - [ ] Test : dashboard affiche volume correct
   - [ ] **PRÊT POUR MR** (après tests)
 

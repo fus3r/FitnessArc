@@ -36,10 +36,10 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">
   <div class="card">
     <h3>🏋️ Raccourcis Entraînement</h3>
-    <a href="{% url 'workouts:template_list' %}" class="btn" style="margin-top:1rem">Mes Templates</a>
+    <a href="{% url 'workouts:template_list' %}" class="btn" style="margin-top:1rem">Mes Workouts</a>
     <a href="{% url 'workouts:exercise_list' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Exercices</a>
   </div>
   
@@ -48,6 +48,62 @@
     <a href="{% url 'nutrition_today' %}" class="btn" style="margin-top:1rem">Journal du jour</a>
   </div>
 </div>
+
+{% if workout_history %}
+<div class="card" style="margin-bottom:1.5rem">
+  <h3>📅 Historique des Workouts (30 derniers jours)</h3>
+  {% for item in workout_history %}
+  <div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin:1rem 0;background:#f9fafb">
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.5rem">
+      <div>
+        <h4 style="margin:0;color:#111">
+          {% if item.session.from_template %}
+            {{ item.session.from_template.name }}
+          {% else %}
+            Séance du {{ item.session.date|date:"d/m/Y" }}
+          {% endif %}
+        </h4>
+        <p style="color:#666;font-size:0.9rem;margin:0.25rem 0">
+          {{ item.session.date|date:"l d M Y" }} • {{ item.session.duration_minutes }} min
+        </p>
+      </div>
+      <div style="text-align:right">
+        <span style="background:#667eea;color:#fff;padding:4px 8px;border-radius:6px;font-size:0.85rem">
+          🔥 {{ item.session.estimated_calories_burned }} kcal
+        </span>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.5rem;margin:0.75rem 0">
+      {% for ex_name, data in item.exercises.items %}
+      <div style="background:#fff;padding:0.5rem;border-radius:6px;font-size:0.85rem">
+        <strong>{{ ex_name }}</strong><br>
+        <span style="color:#666">{{ data.sets }} séries • {{ data.reps }} reps</span>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #e5e7eb">
+      <div style="font-size:0.9rem;color:#666">
+        📊 Volume total: <strong>{{ item.session.total_volume|floatformat:0 }} kg</strong> • 
+        Séries: <strong>{{ item.total_sets }}</strong>
+        {% if item.prs_count > 0 %}
+        • 🏆 <strong style="color:#f59e0b">{{ item.prs_count }} nouveau(x) PR(s)</strong>
+        {% endif %}
+      </div>
+      <a href="{% url 'workouts:session_summary' item.session.pk %}" class="btn" style="padding:4px 12px;font-size:0.85rem">
+        Voir détails →
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="margin-bottom:1.5rem;text-align:center;padding:2rem">
+  <p style="color:#666">Aucun workout complété récemment.</p>
+  <a href="{% url 'workouts:template_list' %}" class="btn" style="margin-top:1rem">Commencer un workout →</a>
+</div>
+{% endif %}
 
 {% if recent_prs %}
 <div class="card" style="margin-top:1.5rem">
