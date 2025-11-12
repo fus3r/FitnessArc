@@ -53,12 +53,18 @@
   - [x] Nettoyage : suppression dossier template/ obsolète ✅
   - [ ] **PRÊT POUR MR sur GitLab** (après dernier push)
 
-- [ ] **App `nutrition`** (Personne D)
-  - [ ] Modèles : `Food`, `FoodLog`
-  - [ ] Migrations
-  - [ ] Admin : FoodLog avec date filter
-  - [ ] Fixtures : `foods.json` (50 aliments)
-  - [ ] Test : ajouter food log, calculer totaux jour
+- [x] **App `nutrition`** (Personne D)
+  - [x] Modèles : `Food`, `FoodLog` ✅
+  - [x] Migrations créées et appliquées ✅
+  - [x] Admin : Food + FoodLog avec filtres date/meal_type ✅
+  - [x] Views : nutrition_today (affiche logs + totaux) ✅
+  - [x] Forms : FoodLogForm ✅
+  - [x] Template : nutrition/templates/nutrition/nutrition_today.html ✅
+  - [x] URLs : /nutrition/today/ ✅
+  - [x] Fixtures : `foods.json` (5 aliments de base) ✅
+  - [x] Page fonctionnelle : ajout de logs + calcul totaux ✅
+  - [ ] Tests : ajouter food log, calculer totaux jour
+  - [ ] **PRÊT POUR MR** (après tests)
 
 ---
 
@@ -162,3 +168,16 @@
 ---
 
 ## 📝 Conventions de Commits
+
+### 2. Tester l'Ajout d'un Log
+
+1. Visite **http://127.0.0.1:8000/nutrition/today/**
+2. Sélectionne un aliment (ex: Poulet)
+3. Entre 150g
+4. Choisis "Déjeuner"
+5. Clique "Ajouter"
+6. Les totaux devraient se mettre à jour automatiquement !
+
+---
+
+## 📝 Mise à Jour du TODO

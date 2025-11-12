@@ -50,16 +50,26 @@
             {% csrf_token %}
             <div class="row g-3 align-items-end">
                 <div class="col-md-6">
-                    <label for="{{ form.food.id_for_label }}" class="form-label">Aliment</label>
-                    {{ form.food }}
+                    <label for="id_food" class="form-label">Aliment</label>
+                    <select name="food" id="id_food" class="form-control" required>
+                        <option value="">-- Choisir un aliment --</option>
+                        {% for food in form.food.field.queryset %}
+                            <option value="{{ food.pk }}">{{ food.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="{{ form.grams.id_for_label }}" class="form-label">Grammes</label>
-                    {{ form.grams }}
+                    <label for="id_grams" class="form-label">Grammes</label>
+                    <input type="number" name="grams" id="id_grams" class="form-control" min="1" required>
                 </div>
                 <div class="col-md-2">
-                    <label for="{{ form.meal_type.id_for_label }}" class="form-label">Repas</label>
-                    {{ form.meal_type }}
+                    <label for="id_meal_type" class="form-label">Repas</label>
+                    <select name="meal_type" id="id_meal_type" class="form-control">
+                        <option value="breakfast">Petit-déjeuner</option>
+                        <option value="lunch">Déjeuner</option>
+                        <option value="dinner">Dîner</option>
+                        <option value="snack">Collation</option>
+                    </select>
                 </div>
                 <div class="col-md-1 d-grid">
                     <button type="submit" class="btn btn-success">Ajouter</button>
