@@ -9,7 +9,7 @@ class FoodAdmin(admin.ModelAdmin):
 
 @admin.register(FoodLog)
 class FoodLogAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'date', 'food', 'grams', 'meal_type', 'kcal')
+    list_display = ('owner', 'date', 'food', 'quantity', 'meal_type', 'kcal')
     list_filter = ('date', 'meal_type', 'owner')
     search_fields = ('owner__username', 'food__name')
     date_hierarchy = 'date'

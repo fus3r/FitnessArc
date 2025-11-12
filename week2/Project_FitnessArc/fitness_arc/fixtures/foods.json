@@ -9,6 +9,7 @@
       "protein_per_100g": "2.70",
       "carbs_per_100g": "28.00",
       "fat_per_100g": "0.30",
+      "unit_type": "g",
       "is_public": true
     }
   },
@@ -22,6 +23,7 @@
       "protein_per_100g": "31.00",
       "carbs_per_100g": "0.00",
       "fat_per_100g": "3.60",
+      "unit_type": "g",
       "is_public": true
     }
   },
@@ -35,6 +37,7 @@
       "protein_per_100g": "1.10",
       "carbs_per_100g": "23.00",
       "fat_per_100g": "0.30",
+      "unit_type": "unit",
       "is_public": true
     }
   },
@@ -48,6 +51,7 @@
       "protein_per_100g": "13.00",
       "carbs_per_100g": "1.10",
       "fat_per_100g": "11.00",
+      "unit_type": "unit",
       "is_public": true
     }
   },
@@ -61,6 +65,7 @@
       "protein_per_100g": "20.00",
       "carbs_per_100g": "0.00",
       "fat_per_100g": "13.00",
+      "unit_type": "g",
       "is_public": true
     }
   },
@@ -178,6 +183,7 @@
       "protein_per_100g": "3.30",
       "carbs_per_100g": "4.80",
       "fat_per_100g": "1.60",
+      "unit_type": "ml",
       "is_public": true
     }
   },

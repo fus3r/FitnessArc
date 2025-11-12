@@ -72,11 +72,13 @@
 
 ### Jour 2 (Mardi) - Vues CRUD
 
-- [ ] **App `accounts`** (Personne A)
-  - [ ] Views : signup, login (django.contrib.auth), profile_edit
-  - [ ] Templates : `signup.html`, `login.html`, `profile.html`
-  - [ ] URLs : `/accounts/signup/`, `/accounts/login/`, `/accounts/profile/`
-  - [ ] Test : signup crée profile, edit profile sauvegarde
+- [x] **App `accounts`** (Personne A)
+  - [x] Views : signup, login (django.contrib.auth), profile_edit, password_change ✅
+  - [x] Templates : `signup.html`, `login.html`, `profile.html`, `profile_edit.html`, `password_change.html` ✅
+  - [x] URLs : `/accounts/signup/`, `/accounts/login/`, `/accounts/profile/`, `/accounts/password-change/` ✅
+  - [x] Test : signup crée profile, edit profile sauvegarde ✅
+  - [x] Fonctionnalité : Changement de mot de passe depuis le profil ✅
+  - [ ] **PRÊT POUR MR** (après dernier push)
 
 - [ ] **App `workouts`** (Personne B)
   - [ ] View : `exercise_list` (filtres muscle_group, equipment)

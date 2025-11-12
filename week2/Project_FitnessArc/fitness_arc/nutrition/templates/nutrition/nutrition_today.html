@@ -46,21 +46,28 @@
     
     <div class="card p-3 mb-4">
         <h4>Ajouter un aliment</h4>
-        <form method="POST" action="{% url 'nutrition_today' %}">
+        <form method="POST" action="{% url 'nutrition_today' %}" id="foodForm">
             {% csrf_token %}
             <div class="row g-3 align-items-end">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <label for="id_food" class="form-label">Aliment</label>
-                    <select name="food" id="id_food" class="form-control" required>
+                    <select name="food" id="id_food" class="form-control" required onchange="updateQuantityLabel()">
                         <option value="">-- Choisir un aliment --</option>
                         {% for food in form.food.field.queryset %}
-                            <option value="{{ food.pk }}">{{ food.name }}</option>
+                            <option value="{{ food.pk }}" data-unit="{{ food.unit_type }}" data-unit-label="{{ food.get_unit_label }}">
+                                {{ food.name }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="id_grams" class="form-label">Grammes</label>
-                    <input type="number" name="grams" id="id_grams" class="form-control" min="1" required>
+                    <label for="id_quantity" class="form-label">
+                        <span id="quantity_label">Quantité</span>
+                    </label>
+                    <div class="input-group">
+                        <input type="number" name="quantity" id="id_quantity" class="form-control" min="0.1" step="0.1" required>
+                        <span class="input-group-text" id="unit_suffix">g</span>
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <label for="id_meal_type" class="form-label">Repas</label>
@@ -71,7 +78,7 @@
                         <option value="snack">Collation</option>
                     </select>
                 </div>
-                <div class="col-md-1 d-grid">
+                <div class="col-md-2 d-grid">
                     <button type="submit" class="btn btn-success">Ajouter</button>
                 </div>
             </div>
@@ -81,6 +88,39 @@
         </form>
     </div>
 
+    <script>
+        const unitLabels = {
+            'g': 'Grammes (g)',
+            'ml': 'Millilitres (ml)',
+            'unit': 'Unité(s)'
+        };
+
+        const unitSuffixes = {
+            'g': 'g',
+            'ml': 'ml',
+            'unit': 'unité(s)'
+        };
+
+        function updateQuantityLabel() {
+            const select = document.getElementById('id_food');
+            const selectedOption = select.options[select.selectedIndex];
+            const unitType = selectedOption.getAttribute('data-unit') || 'g';
+            const unitLabel = selectedOption.getAttribute('data-unit-label') || 'g';
+            
+            document.getElementById('quantity_label').textContent = unitLabels[unitType] || 'Quantité';
+            document.getElementById('unit_suffix').textContent = unitSuffixes[unitType] || 'g';
+            
+            const quantityInput = document.getElementById('id_quantity');
+            if (unitType === 'unit') {
+                quantityInput.step = '1';
+                quantityInput.placeholder = 'Nombre';
+            } else {
+                quantityInput.step = '0.1';
+                quantityInput.placeholder = 'Quantité';
+            }
+        }
+    </script>
+
     <h4 class="mt-4">Détail des entrées</h4>
     
     {% if logs %}
@@ -89,7 +129,7 @@
                 <tr>
                     <th>Heure/Type</th>
                     <th>Aliment</th>
-                    <th class="text-end">Quantité (g)</th>
+                    <th class="text-end">Quantité</th>
                     <th class="text-end">Kcal</th>
                     <th class="text-end">Prot. (g)</th>
                     <th class="text-end">Gluc. (g)</th>
@@ -102,7 +142,7 @@
                 <tr>
                     <td>{{ log.get_meal_type_display }}</td>
                     <td>{{ log.food.name }}</td>
-                    <td class="text-end">{{ log.grams|floatformat:1 }}</td>
+                    <td class="text-end">{{ log.quantity|floatformat:1 }} {{ log.food.get_unit_label }}</td>
                     <td class="text-end fw-bold">{{ log.kcal|floatformat:1 }}</td>
                     <td class="text-end">{{ log.protein|floatformat:1 }}</td>
                     <td class="text-end">{{ log.carbs|floatformat:1 }}</td>
@@ -111,7 +151,7 @@
                         <a href="{% url 'delete_food_log' log.pk %}" 
                            class="btn" 
                            style="background:#dc3545;color:white;font-size:0.875rem;padding:4px 8px"
-                           onclick="return confirm('Supprimer {{ log.food.name }} ({{ log.grams }}g) ?')">
+                           onclick="return confirm('Supprimer {{ log.food.name }} ({{ log.quantity }}{{ log.food.get_unit_label }}) ?')">
                            🗑️ Supprimer
                         </a>
                     </td>
