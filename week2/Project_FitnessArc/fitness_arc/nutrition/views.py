@@ -52,3 +52,27 @@ def nutrition_today(request):
     
     # Utilisation du template nutrition_today.html (Must-have )
     return render(request, 'nutrition/nutrition_today.html', context)
+
+@login_required
+def delete_food_log(request, pk):
+    """
+    Supprime un FoodLog spécifique après vérification de l'utilisateur.
+    """
+    # Récupère le FoodLog OU renvoie un 404 si non trouvé OU si l'utilisateur n'est pas le propriétaire
+    log_to_delete = get_object_or_404(
+        FoodLog, 
+        pk=pk, 
+        owner=request.user # SECURITE: Assure que l'utilisateur ne supprime que ses propres logs
+    )
+    
+    # La suppression se fait généralement via POST pour des raisons de sécurité, 
+    # mais pour un MVP, nous allons la traiter directement si le lien est cliqué (GET)
+    
+    # Logique de suppression
+    log_to_delete.delete()
+    
+    # Affichage d'un message de succès (nécessite l'utilisation du framework messages dans base.html)
+    messages.success(request, f"L'entrée '{log_to_delete.food.name}' a été supprimée.")
+    
+    # Redirection vers la page du journal du jour
+    return redirect('nutrition_today')
