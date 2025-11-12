@@ -78,4 +78,15 @@ def template_item_delete(request, pk, item_id):
     if request.method == "POST":
         item.delete()
         messages.success(request, "Item supprimé.")
-    return redirect("workouts:template_detail", pk=tpl.pk)  # ← Ajouter namespace
+    return redirect("workouts:template_detail", pk=tpl.pk)
+
+@login_required
+def template_delete(request, pk):
+    """Supprimer un template complet"""
+    tpl = get_object_or_404(WorkoutTemplate, pk=pk, owner=request.user)
+    if request.method == "POST":
+        template_name = tpl.name
+        tpl.delete()
+        messages.success(request, f"Template '{template_name}' supprimé avec succès.")
+        return redirect("workouts:template_list")
+    return render(request, "workouts/template_confirm_delete.html", {"template": tpl})

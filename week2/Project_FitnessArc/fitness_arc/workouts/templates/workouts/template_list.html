@@ -21,6 +21,7 @@
           {% else %}
             <a class="btn" href="{% url 'workouts:template_detail' tpl.pk %}">Ajouter des items</a>
           {% endif %}
+          <a href="{% url 'workouts:template_delete' tpl.pk %}" class="btn" style="background:#dc3545;margin-left:0.5rem">Supprimer</a>
         </td>
       </tr>
     {% empty %}

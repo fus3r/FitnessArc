@@ -6,6 +6,7 @@
 <p style="margin:.5rem 0 1rem">
   <a class="btn" href="{% url 'workouts:start_session' template.pk %}">Démarrer une séance</a>
   <a class="btn" href="{% url 'workouts:template_list' %}">← Retour à mes templates</a>
+  <a href="{% url 'workouts:template_delete' template.pk %}" class="btn" style="background:#dc3545;margin-left:0.5rem">Supprimer ce template</a>
 </p>
 
 <h3>Items du template</h3>
