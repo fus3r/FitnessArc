@@ -41,7 +41,7 @@
           <tr>
             <td>
               {% if ex.image %}
-                <img src="{{ ex.image }}" alt="{{ ex.name }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
+                <img src="{{ MEDIA_URL }}{{ ex.image }}" alt="{{ ex.name }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
               {% else %}
                 <div style="width:80px;height:80px;background:#ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">
                   <span>?</span>
@@ -58,9 +58,7 @@
     </table>
   {% else %}
     <p style="padding:1rem; text-align:center; color:#999;">
-      ❌ Aucun exercice trouvé. 
-      <br><br>
-      Chargez les fixtures avec : <code>python manage.py loaddata fixtures/exercices.json</code>
+      ❌ Aucun exercice trouvé.
     </p>
   {% endif %}
 </div>
