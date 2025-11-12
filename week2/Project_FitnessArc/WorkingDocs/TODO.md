@@ -3,18 +3,18 @@
 ## 🚨 Priorité Immédiate (Jour 1 - Matin)
 
 ### Stratégie Git & Setup
-- [ ] **RÉUNION ÉQUIPE (30 min)** : valider stratégie branches feature/app
-- [ ] **Setup Django de base sur `main`**
-  - [ ] `django-admin startproject fitness_arc`
-  - [ ] Créer 5 apps vides : `accounts`, `workouts`, `nutrition`, `dashboard`, `common`
-  - [ ] Configurer `INSTALLED_APPS` dans `settings.py`
-  - [ ] Commit initial : `"Setup: Django project + apps structure"`
-  - [ ] Push sur `main`
+- [x] **RÉUNION ÉQUIPE (30 min)** : valider stratégie branches feature/app
+- [x] **Setup Django de base sur `main`**
+  - [x] `django-admin startproject fitness_arc`
+  - [x] Créer 5 apps vides : `accounts`, `workouts`, `nutrition`, `dashboard`, `common`
+  - [x] Configurer `INSTALLED_APPS` dans `settings.py`
+  - [x] Commit initial : `"Setup: Django project + apps structure"`
+  - [x] Push sur `main`
 
 - [ ] **Chaque membre crée SA branche**
-  - [ ] Personne A : `git checkout -b feature/accounts`
-  - [ ] Personne B : `git checkout -b feature/workouts`
-  - [ ] Personne C : rejoint `feature/workouts` (ou `feature/workouts-sessions`)
+  - [x] Personne A : `git checkout -b feature/accounts`
+  - [x] Personne B : `git checkout -b feature/workouts`
+  - [x] Personne C : rejoint `feature/workouts` (ou `feature/workouts-sessions`)
   - [ ] Personne D : `git checkout -b feature/nutrition`
   - [ ] Personne E : `git checkout -b feature/dashboard`
 
