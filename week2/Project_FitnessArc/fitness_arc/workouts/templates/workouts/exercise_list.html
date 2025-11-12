@@ -34,16 +34,24 @@
   {% if exercises %}
     <table style="width:100%">
       <thead>
-        <tr><th>Nom</th><th>Muscle</th><th>Équipement</th><th>Difficulté</th><th>Description</th></tr>
+        <tr><th>Image</th><th>Nom</th><th>Muscle</th><th>Équipement</th><th>Difficulté</th></tr>
       </thead>
       <tbody>
         {% for ex in exercises %}
           <tr>
+            <td>
+              {% if ex.image %}
+                <img src="{{ ex.image }}" alt="{{ ex.name }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
+              {% else %}
+                <div style="width:80px;height:80px;background:#ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">
+                  <span>?</span>
+                </div>
+              {% endif %}
+            </td>
             <td><strong>{{ ex.name }}</strong></td>
             <td>{{ ex.get_muscle_group_display }}</td>
             <td>{{ ex.get_equipment_display }}</td>
             <td>{{ ex.difficulty }}/5</td>
-            <td>{{ ex.description|default:"—" }}</td>
           </tr>
         {% endfor %}
       </tbody>
