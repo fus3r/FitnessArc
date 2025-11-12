@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Template · {{ template.name }}{% endblock %}
+{% block content %}
+<h1>Template : {{ template.name }}</h1>
+
+<p style="margin:.5rem 0 1rem">
+  <a class="btn" href="{% url 'workouts:start_session' template.pk %}">Démarrer une séance</a>
+  <a class="btn" href="{% url 'workouts:template_list' %}">← Retour à mes templates</a>
+</p>
+
+<h3>Items du template</h3>
+<table>
+  <thead>
+    <tr><th>#</th><th>Exercice</th><th>Sets</th><th>Reps</th><th>Repos (s)</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for it in items %}
+      <tr>
+        <td>{{ it.order }}</td>
+        <td>{{ it.exercise.name }}</td>
+        <td>{{ it.sets }}</td>
+        <td>{{ it.reps }}</td>
+        <td>{{ it.rest_seconds }}</td>
+        <td>
+          <form method="post" action="{% url 'workouts:template_item_delete' template.pk it.pk %}">
+            {% csrf_token %}
+            <button class="btn" type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6"><em>Aucun item pour l’instant.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3 style="margin-top:1.5rem">Ajouter un item</h3>
+<form method="post">
+  {% csrf_token %}
+  <div style="display:grid;grid-template-columns:2fr repeat(3,1fr) auto;gap:.5rem;align-items:end;max-width:900px">
+    <label>Exercice<br>{{ form.exercise }}</label>
+    <label>Sets<br>{{ form.sets }}</label>
+    <label>Reps<br>{{ form.reps }}</label>
+    <label>Repos (s)<br>{{ form.rest_seconds }}</label>
+    <button class="btn" type="submit">Ajouter</button>
+  </div>
+</form>
+{% endblock %}
