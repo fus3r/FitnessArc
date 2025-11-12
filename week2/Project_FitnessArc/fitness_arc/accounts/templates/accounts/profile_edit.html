@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Éditer mon profil{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Éditer mon profil</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+    <a href="{% url 'accounts:profile' %}" style="margin-left:8px;">Annuler</a>
+  </form>
+</div>
+{% endblock %}
+

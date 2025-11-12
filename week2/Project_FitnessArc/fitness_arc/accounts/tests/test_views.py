@@ -1,0 +1,69 @@
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+from accounts.models import Profile
+
+
+class AccountsViewsTests(TestCase):
+    def test_signup_creates_user_profile_and_redirects(self):
+        url = reverse("accounts:signup")
+        resp = self.client.post(
+            url,
+            data={
+                "username": "john",
+                "email": "john@example.com",
+                "goal": "maintain",
+                "password1": "StrongPass123",
+                "password2": "StrongPass123",
+            },
+        )
+        # Redirige vers /accounts/profile/
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, reverse("accounts:profile"))
+
+        # Utilisateur + profil créés
+        User = get_user_model()
+        self.assertTrue(User.objects.filter(username="john").exists())
+        u = User.objects.get(username="john")
+        self.assertTrue(Profile.objects.filter(user=u).exists())
+
+    def test_profile_edit_requires_login_redirects_to_login(self):
+        url = reverse("accounts:profile_edit")
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 302)
+        expected_login = f"{reverse('accounts:login')}?next={url}"
+        self.assertEqual(resp.url, expected_login)
+
+    def test_profile_detail_requires_login_redirects_to_login(self):
+        url = reverse("accounts:profile")
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 302)
+        expected_login = f"{reverse('accounts:login')}?next={url}"
+        self.assertEqual(resp.url, expected_login)
+
+    def test_profile_edit_updates_profile_when_logged_in(self):
+        # créer & connecter un user
+        User = get_user_model()
+        u = User.objects.create_user(username="maria", password="pass12345")
+        logged = self.client.login(username="maria", password="pass12345")
+        self.assertTrue(logged)
+
+        url = reverse("accounts:profile_edit")
+        resp = self.client.post(
+            url,
+            data={
+                "sex": "F",
+                "height_cm": 170,
+                "weight_kg": "60.0",
+                "goal": "cut",
+            },
+        )
+        # redirection vers la page profil après succès
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, reverse("accounts:profile"))
+
+        u.refresh_from_db()
+        self.assertEqual(u.profile.sex, "F")
+        self.assertEqual(u.profile.height_cm, 170)
+        self.assertEqual(str(u.profile.weight_kg), "60.00")
+        self.assertEqual(u.profile.goal, "cut")

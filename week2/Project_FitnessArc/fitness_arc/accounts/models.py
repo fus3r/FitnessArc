@@ -1,3 +1,30 @@
+from django.conf import settings
 from django.db import models
 
-# Create your models here.
+
+class Profile(models.Model):
+    GOAL_CHOICES = [
+        ('bulk', 'Prise de masse'),
+        ('cut', 'Perte de poids'),
+        ('maintain', 'Maintien'),
+    ]
+    SEX_CHOICES = [
+        ('M', 'Homme'),
+        ('F', 'Femme'),
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='profile',
+    )
+    height_cm = models.PositiveIntegerField(null=True, blank=True)
+    weight_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    sex = models.CharField(max_length=1, choices=SEX_CHOICES, blank=True)
+    goal = models.CharField(max_length=8, choices=GOAL_CHOICES, default='maintain')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"Profile<{self.user.username}>"
