@@ -1,3 +1,71 @@
+# Fitness Arc - Web App (Team 5)
+
+## 🚀 Setup Rapide pour Développeurs
+
+### Prérequis
+- Python 3.10+
+- Git
+
+### Installation
+
+```bash
+# 1. Cloner le repo
+git clone https://gitlab-cw4.centralesupelec.fr/riad.darwish/webapp_by_team_5.git
+cd webapp_by_team_5/week2/Project_FitnessArc/fitness_arc
+
+# 2. Créer l'environnement virtuel
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate  # Windows
+
+# 3. Installer les dépendances
+pip install django pillow
+
+# 4. Créer la base de données
+python manage.py migrate
+
+# 5. Charger les données de démo
+python manage.py loaddata fixtures/exercices.json
+python manage.py loaddata fixtures/templates_public.json
+python manage.py create_demo_users
+
+# 6. Lancer le serveur
+python manage.py runserver
+```
+
+### 👥 Comptes de Test
+
+Tous les comptes ont le mot de passe : **`pass123`**
+
+| Username | Email | Rôle |
+|----------|-------|------|
+| `admin` | admin@fitnessarc.com | Superuser (mot de passe: `admin123`) |
+| `riad` | riad@example.com | User normal |
+| `alice` | alice@example.com | User normal |
+| `bob` | bob@example.com | User normal |
+| `charlie` | charlie@example.com | User normal |
+
+### 🔄 Synchroniser les Utilisateurs
+
+Si un nouveau collaborateur rejoint le projet :
+
+```bash
+# Recréer les utilisateurs depuis zéro
+python manage.py create_demo_users
+```
+
+### 🧪 Tester le Système d'Amis
+
+1. Se connecter avec `riad` (pass123)
+2. Aller sur `/accounts/friends/`
+3. Envoyer une demande à `alice`
+4. Se déconnecter et se connecter avec `alice`
+5. Accepter la demande de `riad`
+6. Voir le dashboard de `riad` depuis le profil d'`alice`
+
+## 📁 Structure du Projet
+
+````markdown
 # webapp_by_team_5
 
 
