@@ -45,11 +45,13 @@
   - [x] Images : 2 locales (barbell_bench_press.webp, squat.webp) + 8 URLs ExRx.net ✅
   - [x] Tests : créer template avec 3 items ✅
   - [x] Views : exercise_list (filtres muscle/equip), template CRUD, session logging ✅
-  - [x] Templates : exercise_list.html (avec MEDIA_URL), template_list.html, template_form.html, session_detail.html ✅
-  - [x] URLs : /workouts/exercises/, /workouts/templates/, /workouts/sessions/ (avec namespace) ✅
+  - [x] Templates : exercise_list.html (avec MEDIA_URL), template_list.html, template_detail.html, template_form.html, session_detail.html ✅
+  - [x] URLs : /workouts/exercises/, /workouts/templates/, /workouts/sessions/ (avec namespace workouts:) ✅
   - [x] Base template créé dans templates/base.html avec navigation ✅
-  - [x] Configuration MEDIA : settings.py + urls.py ✅
-  - [ ] **CRÉER MR sur GitLab** (après push)
+  - [x] Configuration MEDIA : settings.py + urls.py + context_processors.media ✅
+  - [x] Forms : TemplateItemForm pour ajouter exercices aux templates ✅
+  - [x] Nettoyage : suppression dossier template/ obsolète ✅
+  - [ ] **PRÊT POUR MR sur GitLab** (après dernier push)
 
 - [ ] **App `nutrition`** (Personne D)
   - [ ] Modèles : `Food`, `FoodLog`
