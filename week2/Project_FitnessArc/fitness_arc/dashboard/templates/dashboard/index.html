@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1>📊 Tableau de bord</h1>
+<h1>Tableau de bord</h1>
 <p style="color:var(--text-dim);margin-bottom:2rem">Vue d'ensemble de votre activité du {{ today|date:"l d M" }}</p>
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem">
@@ -42,22 +42,32 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">
+<!-- Graphiques Analytics -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem;margin-bottom:2rem">
   <div class="card">
-    <h3>🏋️ Raccourcis Entraînement</h3>
-    <a href="{% url 'workouts:template_list' %}" class="btn" style="margin-top:1rem">Mes Workouts</a>
-    <a href="{% url 'workouts:exercise_list' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Exercices</a>
+    <h3>Workouts par Semaine (5 dernières)</h3>
+    <canvas id="weeklyWorkoutsChart" height="200"></canvas>
   </div>
   
   <div class="card">
-    <h3>🥗 Raccourcis Nutrition</h3>
-    <a href="{% url 'nutrition_today' %}" class="btn" style="margin-top:1rem">Journal du jour</a>
+    <h3>Calories Journalières (7 derniers jours)</h3>
+    <canvas id="dailyCaloriesChart" height="200"></canvas>
+  </div>
+  
+  <div class="card">
+    <h3>Volume d'Entraînement (5 dernières semaines)</h3>
+    <canvas id="weeklyVolumeChart" height="200"></canvas>
+  </div>
+  
+  <div class="card">
+    <h3>Répartition Macros (Aujourd'hui)</h3>
+    <canvas id="macrosChart" height="200"></canvas>
   </div>
 </div>
 
 {% if workout_history %}
 <div class="card" style="margin-bottom:1.5rem">
-  <h3>📅 Historique des Workouts (30 derniers jours)</h3>
+  <h3>Historique des Workouts (30 derniers jours)</h3>
   {% for item in workout_history %}
   <div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin:1rem 0;background:#f9fafb">
     <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.5rem">
@@ -104,11 +114,6 @@
   </div>
   {% endfor %}
 </div>
-{% else %}
-<div class="card" style="margin-bottom:1.5rem;text-align:center;padding:2rem">
-  <p style="color:#666">Aucun workout complété récemment.</p>
-  <a href="{% url 'workouts:template_list' %}" class="btn" style="margin-top:1rem">Commencer un workout →</a>
-</div>
 {% endif %}
 
 {% if recent_prs %}
@@ -129,4 +134,168 @@
   </table>
 </div>
 {% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Configuration globale Chart.js
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(99,102,241,0.1)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+
+// 1. Workouts par Semaine
+const weeklyWorkoutsCtx = document.getElementById('weeklyWorkoutsChart');
+new Chart(weeklyWorkoutsCtx, {
+  type: 'bar',
+  data: {
+    labels: {{ weekly_workouts_labels|safe }},
+    datasets: [{
+      label: 'Workouts',
+      data: {{ weekly_workouts_data|safe }},
+      backgroundColor: 'rgba(99,102,241,0.6)',
+      borderColor: 'rgba(99,102,241,0.8)',
+      borderWidth: 2,
+      borderRadius: 8,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,36,0.95)',
+        padding: 12,
+        borderColor: 'rgba(99,102,241,0.3)',
+        borderWidth: 1,
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 1 },
+        grid: { color: 'rgba(99,102,241,0.1)' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. Calories Journalières
+const dailyCaloriesCtx = document.getElementById('dailyCaloriesChart');
+new Chart(dailyCaloriesCtx, {
+  type: 'line',
+  data: {
+    labels: {{ daily_calories_labels|safe }},
+    datasets: [{
+      label: 'Consommées',
+      data: {{ daily_calories_consumed|safe }},
+      borderColor: 'rgba(99,102,241,0.8)',
+      backgroundColor: 'rgba(99,102,241,0.2)',
+      fill: true,
+      tension: 0.4,
+    }, {
+      label: 'Brûlées',
+      data: {{ daily_calories_burned|safe }},
+      borderColor: 'rgba(239,68,68,0.8)',
+      backgroundColor: 'rgba(239,68,68,0.2)',
+      fill: true,
+      tension: 0.4,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true } },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,36,0.95)',
+        padding: 12,
+        borderColor: 'rgba(99,102,241,0.3)',
+        borderWidth: 1,
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(99,102,241,0.1)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. Volume Hebdomadaire
+const weeklyVolumeCtx = document.getElementById('weeklyVolumeChart');
+new Chart(weeklyVolumeCtx, {
+  type: 'line',
+  data: {
+    labels: {{ weekly_volume_labels|safe }},
+    datasets: [{
+      label: 'Volume (kg)',
+      data: {{ weekly_volume_data|safe }},
+      borderColor: 'rgba(236,72,153,0.8)',
+      backgroundColor: 'rgba(236,72,153,0.2)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 6,
+      pointHoverRadius: 8,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,36,0.95)',
+        padding: 12,
+        borderColor: 'rgba(236,72,153,0.3)',
+        borderWidth: 1,
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(99,102,241,0.1)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 4. Répartition Macros
+const macrosCtx = document.getElementById('macrosChart');
+new Chart(macrosCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Protéines', 'Glucides', 'Lipides'],
+    datasets: [{
+      data: [{{ protein_consumed }}, {{ carbs_consumed }}, {{ fat_consumed }}],
+      backgroundColor: [
+        'rgba(16,185,129,0.6)',
+        'rgba(245,158,11,0.6)',
+        'rgba(236,72,153,0.6)'
+      ],
+      borderColor: [
+        'rgba(16,185,129,0.8)',
+        'rgba(245,158,11,0.8)',
+        'rgba(236,72,153,0.8)'
+      ],
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15 } },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,36,0.95)',
+        padding: 12,
+        borderColor: 'rgba(99,102,241,0.3)',
+        borderWidth: 1,
+        callbacks: {
+          label: function(context) {
+            return context.label + ': ' + context.parsed + 'g';
+          }
+        }
+      }
+    }
+  }
+});
+</script>
 {% endblock %}

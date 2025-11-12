@@ -6,25 +6,28 @@
   <p style="color:var(--text-dim);margin-bottom:2rem">{{ current_date|date:"l d M Y" }}</p>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;margin-bottom:3rem">
-    <div class="stat-card" style="background:linear-gradient(135deg,var(--primary),var(--secondary))">
-      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem">Calories</div>
-      <div style="font-size:2.5rem;font-weight:700" v-text="totals.kcal"></div>
-      <div style="font-size:0.8rem;opacity:0.8">kcal</div>
+    <div class="stat-card" style="background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.3)">
+      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem;color:var(--text)">Calories</div>
+      <div style="font-size:2.5rem;font-weight:700;color:var(--text)" v-text="totals.kcal"></div>
+      <div style="font-size:0.8rem;opacity:0.8;color:var(--text-dim)">kcal</div>
     </div>
-    <div class="stat-card" style="background:linear-gradient(135deg,var(--success),#059669)">
-      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem">Protéines</div>
-      <div style="font-size:2.5rem;font-weight:700" v-text="totals.protein"></div>
-      <div style="font-size:0.8rem;opacity:0.8">grammes</div>
+    
+    <div class="stat-card" style="background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(5,150,105,0.15));border:1px solid rgba(16,185,129,0.3)">
+      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem;color:var(--text)">Protéines</div>
+      <div style="font-size:2.5rem;font-weight:700;color:var(--success)" v-text="totals.protein"></div>
+      <div style="font-size:0.8rem;opacity:0.8;color:var(--text-dim)">grammes</div>
     </div>
-    <div class="stat-card" style="background:linear-gradient(135deg,var(--warning),#d97706)">
-      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem">Glucides</div>
-      <div style="font-size:2.5rem;font-weight:700" v-text="totals.carbs"></div>
-      <div style="font-size:0.8rem;opacity:0.8">grammes</div>
+    
+    <div class="stat-card" style="background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(217,119,6,0.15));border:1px solid rgba(245,158,11,0.3)">
+      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem;color:var(--text)">Glucides</div>
+      <div style="font-size:2.5rem;font-weight:700;color:var(--warning)" v-text="totals.carbs"></div>
+      <div style="font-size:0.8rem;opacity:0.8;color:var(--text-dim)">grammes</div>
     </div>
-    <div class="stat-card" style="background:linear-gradient(135deg,var(--accent),#db2777)">
-      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem">Lipides</div>
-      <div style="font-size:2.5rem;font-weight:700" v-text="totals.fat"></div>
-      <div style="font-size:0.8rem;opacity:0.8">grammes</div>
+    
+    <div class="stat-card" style="background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(219,39,119,0.15));border:1px solid rgba(236,72,153,0.3)">
+      <div style="font-size:0.85rem;opacity:0.9;margin-bottom:0.5rem;color:var(--text)">Lipides</div>
+      <div style="font-size:2.5rem;font-weight:700;color:var(--accent)" v-text="totals.fat"></div>
+      <div style="font-size:0.8rem;opacity:0.8;color:var(--text-dim)">grammes</div>
     </div>
   </div>
 

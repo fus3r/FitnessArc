@@ -1,5 +1,7 @@
 from django.utils import timezone
+from django.db.models import Sum
 from datetime import timedelta
+from collections import defaultdict
 from workouts.models import WorkoutSession, SetLog, PR
 from nutrition.models import FoodLog
 
@@ -8,6 +10,7 @@ def get_dashboard_data(user):
     today = timezone.now().date()
     week_ago = today - timedelta(days=7)
     month_ago = today - timedelta(days=30)
+    five_weeks_ago = today - timedelta(days=35)
     
     # Calories nutrition (aujourd'hui)
     today_food_logs = FoodLog.objects.filter(owner=user, date=today)
@@ -64,6 +67,64 @@ def get_dashboard_data(user):
             'total_sets': session.set_logs.count(),
         })
     
+    # === Nouveaux Graphiques ===
+    
+    # 1. Workouts par Semaine (5 dernières semaines)
+    weekly_workouts = defaultdict(int)
+    all_sessions = WorkoutSession.objects.filter(
+        owner=user,
+        date__gte=five_weeks_ago,
+        is_completed=True
+    )
+    
+    for session in all_sessions:
+        week_num = session.date.isocalendar()[1]
+        weekly_workouts[week_num] += 1
+    
+    sorted_weeks = sorted(weekly_workouts.items())[-5:]
+    weekly_workouts_labels = [f"S{w[0]}" for w in sorted_weeks]
+    weekly_workouts_data = [w[1] for w in sorted_weeks]
+    
+    # 2. Calories Journalières (7 derniers jours)
+    daily_calories_labels = []
+    daily_calories_consumed = []
+    daily_calories_burned = []
+    
+    for i in range(6, -1, -1):
+        date = today - timedelta(days=i)
+        daily_calories_labels.append(date.strftime('%d/%m'))
+        
+        # Calories consommées
+        food_logs = FoodLog.objects.filter(owner=user, date=date)
+        consumed = sum(log.kcal for log in food_logs)
+        daily_calories_consumed.append(round(consumed, 1))
+        
+        # Calories brûlées
+        workouts = WorkoutSession.objects.filter(owner=user, date=date, is_completed=True)
+        burned = sum(w.estimated_calories_burned for w in workouts)
+        daily_calories_burned.append(round(burned, 1))
+    
+    # 3. Volume Hebdomadaire (5 dernières semaines)
+    weekly_volumes = defaultdict(float)
+    volume_sessions = WorkoutSession.objects.filter(
+        owner=user,
+        date__gte=five_weeks_ago,
+        is_completed=True
+    ).prefetch_related('set_logs')
+    
+    for session in volume_sessions:
+        week_num = session.date.isocalendar()[1]
+        weekly_volumes[week_num] += session.total_volume
+    
+    sorted_vol_weeks = sorted(weekly_volumes.items())[-5:]
+    weekly_volume_labels = [f"S{w[0]}" for w in sorted_vol_weeks]
+    weekly_volume_data = [round(w[1], 1) for w in sorted_vol_weeks]
+    
+    # 4. Macros du jour
+    today_food_logs = FoodLog.objects.filter(owner=user, date=today)
+    carbs_consumed = sum(log.carbs for log in today_food_logs)
+    fat_consumed = sum(log.fat for log in today_food_logs)
+    
     return {
         'calories_consumed': round(calories_consumed, 1),
         'protein_consumed': round(protein_consumed, 1),
@@ -74,4 +135,13 @@ def get_dashboard_data(user):
         'recent_prs': recent_prs,
         'workout_history': workout_details,
         'today': today,
+        'carbs_consumed': round(carbs_consumed, 1),
+        'fat_consumed': round(fat_consumed, 1),
+        'weekly_workouts_labels': weekly_workouts_labels,
+        'weekly_workouts_data': weekly_workouts_data,
+        'daily_calories_labels': daily_calories_labels,
+        'daily_calories_consumed': daily_calories_consumed,
+        'daily_calories_burned': daily_calories_burned,
+        'weekly_volume_labels': weekly_volume_labels,
+        'weekly_volume_data': weekly_volume_data,
     }

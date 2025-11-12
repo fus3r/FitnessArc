@@ -50,9 +50,9 @@
   - [x] Modèles : `Exercise`, `WorkoutTemplate`, `TemplateItem`, `WorkoutSession`, `SetLog`, `PR`
   - [x] Migrations appliquées (+ ImageField pour images locales)
   - [x] Admin : inline TemplateItems + SetLogs, filtres Exercise
-  - [x] Fixtures : `exercices.json` (10 exercices avec images) ✅
+  - [x] Fixtures : `exercices.json` (150+ exercices complets par groupe musculaire) ✅
   - [x] Fixtures : `templates_public.json` (3 templates Push/Pull/Legs publics) ✅
-  - [x] Images : 2 locales (barbell_bench_press.webp, squat.webp) + 8 URLs ExRx.net ✅
+  - [x] Images : Convention exercises/{slug}.webp pour tous les exercices ✅
   - [x] Tests : créer template avec 3 items ✅
   - [x] Views : exercise_list (filtres muscle/equip auto), template CRUD (list avec publics, create, detail, delete), session logging ✅
   - [x] Templates : exercise_list.html, template_list.html (avec section publics), template_detail.html (lecture seule pour publics), template_form.html, template_confirm_delete.html, session_detail.html ✅
@@ -78,6 +78,7 @@
   - [x] URLs : /nutrition/today/ ✅
   - [x] Fixtures : `foods.json` (5 aliments de base) ✅
   - [x] Page fonctionnelle : ajout de logs + calcul totaux ✅
+  - [x] Stat-cards Nutrition harmonisées avec Dashboard (glassmorphism + couleurs cohérentes) ✅
   - [ ] Tests : ajouter food log, calculer totaux jour
   - [ ] **PRÊT POUR MR** (après tests)
 
@@ -144,6 +145,8 @@
   - [x] Calcul calories workout basé sur durée × 5 kcal/min ✅
   - [x] Historique des workouts : 10 dernières séances avec détails (exos, temps, calories, PRs) ✅
   - [x] Lien vers récapitulatif détaillé depuis l'historique ✅
+  - [x] Graphiques Chart.js : workouts/semaine, calories/jour, volume/semaine, macros ✅
+  - [x] Suppression emojis titre + blocs raccourcis ✅
   - [ ] Test : dashboard affiche volume correct
   - [ ] **PRÊT POUR MR** (après tests)
 
