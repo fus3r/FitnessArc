@@ -3,7 +3,12 @@
 {% block content %}
 <h1>Séance du {{ session.date }}</h1>
 
-<!-- Chronomètre -->
+{% if session.is_completed %}
+<div style="background:#d4edda;border:1px solid #c3e6cb;padding:1rem;border-radius:8px;margin-bottom:1rem">
+  ✅ <strong>Séance terminée !</strong> Durée : {{ session.duration_minutes }} min | Calories : {{ session.estimated_calories_burned }} kcal
+  <br><a href="{% url 'workouts:session_summary' session.pk %}" class="btn" style="margin-top:0.5rem">Voir le récapitulatif →</a>
+</div>
+{% else %}
 <div class="card" style="text-align:center;margin-bottom:2rem;background:#f8f9fa">
   <h2 style="font-size:3rem;margin:1rem 0;font-weight:bold;font-family:monospace" id="timer">00:00:00</h2>
   <div>
@@ -16,6 +21,7 @@
 <h3>Ajouter une série</h3>
 <form method="post" style="margin-bottom:1rem">
   {% csrf_token %}
+  <input type="hidden" name="duration_minutes" id="duration_minutes" value="0">
   <label>Exercice :
     <select name="exercise_id" required>
       {% if session.from_template %}
@@ -34,8 +40,9 @@
   <label>Poids (kg) :
     <input type="number" name="weight_kg" step="0.5" min="0" required>
   </label>
-  <button type="submit" class="btn">Ajouter</button>
+  <button type="submit" class="btn" onclick="saveDuration()">Ajouter</button>
 </form>
+{% endif %}
 
 <h3>Logs</h3>
 <table>
@@ -55,6 +62,18 @@
   </tbody>
 </table>
 
+{% if not session.is_completed and session.set_logs.count > 0 %}
+<div style="margin-top:2rem;text-align:center">
+  <form method="post" action="{% url 'workouts:complete_session' session.pk %}" onsubmit="saveDuration()">
+    {% csrf_token %}
+    <input type="hidden" name="duration_minutes" id="complete_duration_minutes" value="0">
+    <button type="submit" class="btn" style="background:#28a745;font-size:1.2rem;padding:12px 24px">
+      🏁 Terminer la séance
+    </button>
+  </form>
+</div>
+{% endif %}
+
 <style>
   #timer {
     color: #0b5ed7;
@@ -65,12 +84,12 @@
   }
 </style>
 
+{% if not session.is_completed %}
 <script>
 let seconds = 0;
 let interval = null;
 let isRunning = false;
 
-// Récupérer le temps sauvegardé dans localStorage
 const sessionKey = 'session_{{ session.pk }}_time';
 const savedTime = localStorage.getItem(sessionKey);
 if (savedTime) {
@@ -80,11 +99,9 @@ if (savedTime) {
 
 function startTimer() {
   if (isRunning) return;
-  
   isRunning = true;
   document.getElementById('pauseBtn').style.display = 'inline-block';
   document.getElementById('resumeBtn').style.display = 'none';
-  
   interval = setInterval(() => {
     seconds++;
     updateDisplay();
@@ -117,9 +134,17 @@ function updateDisplay() {
   document.getElementById('timer').textContent = `${hrs}:${mins}:${secs}`;
 }
 
-// Auto-démarrage au chargement de la page
+function saveDuration() {
+  const durationMinutes = Math.floor(seconds / 60);
+  const durationField = document.getElementById('duration_minutes');
+  if (durationField) durationField.value = durationMinutes;
+  const completeField = document.getElementById('complete_duration_minutes');
+  if (completeField) completeField.value = durationMinutes;
+}
+
 window.addEventListener('load', () => {
   startTimer();
 });
 </script>
+{% endif %}
 {% endblock %}

@@ -42,12 +42,28 @@ class WorkoutSession(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="workout_sessions")
     date = models.DateField(auto_now_add=True)
     from_template = models.ForeignKey(WorkoutTemplate, on_delete=models.SET_NULL, null=True, blank=True)
+    duration_minutes = models.PositiveIntegerField(default=0, help_text="Durée de la séance en minutes")
+    is_completed = models.BooleanField(default=False, help_text="Séance terminée")
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self): return f"Session {self.date}"
+    
     @property
-    def total_volume(self):  # somme (poids * reps)
+    def total_volume(self):
         return sum(sl.volume for sl in self.set_logs.all())
+    
+    @property
+    def estimated_calories_burned(self):
+        """
+        Estimation des calories brûlées selon :
+        - Musculation intense : ~6 kcal/min
+        - Musculation modérée : ~4 kcal/min
+        - Moyenne : 5 kcal/min
+        """
+        if self.duration_minutes == 0:
+            return 0
+        return self.duration_minutes * 5
 
 class SetLog(models.Model):
     session = models.ForeignKey(WorkoutSession, on_delete=models.CASCADE, related_name="set_logs")

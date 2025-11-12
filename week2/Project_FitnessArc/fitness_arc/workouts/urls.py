@@ -9,8 +9,10 @@ urlpatterns = [
     path("templates/new/", views.template_create, name="template_create"),
     path("templates/<int:pk>/", views.template_detail, name="template_detail"),
     path("templates/<int:pk>/delete/", views.template_delete, name="template_delete"),
-    path("templates/<int:pk>/items/<int:item_id>/delete/", views.template_item_delete,name="template_item_delete"),
+    path("templates/<int:pk>/items/<int:item_id>/delete/", views.template_item_delete, name="template_item_delete"),
     path("templates/<int:pk>/start/", views.start_session, name="start_session"),
     path("sessions/<int:pk>/", views.session_detail, name="session_detail"),
+    path("sessions/<int:pk>/complete/", views.complete_session, name="complete_session"),
+    path("sessions/<int:pk>/summary/", views.session_summary, name="session_summary"),
 ]
 

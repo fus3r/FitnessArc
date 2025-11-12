@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>📊 Tableau de bord</h1>
+<p style="color:#666;margin-bottom:2rem">Vue d'ensemble de votre activité du {{ today|date:"l d M" }}</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem">
+  <div class="card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9">Calories Consommées</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold">{{ calories_consumed }}</p>
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem">Protéines : {{ protein_consumed }}g</p>
+  </div>
+  
+  <div class="card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:#fff">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9">Calories Brûlées</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold">{{ calories_burned }}</p>
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem">Séances : {{ sessions_count }}</p>
+  </div>
+  
+  {% if calorie_balance > 0 %}
+  <div class="card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:#fff">
+  {% else %}
+  <div class="card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:#fff">
+  {% endif %}
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9">Balance Calorique</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold">{{ calorie_balance|floatformat:0 }}</p>
+    <p style="margin:0.5rem 0 0;opacity:0.8;font-size:0.85rem">
+      {% if calorie_balance > 0 %}Surplus{% elif calorie_balance < 0 %}Déficit{% else %}Équilibre{% endif %}
+    </p>
+  </div>
+  
+  <div class="card" style="background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%)">
+    <h3 style="margin:0 0 0.5rem;font-size:0.9rem;color:#666">Volume (7 jours)</h3>
+    <p style="font-size:2.5rem;margin:0;font-weight:bold;color:#333">{{ weekly_volume|floatformat:0 }}</p>
+    <p style="margin:0.5rem 0 0;color:#666;font-size:0.85rem">kg × reps</p>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+  <div class="card">
+    <h3>🏋️ Raccourcis Entraînement</h3>
+    <a href="{% url 'workouts:template_list' %}" class="btn" style="margin-top:1rem">Mes Templates</a>
+    <a href="{% url 'workouts:exercise_list' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Exercices</a>
+  </div>
+  
+  <div class="card">
+    <h3>🥗 Raccourcis Nutrition</h3>
+    <a href="{% url 'nutrition_today' %}" class="btn" style="margin-top:1rem">Journal du jour</a>
+  </div>
+</div>
+
+{% if recent_prs %}
+<div class="card" style="margin-top:1.5rem">
+  <h3>🏆 Records Récents (PRs)</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Exercice</th><th>Type</th><th>Valeur</th></tr></thead>
+    <tbody>
+      {% for pr in recent_prs %}
+      <tr>
+        <td>{{ pr.date|date:"d/m/Y" }}</td>
+        <td>{{ pr.exercise.name }}</td>
+        <td>{{ pr.get_metric_display }}</td>
+        <td><strong>{{ pr.value }} kg</strong></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}
