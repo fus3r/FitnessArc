@@ -1,0 +1,5 @@
+[
+  {"model":"workouts.exercise","pk":1,"fields":{"name":"Développé couché","slug":"developpe-couche","muscle_group":"chest","equipment":"barbell","difficulty":3,"description":""}},
+  {"model":"workouts.exercise","pk":2,"fields":{"name":"Squat","slug":"squat","muscle_group":"legs","equipment":"barbell","difficulty":4,"description":""}},
+  {"model":"workouts.exercise","pk":3,"fields":{"name":"Tractions","slug":"tractions","muscle_group":"back","equipment":"bodyweight","difficulty":3,"description":""}}
+]
