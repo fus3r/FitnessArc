@@ -39,11 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Fitness Arc Apps
-    'accounts.apps.AccountsConfig',      # Gestion profils utilisateurs (Personne A)
-    'workouts.apps.WorkoutsConfig',      # Exercices, templates, sessions (Personnes B & C)
-    'nutrition.apps.NutritionConfig',    # Aliments, journal alimentaire (Personne D)
-    'dashboard.apps.DashboardConfig',    # Agrégations & graphiques (Personne E)
-    'common.apps.CommonConfig',          # Utils partagés (optionnel)
+    'accounts.apps.AccountsConfig',      # ← Mergé par Personne A
+    'workouts.apps.WorkoutsConfig',      # ← Ton app (Personne B)
+    'nutrition.apps.NutritionConfig',    # ← À venir (Personne D)
+    'dashboard.apps.DashboardConfig',    # ← À venir (Personne E)
+    'common.apps.CommonConfig',
 ]
 
 MIDDLEWARE = [

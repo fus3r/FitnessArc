@@ -23,5 +23,5 @@ urlpatterns = [
     path('workouts/', include('workouts.urls')),
     path('nutrition/', include('nutrition.urls')),
     path('dashboard/', include('dashboard.urls')),
-    path('common/', include('common.urls'))
+    #path('common/', include('common.urls'))
 ]
