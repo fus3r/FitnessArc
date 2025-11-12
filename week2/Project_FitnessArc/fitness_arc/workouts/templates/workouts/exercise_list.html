@@ -3,9 +3,45 @@
 {% block content %}
 <div id="exerciseApp">
   <h1>Bibliothèque d'exercices</h1>
-  <p style="color:var(--text-dim);margin-bottom:2rem">{{ exercises|length }} exercices disponibles</p>
+  <p style="color:var(--text-dim);margin-bottom:2rem"><span v-text="exercises.length"></span> exercices disponibles</p>
 
   <div class="card" style="margin-bottom:2rem">
+    <!-- Barre de recherche fancy -->
+    <div style="position:relative;margin-bottom:1.5rem">
+      <input 
+        type="text" 
+        v-model="searchQuery" 
+        placeholder="Rechercher un exercice par nom..."
+        style="padding:1rem 1rem 1rem 3rem;font-size:1rem;border:2px solid rgba(99,102,241,0.3);border-radius:12px;background:rgba(18,18,26,0.8);transition:all 0.3s"
+        @focus="searchFocused = true"
+        @blur="searchFocused = false">
+      <svg 
+        width="20" height="20" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        stroke-width="2"
+        style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--primary);opacity:0.7">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <div 
+        v-if="searchQuery" 
+        @click="searchQuery = ''" 
+        style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-dim);font-size:1.25rem;font-weight:bold;transition:color 0.2s"
+        @mouseover="clearHover = true"
+        @mouseleave="clearHover = false"
+        :style="{color: clearHover ? 'var(--danger)' : 'var(--text-dim)'}">
+        ×
+      </div>
+      <div 
+        v-if="searchQuery && filteredExercises.length > 0" 
+        style="margin-top:0.5rem;font-size:0.9rem;color:var(--primary)">
+        ✓ <span v-text="filteredExercises.length"></span> résultat(s) trouvé(s)
+      </div>
+    </div>
+
+    <!-- Filtres existants -->
     <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;align-items:end">
       <label>
         Groupe musculaire
@@ -34,7 +70,8 @@
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem">
+  <!-- Grille d'exercices avec v-for Vue.js -->
+  <div v-if="filteredExercises.length > 0" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem">
     <div v-for="(ex, index) in filteredExercises" :key="ex.id" 
          class="item-card" 
          :style="{animationDelay: (index * 0.05) + 's'}"
@@ -55,15 +92,31 @@
         </div>
         <div>
           <span style="opacity:0.7">Difficulté:</span>
-          <strong style="margin-left:0.25rem;color:var(--warning)" v-text="'★'.repeat(ex.difficulty)"></strong>
+          <strong style="margin-left:0.25rem;color:var(--warning)" v-html="'★'.repeat(ex.difficulty)"></strong>
         </div>
       </div>
     </div>
   </div>
 
-  <div v-if="filteredExercises.length === 0" class="card" style="text-align:center;padding:3rem;margin-top:2rem">
-    <p style="color:var(--text-dim)">Aucun exercice trouvé avec ces filtres</p>
-    <button @click="resetFilters" class="btn" style="margin-top:1rem">Réinitialiser les filtres</button>
+  <!-- Message si aucun résultat -->
+  <div v-else class="card" style="text-align:center;padding:3rem;margin-top:2rem">
+    <p style="color:var(--text-dim)">
+      <span v-if="searchQuery">Aucun exercice trouvé pour "<span v-text="searchQuery"></span>"</span>
+      <span v-else-if="filters.muscle || filters.equipment">Aucun exercice trouvé avec ces filtres</span>
+      <span v-else>Chargement des exercices...</span>
+    </p>
+    <button @click="resetFilters" class="btn" style="margin-top:1rem" v-if="searchQuery || filters.muscle || filters.equipment">
+      Réinitialiser les filtres
+    </button>
+    
+    <!-- Debug info -->
+    <div style="margin-top:2rem;padding:1rem;background:rgba(239,68,68,0.1);border-radius:8px;font-size:0.9rem">
+      <p><strong>Debug:</strong></p>
+      <p>Total exercices: <span v-text="exercises.length"></span></p>
+      <p>Recherche: "<span v-text="searchQuery || 'vide'"></span>"</p>
+      <p>Filtre muscle: <span v-text="filters.muscle || 'aucun'"></span></p>
+      <p>Filtre équipement: <span v-text="filters.equipment || 'aucun'"></span></p>
+    </div>
   </div>
 </div>
 
@@ -74,6 +127,9 @@ createApp({
   data() {
     return {
       exercises: {{ exercises_json|safe }},
+      searchQuery: '',
+      searchFocused: false,
+      clearHover: false,
       filters: {
         muscle: '{{ request.GET.muscle|default:"" }}',
         equipment: '{{ request.GET.equip|default:"" }}'
@@ -82,11 +138,28 @@ createApp({
   },
   computed: {
     filteredExercises() {
-      return this.exercises.filter(ex => {
-        const muscleMatch = !this.filters.muscle || ex.muscle_group === this.filters.muscle;
-        const equipMatch = !this.filters.equipment || ex.equipment === this.filters.equipment;
-        return muscleMatch && equipMatch;
-      });
+      let filtered = this.exercises;
+      
+      // Filtre par recherche texte
+      if (this.searchQuery.trim()) {
+        const query = this.searchQuery.toLowerCase().trim();
+        filtered = filtered.filter(ex => 
+          ex.name.toLowerCase().includes(query) ||
+          ex.description.toLowerCase().includes(query)
+        );
+      }
+      
+      // Filtre par muscle
+      if (this.filters.muscle) {
+        filtered = filtered.filter(ex => ex.muscle_group === this.filters.muscle);
+      }
+      
+      // Filtre par équipement
+      if (this.filters.equipment) {
+        filtered = filtered.filter(ex => ex.equipment === this.filters.equipment);
+      }
+      
+      return filtered;
     }
   },
   methods: {
@@ -97,6 +170,7 @@ createApp({
       window.history.replaceState({}, '', `?${params.toString()}`);
     },
     resetFilters() {
+      this.searchQuery = '';
       this.filters = {muscle: '', equipment: ''};
       window.history.replaceState({}, '', window.location.pathname);
     },
@@ -114,4 +188,29 @@ createApp({
   }
 }).mount('#exerciseApp');
 </script>
+
+<style>
+/* Animation focus barre de recherche */
+input[type="text"]:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.2) !important;
+  transform: translateY(-2px);
+}
+
+/* Animation des résultats */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.item-card {
+  animation: fadeInUp 0.3s ease;
+}
+</style>
 {% endblock %}

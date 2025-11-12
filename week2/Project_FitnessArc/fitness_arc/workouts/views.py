@@ -7,19 +7,33 @@ from .forms import TemplateItemForm
 import json
 
 def exercise_list(request):
-    qs = Exercise.objects.all()
-    exercises_json = json.dumps([{
-        'id': ex.id,
-        'name': ex.name,
-        'muscle_group': ex.muscle_group,
-        'equipment': ex.equipment,
-        'difficulty': ex.difficulty,
-        'image': ex.image.name if ex.image else ''
-    } for ex in qs])
+    exercises = Exercise.objects.all()
     
-    return render(request, "workouts/exercise_list.html", {
-        "exercises": qs,
-        "exercises_json": exercises_json
+    # Filtres
+    muscle = request.GET.get('muscle')
+    equip = request.GET.get('equip')
+    if muscle:
+        exercises = exercises.filter(muscle_group=muscle)
+    if equip:
+        exercises = exercises.filter(equipment=equip)
+    
+    # JSON pour Vue.js
+    exercises_json = json.dumps([
+        {
+            'id': ex.id,
+            'name': ex.name,
+            'muscle_group': ex.muscle_group,
+            'equipment': ex.equipment,
+            'difficulty': ex.difficulty,
+            'description': ex.description,
+            'image': ex.image.name if ex.image else ''
+        }
+        for ex in exercises
+    ])
+    
+    return render(request, 'workouts/exercise_list.html', {
+        'exercises': exercises,
+        'exercises_json': exercises_json  # ← Assurez-vous que c'est bien passé
     })
 
 @login_required
