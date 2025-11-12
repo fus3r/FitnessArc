@@ -1,66 +1,117 @@
 {% extends "base.html" %}
 {% block title %}Exercices{% endblock %}
 {% block content %}
-<h1>Exercices</h1>
+<div id="exerciseApp">
+  <h1>Bibliothèque d'exercices</h1>
+  <p style="color:var(--text-dim);margin-bottom:2rem">{{ exercises|length }} exercices disponibles</p>
 
-<p>Nombre d'exercices : {{ exercises.count }}</p>
+  <div class="card" style="margin-bottom:2rem">
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;align-items:end">
+      <label>
+        Groupe musculaire
+        <select v-model="filters.muscle" @change="applyFilters">
+          <option value="">Tous</option>
+          <option value="chest">Pectoraux</option>
+          <option value="back">Dos</option>
+          <option value="legs">Jambes</option>
+          <option value="shoulders">Épaules</option>
+          <option value="arms">Bras</option>
+          <option value="core">Abdos</option>
+        </select>
+      </label>
+      <label>
+        Équipement
+        <select v-model="filters.equipment" @change="applyFilters">
+          <option value="">Tous</option>
+          <option value="barbell">Barre</option>
+          <option value="dumbbell">Haltères</option>
+          <option value="machine">Machine</option>
+          <option value="cable">Poulie</option>
+          <option value="bodyweight">Poids du corps</option>
+        </select>
+      </label>
+      <button @click="resetFilters" class="btn btn-secondary">Réinitialiser</button>
+    </div>
+  </div>
 
-<form method="get" id="filterForm" style="margin-bottom:1rem">
-  <label>Muscle:
-    <select name="muscle" onchange="document.getElementById('filterForm').submit()">
-      <option value="">-- Tous --</option>
-      <option value="chest" {% if request.GET.muscle == 'chest' %}selected{% endif %}>Pectoraux</option>
-      <option value="back" {% if request.GET.muscle == 'back' %}selected{% endif %}>Dos</option>
-      <option value="legs" {% if request.GET.muscle == 'legs' %}selected{% endif %}>Jambes</option>
-      <option value="shoulders" {% if request.GET.muscle == 'shoulders' %}selected{% endif %}>Épaules</option>
-      <option value="arms" {% if request.GET.muscle == 'arms' %}selected{% endif %}>Bras</option>
-      <option value="core" {% if request.GET.muscle == 'core' %}selected{% endif %}>Abdos</option>
-    </select>
-  </label>
-  <label>Équipement:
-    <select name="equip" onchange="document.getElementById('filterForm').submit()">
-      <option value="">-- Tous --</option>
-      <option value="barbell" {% if request.GET.equip == 'barbell' %}selected{% endif %}>Barre</option>
-      <option value="dumbbell" {% if request.GET.equip == 'dumbbell' %}selected{% endif %}>Haltères</option>
-      <option value="machine" {% if request.GET.equip == 'machine' %}selected{% endif %}>Machine</option>
-      <option value="bodyweight" {% if request.GET.equip == 'bodyweight' %}selected{% endif %}>Poids du corps</option>
-    </select>
-  </label>
-  {% if request.GET.muscle or request.GET.equip %}
-    <a href="{% url 'workouts:exercise_list' %}" class="btn" style="background:#6c757d">Réinitialiser</a>
-  {% endif %}
-</form>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem">
+    <div v-for="(ex, index) in filteredExercises" :key="ex.id" 
+         class="item-card" 
+         :style="{animationDelay: (index * 0.05) + 's'}"
+         style="cursor:pointer;padding:1.5rem">
+      <div v-if="ex.image" style="width:100%;height:180px;border-radius:12px;overflow:hidden;margin-bottom:1rem;background:rgba(99,102,241,0.1)">
+        <img :src="'/media/' + ex.image" :alt="ex.name" 
+             style="width:100%;height:100%;object-fit:cover"
+             @error="handleImageError">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.75rem">
+        <h3 style="margin:0;font-size:1.25rem" v-text="ex.name"></h3>
+        <span class="badge badge-primary" v-text="getMuscleLabel(ex.muscle_group)"></span>
+      </div>
+      <div style="display:flex;gap:1rem;font-size:0.9rem;color:var(--text-dim)">
+        <div>
+          <span style="opacity:0.7">Équipement:</span>
+          <strong style="margin-left:0.25rem" v-text="getEquipmentLabel(ex.equipment)"></strong>
+        </div>
+        <div>
+          <span style="opacity:0.7">Difficulté:</span>
+          <strong style="margin-left:0.25rem;color:var(--warning)" v-text="'★'.repeat(ex.difficulty)"></strong>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="card">
-  {% if exercises %}
-    <table style="width:100%">
-      <thead>
-        <tr><th>Image</th><th>Nom</th><th>Muscle</th><th>Équipement</th><th>Difficulté</th></tr>
-      </thead>
-      <tbody>
-        {% for ex in exercises %}
-          <tr>
-            <td>
-              {% if ex.image %}
-                <img src="{{ MEDIA_URL }}{{ ex.image }}" alt="{{ ex.name }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
-              {% else %}
-                <div style="width:80px;height:80px;background:#ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">
-                  <span>?</span>
-                </div>
-              {% endif %}
-            </td>
-            <td><strong>{{ ex.name }}</strong></td>
-            <td>{{ ex.get_muscle_group_display }}</td>
-            <td>{{ ex.get_equipment_display }}</td>
-            <td>{{ ex.difficulty }}/5</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p style="padding:1rem; text-align:center; color:#999;">
-      ❌ Aucun exercice trouvé.
-    </p>
-  {% endif %}
+  <div v-if="filteredExercises.length === 0" class="card" style="text-align:center;padding:3rem;margin-top:2rem">
+    <p style="color:var(--text-dim)">Aucun exercice trouvé avec ces filtres</p>
+    <button @click="resetFilters" class="btn" style="margin-top:1rem">Réinitialiser les filtres</button>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+<script>
+const { createApp } = Vue;
+createApp({
+  data() {
+    return {
+      exercises: {{ exercises_json|safe }},
+      filters: {
+        muscle: '{{ request.GET.muscle|default:"" }}',
+        equipment: '{{ request.GET.equip|default:"" }}'
+      }
+    }
+  },
+  computed: {
+    filteredExercises() {
+      return this.exercises.filter(ex => {
+        const muscleMatch = !this.filters.muscle || ex.muscle_group === this.filters.muscle;
+        const equipMatch = !this.filters.equipment || ex.equipment === this.filters.equipment;
+        return muscleMatch && equipMatch;
+      });
+    }
+  },
+  methods: {
+    applyFilters() {
+      const params = new URLSearchParams();
+      if (this.filters.muscle) params.set('muscle', this.filters.muscle);
+      if (this.filters.equipment) params.set('equip', this.filters.equipment);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+    },
+    resetFilters() {
+      this.filters = {muscle: '', equipment: ''};
+      window.history.replaceState({}, '', window.location.pathname);
+    },
+    getMuscleLabel(muscle) {
+      const labels = {chest: 'Pecs', back: 'Dos', legs: 'Jambes', shoulders: 'Épaules', arms: 'Bras', core: 'Abdos'};
+      return labels[muscle] || muscle;
+    },
+    getEquipmentLabel(equip) {
+      const labels = {barbell: 'Barre', dumbbell: 'Haltères', machine: 'Machine', cable: 'Poulie', bodyweight: 'Poids du corps'};
+      return labels[equip] || equip;
+    },
+    handleImageError(e) {
+      e.target.style.display = 'none';
+    }
+  }
+}).mount('#exerciseApp');
+</script>
 {% endblock %}

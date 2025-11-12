@@ -21,6 +21,7 @@
 ### Documentation
 - [ ] Dessiner wireframes (main, 5 pages clés) → commit images dans `WorkingDocs/wireframes/`
 - [x] Page d'accueil (/) avec navigation vers toutes les apps ✅
+- [x] Navbar ultra classy avec pills, active states, avatar, et gradient brand ✅
 - [ ] Créer `requirements.txt` (Django 5.x, pytest-django, flake8, black)
 - [ ] Rédiger conventions de code (fichier `CONVENTIONS.md`)
 
@@ -197,3 +198,30 @@
 ## 📝 Mise à Jour du TODO
 
 ## ✅ Mise à Jour du TODO
+
+## ✅ Solution : Refonte Complète avec Vue.js + Design Minimaliste
+
+### 1. Mise à Jour du TODO
+
+## 🚀 Objectifs de la Semaine 2
+
+### Priorités
+- [ ] Finaliser les fonctionnalités clés pour chaque app
+- [ ] Assurer une expérience utilisateur fluide et sans bug
+- [ ] Préparer une démo fonctionnelle pour vendredi
+
+### Objectifs Techniques
+- [ ] Couvrir le code par des tests automatisés (unitaire et intégration)
+- [ ] Documenter les APIs et les principales fonctionnalités
+- [ ] Préparer le déploiement sur Heroku (ou autre plateforme)
+
+### Améliorations & Optimisations
+- [ ] Analyser et optimiser les performances (temps de réponse, requêtes lentes)
+- [ ] Améliorer l'UX/UI selon les retours utilisateurs
+- [ ] Ajouter des fonctionnalités avancées si le temps le permet (ex: statistiques, export de données)
+
+### Tâches Personnalisées
+- [ ] Chaque membre de l'équipe doit :
+  - [ ] Documenter ses fonctionnalités dans le README
+  - [ ] Préparer une courte présentation de son travail pour la démo
+  - [ ] Proposer au moins une amélioration ou optimisation possible

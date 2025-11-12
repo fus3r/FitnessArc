@@ -4,18 +4,23 @@ from .models import Exercise, WorkoutTemplate, TemplateItem, WorkoutSession, Set
 from django.contrib import messages
 from django.db.models import Max
 from .forms import TemplateItemForm
+import json
 
 def exercise_list(request):
     qs = Exercise.objects.all()
-    m = request.GET.get("muscle")
-    e = request.GET.get("equip")
+    exercises_json = json.dumps([{
+        'id': ex.id,
+        'name': ex.name,
+        'muscle_group': ex.muscle_group,
+        'equipment': ex.equipment,
+        'difficulty': ex.difficulty,
+        'image': ex.image.name if ex.image else ''
+    } for ex in qs])
     
-    if m:
-        qs = qs.filter(muscle_group=m)
-    if e:
-        qs = qs.filter(equipment=e)
-    
-    return render(request, "workouts/exercise_list.html", {"exercises": qs})
+    return render(request, "workouts/exercise_list.html", {
+        "exercises": qs,
+        "exercises_json": exercises_json
+    })
 
 @login_required
 def template_list(request):
