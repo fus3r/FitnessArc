@@ -75,77 +75,162 @@
     text-align: center;
   }
 
-  /* calendrier */
+  /* calendrier - Design compact, élégant & classy */
   .calendar-grid {
-    margin-top: 0.75rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.3rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .calendar-week-header,
   .calendar-week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0.25rem;
+    gap: 0.35rem;
   }
 
   .calendar-week-header span {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-align: center;
-    color: #9ca3af;
+    color: #6b7280;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-bottom: 0.4rem;
   }
 
   .calendar-day {
+    width: 100%;
+    height: 42px;
     border-radius: 8px;
-    padding: 0.35rem 0;
-    font-size: 0.85rem;
-    border: 1px solid transparent;
-    background: transparent;
-    color: #6b7280;
+    padding: 0;
+    font-size: 0.8rem;
+    border: 1.5px solid transparent;
+    background: rgba(31,41,55,0.4);
+    color: #9ca3af;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 0.15rem;
-    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calendar-day::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(99,102,241,0.2), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .calendar-day:hover::before {
+    opacity: 1;
+  }
+
+  .calendar-day:hover {
+    transform: translateY(-1px);
+    border-color: rgba(99,102,241,0.5);
+    box-shadow: 0 3px 10px rgba(99,102,241,0.25);
   }
 
   .calendar-day-out {
-    opacity: 0.25;                 
+    opacity: 0.25;
+    background: rgba(31,41,55,0.15);
+    pointer-events: none;
   }
 
   .calendar-day-has {
-    color: #e5e7eb;
-    border-color: rgba(59,130,246,0.5);
-    background: radial-gradient(circle at 30% 20%,
-                rgba(59,130,246,0.25),
-                rgba(15,23,42,1));
+    color: #f3f4f6;
+    border-color: rgba(59,130,246,0.7);
+    background: linear-gradient(135deg, 
+                rgba(59,130,246,0.3) 0%, 
+                rgba(99,102,241,0.2) 100%);
+    font-weight: 700;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
+  }
+
+  .calendar-day-has:hover {
+    border-color: rgba(59,130,246,1);
+    box-shadow: 0 4px 12px rgba(59,130,246,0.4),
+                inset 0 1px 2px rgba(255,255,255,0.15);
+    transform: translateY(-2px);
   }
 
   .calendar-day-today {
-    box-shadow: 0 0 0 1px rgba(236,72,153,0.7);
+    border-color: rgba(236,72,153,1);
+    background: linear-gradient(135deg, 
+                rgba(236,72,153,0.25) 0%, 
+                rgba(219,39,119,0.15) 100%);
+    box-shadow: 0 0 0 2px rgba(236,72,153,0.2);
+    color: #fecdd3;
+  }
+
+  .calendar-day-today:hover {
+    box-shadow: 0 0 0 2px rgba(236,72,153,0.35), 
+                0 4px 12px rgba(236,72,153,0.4);
   }
 
   .calendar-day-selected {
-  box-shadow: 0 0 0 2px #a855f7;
-  border-color: #a855f7;
-  background: radial-gradient(circle at 30% 20%,
-              rgba(168,85,247,0.35),
-              rgba(15,23,42,1));
-  color: #f10707;
-  transform: translateY(-1px);
-}
+    border-color: rgba(168,85,247,1) !important;
+    background: linear-gradient(135deg, 
+                rgba(168,85,247,0.45) 0%, 
+                rgba(139,92,246,0.35) 100%) !important;
+    color: #fff !important;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(168,85,247,0.5),
+                inset 0 1px 3px rgba(255,255,255,0.2);
+  }
 
   .calendar-day-number {
     line-height: 1;
+    font-weight: 700;
+    z-index: 1;
+    font-size: 0.85rem;
   }
 
   .calendar-day-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 999px;
-    background: #22c55e;           
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 1px 4px rgba(34,197,94,0.6);
+    z-index: 1;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { 
+      opacity: 1; 
+      transform: scale(1);
+    }
+    50% { 
+      opacity: 0.7; 
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .calendar-details-panel {
+    animation: fadeInUp 0.4s ease;
   }
 </style>
 
@@ -237,8 +322,13 @@
 </div>
 
 {% if calendar_weeks %}
-<div class="card" style="margin-bottom:1.5rem">
-  <h3 style="margin:0 0 0.5rem;">Calendrier des Workouts (mois en cours)</h3>
+<div class="card" style="margin-bottom:1.5rem; background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(11,13,16,0.98) 100%); border: 1px solid rgba(99,102,241,0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+  <div style="text-align: center; margin-bottom: 1rem;">
+    <h3 style="margin:0 0 0.4rem; font-size: 1.15rem; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800;">
+      📅 Calendrier des Workouts
+    </h3>
+    <p style="color: #6b7280; font-size: 0.8rem; margin: 0; font-weight: 500;">Mois en cours • Cliquez sur un jour pour voir les détails</p>
+  </div>
 
   <!-- Grille du calendrier -->
   <div class="calendar-grid">
@@ -269,14 +359,14 @@
   </div>
 
   <!-- Zone d'affichage des séances du jour sélectionné -->
-  <div id="calendar-details-container" style="margin-top:1rem;">
-    <p style="color:#9ca3af;font-size:0.9rem;margin:0 0 0.5rem">
-      Cliquez sur un jour avec un point pour voir les séances.
+  <div id="calendar-details-container" style="margin-top:1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(99,102,241,0.2);">
+    <p style="color:#6b7280;font-size:0.8rem;margin:0 0 0.85rem; text-align: center; font-style: italic; font-weight: 500;">
+      ✨ Sélectionnez un jour avec un point vert pour voir les détails
     </p>
 
     <!-- Message quand aucun workout ce jour-là -->
     <div id="calendar-empty-message"
-         style="display:none;color:#9ca3af;font-size:0.9rem;margin-bottom:0.75rem;">
+         style="display:none;color:#9ca3af;font-size:0.85rem;margin-bottom:0.85rem; text-align: center; padding: 0.85rem; background: rgba(239,68,68,0.1); border-radius: 8px; border: 1px solid rgba(239,68,68,0.3);">
     </div>
 
     <!-- Panneaux de détails (un par jour avec au moins une séance) -->
@@ -285,55 +375,77 @@
         {% if day.sessions %}
           <div class="calendar-details-panel"
                id="details-{{ day.date|date:'Y-m-d' }}"
-               style="display:none;">
+               style="display:none; animation: fadeInUp 0.4s ease;">
 
             <!-- Titre du jour -->
-            <div style="font-size:0.9rem;color:#e5e7eb;margin-bottom:0.5rem;">
-              Séances du {{ day.date|date:"l d M Y" }}
+            <div style="font-size:0.95rem;color:#f3f4f6;margin-bottom:0.85rem; font-weight: 700; padding-bottom: 0.4rem; border-bottom: 2px solid rgba(168,85,247,0.4);">
+              🗓️ {{ day.date|date:"l d M Y" }}
             </div>
 
             {% for session in day.sessions %}
               <div style="
-                  border:1px solid #1f2937;
+                  border:1px solid rgba(99,102,241,0.3);
                   border-radius:10px;
-                  padding:0.75rem 0.9rem;
-                  margin-bottom:0.75rem;
-                  background:#020617;
-                ">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
-                  <div>
-                    <strong>
+                  padding:0.85rem 1rem;
+                  margin-bottom:0.85rem;
+                  background: linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(99,102,241,0.05) 100%);
+                  transition: all 0.3s ease;
+                  cursor: pointer;
+                " 
+                onmouseover="this.style.borderColor='rgba(99,102,241,0.6)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(99,102,241,0.2)'"
+                onmouseout="this.style.borderColor='rgba(99,102,241,0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.45rem;">
+                  <div style="flex: 1;">
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #f3f4f6; margin-bottom: 0.2rem;">
                       {% if session.from_template %}
-                        {{ session.from_template.name }}
+                        💪 {{ session.from_template.name }}
                       {% else %}
-                        Séance du {{ session.date|date:"d/m/Y" }}
+                        💪 Séance du {{ session.date|date:"d/m/Y" }}
                       {% endif %}
-                    </strong>
-                    <div style="font-size:0.8rem;color:#9ca3af;">
-                      {{ session.date|date:"l d M" }} • {{ session.duration_minutes }} min
+                    </div>
+                    <div style="font-size:0.75rem;color:#9ca3af; display: flex; gap: 0.85rem; align-items: center;">
+                      <span>📆 {{ session.date|date:"l d M" }}</span>
+                      <span>⏱️ {{ session.duration_minutes }} min</span>
                     </div>
                   </div>
-                  <div style="font-size:0.8rem;color:#f97316;">
-                    🔥 {{ session.estimated_calories_burned }} kcal
+                  <div style="
+                    background: linear-gradient(135deg, rgba(249,115,22,0.2) 0%, rgba(234,88,12,0.15) 100%);
+                    border: 1px solid rgba(249,115,22,0.4);
+                    padding: 0.4rem 0.7rem;
+                    border-radius: 7px;
+                    font-size:0.75rem;
+                    font-weight: 700;
+                    color:#fb923c;
+                    white-space: nowrap;
+                  ">
+                    🔥 {{ session.estimated_calories_burned }}
                   </div>
                 </div>
 
                 <div style="
-                    margin-top:0.5rem;
+                    margin-top:0.65rem;
                     display:flex;
                     justify-content:space-between;
                     align-items:center;
-                    font-size:0.85rem;
-                    color:#9ca3af;
+                    padding-top: 0.65rem;
+                    border-top: 1px solid rgba(99,102,241,0.2);
                   ">
-                  <div>
-                    Volume total :
-                    <strong>{{ session.total_volume|floatformat:0 }} kg</strong>
+                  <div style="font-size:0.8rem;color:#d1d5db;">
+                    📊 <strong style="color: #a78bfa;">{{ session.total_volume|floatformat:0 }} kg</strong>
                   </div>
                   <a href="{% url 'workouts:session_summary' session.pk %}"
                      class="btn"
-                     style="padding:4px 12px;font-size:0.8rem;">
-                    Voir détails →
+                     style="
+                       padding:0.4rem 0.85rem;
+                       font-size:0.75rem;
+                       background: linear-gradient(135deg, rgba(168,85,247,0.8) 0%, rgba(139,92,246,0.8) 100%);
+                       border: none;
+                       transition: all 0.3s ease;
+                       font-weight: 600;
+                     "
+                     onmouseover="this.style.background='linear-gradient(135deg, rgba(168,85,247,1) 0%, rgba(139,92,246,1) 100%)'; this.style.transform='scale(1.05)'"
+                     onmouseout="this.style.background='linear-gradient(135deg, rgba(168,85,247,0.8) 0%, rgba(139,92,246,0.8) 100%)'; this.style.transform='scale(1)'">
+                    Détails →
                   </a>
                 </div>
               </div>
@@ -455,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         // Aucune séance ce jour-là
         if (emptyMsg) {
-          emptyMsg.textContent = "Pas de séance ce jour-là.";
+          emptyMsg.innerHTML = "😴 Pas de séance d'entraînement ce jour-là";
           emptyMsg.style.display = 'block';
         }
       }

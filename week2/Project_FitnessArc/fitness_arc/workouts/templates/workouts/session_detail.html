@@ -13,15 +13,22 @@
   <div class="timer-display" id="timer">00:00:00</div>
   <div class="timer-controls">
     <button class="timer-btn timer-btn-pause" id="pauseBtn" onclick="pauseTimer()">
-      <span class="timer-btn-icon">⏸</span>
+      <svg class="timer-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="6" y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
       <span class="timer-btn-text">Pause</span>
     </button>
     <button class="timer-btn timer-btn-resume" id="resumeBtn" onclick="resumeTimer()" style="display:none">
-      <span class="timer-btn-icon">▶️</span>
+      <svg class="timer-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
       <span class="timer-btn-text">Reprendre</span>
     </button>
     <button class="timer-btn timer-btn-reset" onclick="resetTimer()">
-      <span class="timer-btn-icon">🔄</span>
+      <svg class="timer-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+      </svg>
       <span class="timer-btn-text">Réinitialiser</span>
     </button>
   </div>
@@ -88,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
     {% csrf_token %}
     <input type="hidden" name="duration_minutes" id="complete_duration_minutes" value="0">
     <button type="submit" class="btn-finish-workout" id="finishBtn">
-      <span class="finish-icon" id="finishIcon">🏁</span>
+      <svg class="finish-icon" id="finishIcon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>
+      </svg>
       <span class="finish-text" id="finishText">Terminer la séance</span>
     </button>
   </form>
@@ -156,8 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
   .timer-btn {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.75rem;
+    gap: 0.625rem;
+    padding: 1rem 2rem;
     border: none;
     border-radius: 16px;
     font-size: 1rem;
@@ -165,9 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: 'Inter', sans-serif;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
   }
   
   .timer-btn::before {
@@ -177,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -187,36 +196,65 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   .timer-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px) scale(1.02);
   }
   
   .timer-btn:active {
-    transform: translateY(0);
+    transform: translateY(-1px) scale(0.98);
   }
   
   .timer-btn-icon {
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
   
   .timer-btn-pause {
-    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(249, 115, 22, 0.9) 100%);
     color: #fff;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 
+      0 4px 16px rgba(245, 158, 11, 0.3),
+      0 0 0 1px rgba(245, 158, 11, 0.1) inset;
+  }
+  
+  .timer-btn-pause:hover {
+    box-shadow: 
+      0 8px 24px rgba(245, 158, 11, 0.4),
+      0 0 0 1px rgba(245, 158, 11, 0.2) inset;
   }
   
   .timer-btn-resume {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%);
     color: #fff;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 
+      0 4px 16px rgba(16, 185, 129, 0.3),
+      0 0 0 1px rgba(16, 185, 129, 0.1) inset;
+  }
+  
+  .timer-btn-resume:hover {
+    box-shadow: 
+      0 8px 24px rgba(16, 185, 129, 0.4),
+      0 0 0 1px rgba(16, 185, 129, 0.2) inset;
   }
   
   .timer-btn-reset {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.9) 0%, rgba(75, 85, 99, 0.9) 100%);
     color: #fff;
-    border: 1px solid rgba(107, 114, 128, 0.3);
+    border: 1px solid rgba(107, 114, 128, 0.4);
+    box-shadow: 
+      0 4px 16px rgba(107, 114, 128, 0.3),
+      0 0 0 1px rgba(107, 114, 128, 0.1) inset;
+  }
+  
+  .timer-btn-reset:hover {
+    box-shadow: 
+      0 8px 24px rgba(107, 114, 128, 0.4),
+      0 0 0 1px rgba(107, 114, 128, 0.2) inset;
   }
   
   .finish-workout-container {
@@ -279,17 +317,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   .btn-finish-workout.btn-finish {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
     box-shadow: 
       0 8px 24px rgba(16, 185, 129, 0.4),
-      0 0 0 1px rgba(16, 185, 129, 0.2) inset;
+      0 0 0 1px rgba(16, 185, 129, 0.2) inset,
+      0 0 60px rgba(16, 185, 129, 0.15);
   }
   
   .btn-finish-workout.btn-cancel {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
     box-shadow: 
       0 8px 24px rgba(239, 68, 68, 0.4),
-      0 0 0 1px rgba(239, 68, 68, 0.2) inset;
+      0 0 0 1px rgba(239, 68, 68, 0.2) inset,
+      0 0 60px rgba(239, 68, 68, 0.15);
   }
   
   .btn-finish-workout::before {
@@ -309,14 +349,16 @@ document.addEventListener('DOMContentLoaded', () => {
     transform: translateY(-4px) scale(1.02);
     box-shadow: 
       0 12px 36px rgba(16, 185, 129, 0.5),
-      0 0 0 1px rgba(16, 185, 129, 0.3) inset;
+      0 0 0 1px rgba(16, 185, 129, 0.3) inset,
+      0 0 80px rgba(16, 185, 129, 0.2);
   }
   
   .btn-finish-workout.btn-cancel:hover {
     transform: translateY(-4px) scale(1.02);
     box-shadow: 
       0 12px 36px rgba(239, 68, 68, 0.5),
-      0 0 0 1px rgba(239, 68, 68, 0.3) inset;
+      0 0 0 1px rgba(239, 68, 68, 0.3) inset,
+      0 0 80px rgba(239, 68, 68, 0.2);
   }
   
   .btn-finish-workout:hover::before {
@@ -328,9 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   .finish-icon {
-    font-size: 1.75rem;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
   
@@ -431,8 +476,8 @@ function updateFinishButton() {
   if (!finishBtn) return;
   
   if (seconds < 30) {
-    // Moins de 30 secondes : mode Annuler
-    finishIcon.textContent = '❌';
+    // Moins de 30 secondes : mode Annuler (icône X)
+    finishIcon.innerHTML = '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2"/>';
     finishText.textContent = 'Annuler le workout';
     finishBtn.classList.add('btn-cancel');
     finishBtn.classList.remove('btn-finish');
@@ -440,8 +485,8 @@ function updateFinishButton() {
     finishContainer.classList.remove('finish-mode');
     finishHint.textContent = 'Le workout sera annulé (< 30 secondes)';
   } else {
-    // 30 secondes ou plus : mode Terminer
-    finishIcon.textContent = '🏁';
+    // 30 secondes ou plus : mode Terminer (icône drapeau)
+    finishIcon.innerHTML = '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" fill="currentColor"/>';
     finishText.textContent = 'Terminer la séance';
     finishBtn.classList.add('btn-finish');
     finishBtn.classList.remove('btn-cancel');
