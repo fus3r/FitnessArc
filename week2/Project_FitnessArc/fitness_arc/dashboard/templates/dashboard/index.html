@@ -4,6 +4,151 @@
 <h1>Tableau de bord</h1>
 <p style="color:var(--text-dim);margin-bottom:2rem">Vue d'ensemble de votre activité du {{ today|date:"l d M" }}</p>
 
+<style>
+  .card {
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: #0b0d10;
+    border: 1px solid #1f2937;
+    height: auto;                 
+  }
+
+  /* Affichage graphe */
+  .chart-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-container {
+    position: relative;
+    height: 220px;               
+    margin-top: 0.75rem;
+  }
+
+  .chart-container canvas {
+    position: absolute;
+    inset: 0;                    
+  }
+
+  /* Affichage horloge digitale */
+
+ 
+  .stat-card-circle {
+   
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0;                         
+  }
+
+  .round-clock {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 3px solid rgba(59,130,246,0.8);           
+    background: radial-gradient(circle at 30% 20%,
+                rgba(59,130,246,0.3),
+                rgba(15,23,42,1));                     
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .round-clock-time {
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco,
+                 Consolas, "Liberation Mono", "Courier New", monospace;
+    color: #e5e7eb;                                    
+  }
+
+  .round-clock-caption {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  /* calendrier */
+  .calendar-grid {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .calendar-week-header,
+  .calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+  }
+
+  .calendar-week-header span {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #9ca3af;
+  }
+
+  .calendar-day {
+    border-radius: 8px;
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  }
+
+  .calendar-day-out {
+    opacity: 0.25;                 
+  }
+
+  .calendar-day-has {
+    color: #e5e7eb;
+    border-color: rgba(59,130,246,0.5);
+    background: radial-gradient(circle at 30% 20%,
+                rgba(59,130,246,0.25),
+                rgba(15,23,42,1));
+  }
+
+  .calendar-day-today {
+    box-shadow: 0 0 0 1px rgba(236,72,153,0.7);
+  }
+
+  .calendar-day-selected {
+  box-shadow: 0 0 0 2px #a855f7;
+  border-color: #a855f7;
+  background: radial-gradient(circle at 30% 20%,
+              rgba(168,85,247,0.35),
+              rgba(15,23,42,1));
+  color: #f10707;
+  transform: translateY(-1px);
+}
+
+  .calendar-day-number {
+    line-height: 1;
+  }
+
+  .calendar-day-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #22c55e;           
+  }
+</style>
+
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem">
   <div class="stat-card" style="background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.3)">
     <h3 style="margin:0 0 0.5rem;font-size:0.9rem;opacity:0.9;color:var(--text)">Calories Consommées</h3>
@@ -42,29 +187,166 @@
   </div>
 </div>
 
+  
+
 <!-- Graphiques Analytics -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem;margin-bottom:2rem">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem">
+  <!-- ... tes autres stat-cards (calories, balance, volume, etc.) ... -->
+
+  <div class="stat-card stat-card-circle">
+    <div class="round-clock">
+      <span class="round-clock-time">
+        {{ weekly_training_hours|stringformat:"02d" }}:{{ weekly_training_min|stringformat:"02d" }}
+      </span>
+    </div>
+
+    <div class="round-clock-caption">
+      Temps d'entraînement (7 derniers jours)
+    </div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem;margin-bottom:2rem">   
   <div class="card">
     <h3>Workouts par Semaine (5 dernières)</h3>
-    <canvas id="weeklyWorkoutsChart" height="200"></canvas>
+    <div class="chart-container">
+      <canvas id="weeklyWorkoutsChart"></canvas>
+    </div>
   </div>
   
   <div class="card">
     <h3>Calories Journalières (7 derniers jours)</h3>
-    <canvas id="dailyCaloriesChart" height="200"></canvas>
+    <div class="chart-container">
+      <canvas id="dailyCaloriesChart"></canvas>
+    </div>
   </div>
   
   <div class="card">
     <h3>Volume d'Entraînement (5 dernières semaines)</h3>
-    <canvas id="weeklyVolumeChart" height="200"></canvas>
+    <div class="chart-container">
+      <canvas id="weeklyVolumeChart"></canvas>
+    </div>
   </div>
   
   <div class="card">
     <h3>Répartition Macros (Aujourd'hui)</h3>
-    <canvas id="macrosChart" height="200"></canvas>
+    <div class="chart-container">
+      <canvas id="macrosChart"></canvas>
+    </div>
   </div>
 </div>
 
+{% if calendar_weeks %}
+<div class="card" style="margin-bottom:1.5rem">
+  <h3 style="margin:0 0 0.5rem;">Calendrier des Workouts (mois en cours)</h3>
+
+  <!-- Grille du calendrier -->
+  <div class="calendar-grid">
+    <!-- En-tête des jours -->
+    <div class="calendar-week-header">
+      <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+    </div>
+
+    {% for week in calendar_weeks %}
+      <div class="calendar-week">
+        {% for day in week %}
+          <button
+            type="button"
+            class="calendar-day
+                   {% if not day.in_month %} calendar-day-out{% endif %}
+                   {% if day.has_workout %} calendar-day-has{% endif %}
+                   {% if day.is_today %} calendar-day-today{% endif %}"
+            data-date="{{ day.date|date:'Y-m-d' }}"
+          >
+            <span class="calendar-day-number">{{ day.day }}</span>
+            {% if day.has_workout %}
+              <span class="calendar-day-dot"></span>
+            {% endif %}
+          </button>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Zone d'affichage des séances du jour sélectionné -->
+  <div id="calendar-details-container" style="margin-top:1rem;">
+    <p style="color:#9ca3af;font-size:0.9rem;margin:0 0 0.5rem">
+      Cliquez sur un jour avec un point pour voir les séances.
+    </p>
+
+    <!-- Message quand aucun workout ce jour-là -->
+    <div id="calendar-empty-message"
+         style="display:none;color:#9ca3af;font-size:0.9rem;margin-bottom:0.75rem;">
+    </div>
+
+    <!-- Panneaux de détails (un par jour avec au moins une séance) -->
+    {% for week in calendar_weeks %}
+      {% for day in week %}
+        {% if day.sessions %}
+          <div class="calendar-details-panel"
+               id="details-{{ day.date|date:'Y-m-d' }}"
+               style="display:none;">
+
+            <!-- Titre du jour -->
+            <div style="font-size:0.9rem;color:#e5e7eb;margin-bottom:0.5rem;">
+              Séances du {{ day.date|date:"l d M Y" }}
+            </div>
+
+            {% for session in day.sessions %}
+              <div style="
+                  border:1px solid #1f2937;
+                  border-radius:10px;
+                  padding:0.75rem 0.9rem;
+                  margin-bottom:0.75rem;
+                  background:#020617;
+                ">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
+                  <div>
+                    <strong>
+                      {% if session.from_template %}
+                        {{ session.from_template.name }}
+                      {% else %}
+                        Séance du {{ session.date|date:"d/m/Y" }}
+                      {% endif %}
+                    </strong>
+                    <div style="font-size:0.8rem;color:#9ca3af;">
+                      {{ session.date|date:"l d M" }} • {{ session.duration_minutes }} min
+                    </div>
+                  </div>
+                  <div style="font-size:0.8rem;color:#f97316;">
+                    🔥 {{ session.estimated_calories_burned }} kcal
+                  </div>
+                </div>
+
+                <div style="
+                    margin-top:0.5rem;
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    font-size:0.85rem;
+                    color:#9ca3af;
+                  ">
+                  <div>
+                    Volume total :
+                    <strong>{{ session.total_volume|floatformat:0 }} kg</strong>
+                  </div>
+                  <a href="{% url 'workouts:session_summary' session.pk %}"
+                     class="btn"
+                     style="padding:4px 12px;font-size:0.8rem;">
+                    Voir détails →
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!--
 {% if workout_history %}
 <div class="card" style="margin-bottom:1.5rem">
   <h3>Historique des Workouts (30 derniers jours)</h3>
@@ -115,6 +397,7 @@
   {% endfor %}
 </div>
 {% endif %}
+-->
 
 {% if recent_prs %}
 <div class="card" style="margin-top:1.5rem">
@@ -135,6 +418,53 @@
 </div>
 {% endif %}
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const days = document.querySelectorAll('.calendar-day');
+  const panels = document.querySelectorAll('.calendar-details-panel');
+  const emptyMsg = document.getElementById('calendar-empty-message');
+
+  // Cache tous les panneaux de détails
+  function hideAllPanels() {
+    panels.forEach(p => p.style.display = 'none');
+  }
+
+  // Enlève le highlight de tous les jours
+  function clearSelectedDays() {
+    days.forEach(d => d.classList.remove('calendar-day-selected'));
+  }
+
+  days.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const date = btn.dataset.date;   // ex: "2025-11-13"
+
+      clearSelectedDays();
+      btn.classList.add('calendar-day-selected');
+
+      hideAllPanels();
+
+      const panel = document.getElementById('details-' + date);
+
+      if (panel) {
+        // Il y a des séances ce jour-là
+        if (emptyMsg) {
+          emptyMsg.style.display = 'none';
+          emptyMsg.textContent = '';
+        }
+        panel.style.display = 'block';
+      } else {
+        // Aucune séance ce jour-là
+        if (emptyMsg) {
+          emptyMsg.textContent = "Pas de séance ce jour-là.";
+          emptyMsg.style.display = 'block';
+        }
+      }
+    });
+  });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // Configuration globale Chart.js
@@ -144,158 +474,175 @@ Chart.defaults.font.family = "'Inter', sans-serif";
 
 // 1. Workouts par Semaine
 const weeklyWorkoutsCtx = document.getElementById('weeklyWorkoutsChart');
-new Chart(weeklyWorkoutsCtx, {
-  type: 'bar',
-  data: {
-    labels: {{ weekly_workouts_labels|safe }},
-    datasets: [{
-      label: 'Workouts',
-      data: {{ weekly_workouts_data|safe }},
-      backgroundColor: 'rgba(99,102,241,0.6)',
-      borderColor: 'rgba(99,102,241,0.8)',
-      borderWidth: 2,
-      borderRadius: 8,
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(26,26,36,0.95)',
-        padding: 12,
-        borderColor: 'rgba(99,102,241,0.3)',
-        borderWidth: 1,
-      }
+if (weeklyWorkoutsCtx) {  // sécurité : on vérifie que le canvas existe
+  new Chart(weeklyWorkoutsCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ weekly_workouts_labels|safe }},
+      datasets: [{
+        label: 'Workouts',
+        data: {{ weekly_workouts_data|safe }},
+        backgroundColor: 'rgba(99,102,241,0.6)',
+        borderColor: 'rgba(99,102,241,0.8)',
+        borderWidth: 2,
+        borderRadius: 8,
+      }]
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 1 },
-        grid: { color: 'rgba(99,102,241,0.1)' }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(26,26,36,0.95)',
+          padding: 12,
+          borderColor: 'rgba(99,102,241,0.3)',
+          borderWidth: 1,
+        }
       },
-      x: { grid: { display: false } }
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 },
+          grid: { color: 'rgba(99,102,241,0.1)' }
+        },
+        x: { grid: { display: false } }
+      }
     }
-  }
-});
+  });
+}
 
 // 2. Calories Journalières
 const dailyCaloriesCtx = document.getElementById('dailyCaloriesChart');
-new Chart(dailyCaloriesCtx, {
-  type: 'line',
-  data: {
-    labels: {{ daily_calories_labels|safe }},
-    datasets: [{
-      label: 'Consommées',
-      data: {{ daily_calories_consumed|safe }},
-      borderColor: 'rgba(99,102,241,0.8)',
-      backgroundColor: 'rgba(99,102,241,0.2)',
-      fill: true,
-      tension: 0.4,
-    }, {
-      label: 'Brûlées',
-      data: {{ daily_calories_burned|safe }},
-      borderColor: 'rgba(239,68,68,0.8)',
-      backgroundColor: 'rgba(239,68,68,0.2)',
-      fill: true,
-      tension: 0.4,
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top', labels: { usePointStyle: true } },
-      tooltip: {
-        backgroundColor: 'rgba(26,26,36,0.95)',
-        padding: 12,
-        borderColor: 'rgba(99,102,241,0.3)',
-        borderWidth: 1,
-      }
+if (dailyCaloriesCtx) {
+  console.log("daily labels =", {{ daily_calories_labels|safe }});
+  console.log("daily consumed =", {{ daily_calories_consumed|safe }});
+  console.log("daily burned =", {{ daily_calories_burned|safe }});
+
+  new Chart(dailyCaloriesCtx, {
+    type: 'line',
+    data: {
+      labels: {{ daily_calories_labels|safe }},
+      datasets: [{
+        label: 'Consommées',
+        data: {{ daily_calories_consumed|safe }},
+        borderColor: 'rgba(99,102,241,0.8)',
+        backgroundColor: 'rgba(99,102,241,0.2)',
+        fill: true,
+        tension: 0.4,
+      }, {
+        label: 'Brûlées',
+        data: {{ daily_calories_burned|safe }},
+        borderColor: 'rgba(239,68,68,0.8)',
+        backgroundColor: 'rgba(239,68,68,0.2)',
+        fill: true,
+        tension: 0.4,
+      }]
     },
-    scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(99,102,241,0.1)' } },
-      x: { grid: { display: false } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { usePointStyle: true } },
+        tooltip: {
+          backgroundColor: 'rgba(26,26,36,0.95)',
+          padding: 12,
+          borderColor: 'rgba(99,102,241,0.3)',
+          borderWidth: 1,
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: 'rgba(99,102,241,0.1)' } },
+        x: { grid: { display: false } }
+      }
     }
-  }
-});
+  });
+}
 
 // 3. Volume Hebdomadaire
 const weeklyVolumeCtx = document.getElementById('weeklyVolumeChart');
-new Chart(weeklyVolumeCtx, {
-  type: 'line',
-  data: {
-    labels: {{ weekly_volume_labels|safe }},
-    datasets: [{
-      label: 'Volume (kg)',
-      data: {{ weekly_volume_data|safe }},
-      borderColor: 'rgba(236,72,153,0.8)',
-      backgroundColor: 'rgba(236,72,153,0.2)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: 6,
-      pointHoverRadius: 8,
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(26,26,36,0.95)',
-        padding: 12,
-        borderColor: 'rgba(236,72,153,0.3)',
-        borderWidth: 1,
-      }
+if (weeklyVolumeCtx) {
+  console.log("weekly volume labels =", {{ weekly_volume_labels|safe }});
+  console.log("weekly volume data =", {{ weekly_volume_data|safe }});
+
+  new Chart(weeklyVolumeCtx, {
+    type: 'line',
+    data: {
+      labels: {{ weekly_volume_labels|safe }},
+      datasets: [{
+        label: 'Volume (kg)',
+        data: {{ weekly_volume_data|safe }},
+        borderColor: 'rgba(236,72,153,0.8)',
+        backgroundColor: 'rgba(236,72,153,0.2)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+      }]
     },
-    scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(99,102,241,0.1)' } },
-      x: { grid: { display: false } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(26,26,36,0.95)',
+          padding: 12,
+          borderColor: 'rgba(236,72,153,0.3)',
+          borderWidth: 1,
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: 'rgba(99,102,241,0.1)' } },
+        x: { grid: { display: false } }
+      }
     }
-  }
-});
+  });
+}
 
 // 4. Répartition Macros
 const macrosCtx = document.getElementById('macrosChart');
-new Chart(macrosCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ['Protéines', 'Glucides', 'Lipides'],
-    datasets: [{
-      data: [{{ protein_consumed }}, {{ carbs_consumed }}, {{ fat_consumed }}],
-      backgroundColor: [
-        'rgba(16,185,129,0.6)',
-        'rgba(245,158,11,0.6)',
-        'rgba(236,72,153,0.6)'
-      ],
-      borderColor: [
-        'rgba(16,185,129,0.8)',
-        'rgba(245,158,11,0.8)',
-        'rgba(236,72,153,0.8)'
-      ],
-      borderWidth: 2,
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15 } },
-      tooltip: {
-        backgroundColor: 'rgba(26,26,36,0.95)',
-        padding: 12,
-        borderColor: 'rgba(99,102,241,0.3)',
-        borderWidth: 1,
-        callbacks: {
-          label: function(context) {
-            return context.label + ': ' + context.parsed + 'g';
+if (macrosCtx) {
+  console.log("macros =", {{ protein_consumed|default:0 }}, {{ carbs_consumed|default:0 }}, {{ fat_consumed|default:0 }});
+
+  new Chart(macrosCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Protéines', 'Glucides', 'Lipides'],
+      datasets: [{
+        data: [{{ protein_consumed|default:0 }}, {{ carbs_consumed|default:0 }}, {{ fat_consumed|default:0 }}],
+        backgroundColor: [
+          'rgba(16,185,129,0.6)',
+          'rgba(245,158,11,0.6)',
+          'rgba(236,72,153,0.6)'
+        ],
+        borderColor: [
+          'rgba(16,185,129,0.8)',
+          'rgba(245,158,11,0.8)',
+          'rgba(236,72,153,0.8)'
+        ],
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15 } },
+        tooltip: {
+          backgroundColor: 'rgba(26,26,36,0.95)',
+          padding: 12,
+          borderColor: 'rgba(99,102,241,0.3)',
+          borderWidth: 1,
+          callbacks: {
+            label: function(context) {
+              return context.label + ': ' + context.parsed + 'g';
+            }
           }
         }
       }
     }
-  }
-});
+  });
+}
 </script>
 {% endblock %}
