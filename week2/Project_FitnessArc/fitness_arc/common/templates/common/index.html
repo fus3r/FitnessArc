@@ -7,11 +7,11 @@
     Votre compagnon pour l'entraînement et la nutrition
   </p>
   
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem">
+  <div class="home-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;margin-top:3rem">
     {% if user.is_authenticated %}
-    <a href="{% url 'dashboard:index' %}" class="card clickable-card" style="text-align:left;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.4);position:relative;overflow:hidden;text-decoration:none;cursor:pointer">
-      <div style="position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,0.1),transparent 50%);pointer-events:none"></div>
-      <div style="position:relative;z-index:1">
+    <a href="{% url 'dashboard:index' %}" class="card clickable-card dashboard-card" style="text-align:left;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.4);text-decoration:none">
+      <div class="card-bg-effect"></div>
+      <div class="card-content">
         <h3 style="margin:0 0 0.75rem">Dashboard</h3>
         <p style="color:var(--text-dim);margin:0">Vue d'ensemble de vos calories, volume et progrès</p>
       </div>
@@ -19,7 +19,7 @@
     </a>
     {% endif %}
     
-    <div class="card" style="text-align:left;position:relative">
+    <div class="card non-clickable-card" style="text-align:left">
       <h3 style="margin:0 0 0.75rem">Entraînements</h3>
       <p style="color:var(--text-dim);margin:0 0 1.25rem">Gérez vos exercices, créez des templates et loggez vos séances</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
@@ -32,20 +32,24 @@
       </div>
     </div>
     
-    <a href="{% url 'nutrition_today' %}" class="card clickable-card" style="text-align:left;text-decoration:none;cursor:pointer;position:relative">
-      <h3 style="margin:0 0 0.75rem">Nutrition</h3>
-      <p style="color:var(--text-dim);margin:0">Suivez votre alimentation quotidienne et vos macros</p>
+    <a href="{% url 'nutrition_today' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
+      <div class="card-content">
+        <h3 style="margin:0 0 0.75rem">Nutrition</h3>
+        <p style="color:var(--text-dim);margin:0">Suivez votre alimentation quotidienne et vos macros</p>
+      </div>
       <span class="hover-indicator">Ouvrir →</span>
     </a>
     
     {% if user.is_authenticated %}
-    <a href="{% url 'accounts:profile' %}" class="card clickable-card" style="text-align:left;text-decoration:none;cursor:pointer;position:relative">
-      <h3 style="margin:0 0 0.75rem">Mon Profil</h3>
-      <p style="color:var(--text-dim);margin:0">Gérez vos informations personnelles et vos objectifs</p>
+    <a href="{% url 'accounts:profile' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
+      <div class="card-content">
+        <h3 style="margin:0 0 0.75rem">Mon Profil</h3>
+        <p style="color:var(--text-dim);margin:0">Gérez vos informations personnelles et vos objectifs</p>
+      </div>
       <span class="hover-indicator">Ouvrir →</span>
     </a>
     {% else %}
-    <div class="card" style="text-align:left;position:relative">
+    <div class="card non-clickable-card" style="text-align:left">
       <h3 style="margin:0 0 0.75rem">Commencer</h3>
       <p style="color:var(--text-dim);margin:0 0 1.25rem">Créez un compte pour commencer à suivre vos progrès</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
@@ -82,11 +86,72 @@
 </div>
 
 <style>
-/* Hover indicator pour blocs cliquables */
+/* Reset et isolation */
+.home-grid {
+  position: relative;
+}
+
+.home-grid > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cards de base */
+.card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Cards cliquables - hover sur toute la carte */
+.clickable-card {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
+}
+
+.clickable-card .card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.clickable-card .card-bg-effect {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle,rgba(99,102,241,0.1),transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Hover sur carte cliquable uniquement */
+.clickable-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  border-color: rgba(99,102,241,0.6) !important;
+  z-index: 10;
+}
+
+/* Cards non-cliquables - pas de hover sur la carte */
+.non-clickable-card {
+  cursor: default;
+  pointer-events: auto;
+}
+
+.non-clickable-card:hover {
+  transform: none !important;
+  z-index: 1 !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+  border-color: rgba(99,102,241,0.15) !important;
+}
+
+/* Hover indicator - visible uniquement sur hover de carte cliquable */
 .hover-indicator {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 1.25rem;
+  right: 1.25rem;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--primary);
@@ -95,18 +160,12 @@
   transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
   pointer-events: none;
   letter-spacing: 0.02em;
+  z-index: 2;
 }
 
 .clickable-card:hover .hover-indicator {
-  opacity: 0.8;
+  opacity: 0.9;
   transform: translateX(0);
-}
-
-/* Cards cliquables */
-a.clickable-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
-  border-color: rgba(99,102,241,0.5);
 }
 
 /* Mini links dans les blocs non-cliquables */
@@ -120,9 +179,11 @@ a.clickable-card:hover {
   text-align: center;
   font-size: 13px;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
   display: block;
   position: relative;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .mini-link.secondary {
@@ -139,21 +200,23 @@ a.clickable-card:hover {
 .mini-link:hover {
   background: rgba(99,102,241,0.3);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+  border-color: rgba(99,102,241,0.5);
+  z-index: 3;
 }
 
 .mini-link.secondary:hover {
-  background: rgba(71,85,105,0.95);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  background: rgba(71,85,105,1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .mini-link.primary:hover {
-  box-shadow: 0 6px 16px rgba(99,102,241,0.5);
+  box-shadow: 0 6px 20px rgba(99,102,241,0.6);
 }
 
-/* Cursor pointer pour tous les liens */
-.mini-link, .clickable-card {
-  cursor: pointer;
+/* S'assurer que les mini-links ne déclenchent pas le hover de la carte parent */
+.non-clickable-card .mini-link {
+  pointer-events: auto;
 }
 </style>
 {% endblock %}

@@ -1,13 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Inscription{% endblock %}
 {% block content %}
-<div class="card">
+<div class="card" style="max-width:500px;margin:3rem auto">
   <h1>Créer un compte</h1>
-  <form method="post">
+  <form method="post" id="signupForm">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">S'inscrire</button>
+    <button type="submit" class="btn" style="width:100%;margin-top:1rem">S'inscrire</button>
   </form>
-  <p>Déjà un compte ? <a href="{% url 'accounts:login' %}">Se connecter</a></p>
+  <p style="text-align:center;margin-top:1.5rem;color:var(--text-dim)">
+    Déjà un compte ? <a href="{% url 'accounts:login' %}" style="color:var(--primary);text-decoration:none;font-weight:600">Se connecter</a>
+  </p>
 </div>
+
+<script>
+// Initialize custom selects in form if any
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.querySelectorAll('#signupForm select').forEach(select => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'custom-select';
+      select.parentNode.insertBefore(wrapper, select);
+      wrapper.appendChild(select);
+      new CustomSelect(wrapper);
+    });
+  }, 200);
+});
+</script>
 {% endblock %}

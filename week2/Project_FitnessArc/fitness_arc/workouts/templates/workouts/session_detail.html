@@ -19,17 +19,19 @@
 </div>
 
 <h3>Ajouter une série</h3>
-<form method="post" style="margin-bottom:1rem">
+<form method="post" style="margin-bottom:1rem" id="addSetForm">
   {% csrf_token %}
   <input type="hidden" name="duration_minutes" id="duration_minutes" value="0">
   <label>Exercice :
-    <select name="exercise_id" required>
-      {% if session.from_template %}
-        {% for item in session.from_template.items.all %}
-          <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
-        {% endfor %}
-      {% endif %}
-    </select>
+    <div class="custom-select">
+      <select name="exercise_id" required>
+        {% if session.from_template %}
+          {% for item in session.from_template.items.all %}
+            <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
   </label>
   <label>Série # :
     <input type="number" name="set_number" min="1" value="{{ session.set_logs.count|add:'1' }}">
@@ -42,6 +44,15 @@
   </label>
   <button type="submit" class="btn" onclick="saveDuration()">Ajouter</button>
 </form>
+<script>
+// Initialize custom select for session form
+document.addEventListener('DOMContentLoaded', () => {
+  const sessionSelect = document.querySelector('#addSetForm .custom-select');
+  if (sessionSelect) {
+    new CustomSelect(sessionSelect);
+  }
+});
+</script>
 {% endif %}
 
 <h3>Logs</h3>

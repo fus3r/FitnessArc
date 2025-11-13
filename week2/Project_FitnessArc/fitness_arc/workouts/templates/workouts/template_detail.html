@@ -54,15 +54,29 @@
 
 {% if is_owner %}
 <h3 style="margin-top:1.5rem">Ajouter un item</h3>
-<form method="post">
+<form method="post" id="addItemForm">
   {% csrf_token %}
   <div style="display:grid;grid-template-columns:2fr repeat(3,1fr) auto;gap:.5rem;align-items:end;max-width:900px">
-    <label>Exercice<br>{{ form.exercise }}</label>
+    <label>
+      Exercice<br>
+      <div class="custom-select" data-searchable>
+        {{ form.exercise }}
+      </div>
+    </label>
     <label>Sets<br>{{ form.sets }}</label>
     <label>Reps<br>{{ form.reps }}</label>
     <label>Repos (s)<br>{{ form.rest_seconds }}</label>
     <button class="btn" type="submit">Ajouter</button>
   </div>
 </form>
+<script>
+// Initialize custom select for Django form
+document.addEventListener('DOMContentLoaded', () => {
+  const formSelect = document.querySelector('#addItemForm .custom-select');
+  if (formSelect) {
+    new CustomSelect(formSelect, { searchable: true });
+  }
+});
+</script>
 {% endif %}
 {% endblock %}

@@ -10,6 +10,7 @@ from .forms import FoodLogForm
 import json
 from decimal import Decimal
 
+@login_required
 def nutrition_today(request):
     today = timezone.now().date()
     

@@ -175,7 +175,7 @@
       border:1px solid rgba(99,102,241,0.15);border-radius:20px;
       padding:2rem;margin:1.5rem 0;
       transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
-      position:relative;overflow:hidden;
+      position:relative;overflow:visible;
     }
     .card::before{
       content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
@@ -199,6 +199,73 @@
       box-shadow:0 0 0 4px rgba(99,102,241,0.15);
       background:rgba(18,18,26,0.9);
     }
+    /* Custom Select Dropdowns */
+    .custom-select{position:relative;display:block;width:100%;margin:0.5rem 0;z-index:1}
+    .custom-select.open{z-index:9998}
+    .custom-select select{display:none !important}
+    .custom-select-trigger{
+      background:rgba(18,18,26,0.8);border:1px solid rgba(99,102,241,0.3);
+      border-radius:12px;padding:0.875rem 2.5rem 0.875rem 1.25rem;
+      cursor:pointer;transition:all 0.2s;color:var(--text);
+      font-size:15px;display:flex;align-items:center;
+      justify-content:space-between;position:relative;width:100%;
+    }
+    .custom-select-trigger:hover{
+      border-color:var(--primary);background:rgba(18,18,26,0.9);
+    }
+    .custom-select-arrow{
+      position:absolute;right:1rem;top:50%;
+      transform:translateY(-50%);pointer-events:none;
+      transition:transform 0.3s;width:0;height:0;
+      border-left:5px solid transparent;border-right:5px solid transparent;
+      border-top:6px solid var(--text-dim);
+    }
+    .custom-select.open .custom-select-arrow{
+      transform:translateY(-50%) rotate(180deg);
+    }
+    .custom-select-dropdown{
+      position:absolute;top:calc(100% + 0.5rem);left:0;right:0;
+      background:rgba(26,26,36,0.95);backdrop-filter:blur(20px);
+      border:1px solid rgba(99,102,241,0.3);border-radius:12px;
+      max-height:300px;overflow-y:auto;
+      opacity:0;visibility:hidden;display:block;
+      transform:translateY(-10px);
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index:9999;box-shadow:0 12px 32px rgba(0,0,0,0.5);
+      pointer-events:none;
+    }
+    .custom-select.open .custom-select-dropdown{
+      opacity:1 !important;
+      visibility:visible !important;
+      transform:translateY(0) !important;
+      pointer-events:auto !important;
+    }
+    /* Custom scrollbar for dropdown */
+    .custom-select-dropdown::-webkit-scrollbar{width:8px}
+    .custom-select-dropdown::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);border-radius:10px}
+    .custom-select-dropdown::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.5);border-radius:10px}
+    .custom-select-dropdown::-webkit-scrollbar-thumb:hover{background:rgba(99,102,241,0.7)}
+    .custom-select-option{
+      padding:0.75rem 1rem;cursor:pointer;transition:all 0.2s;
+      color:var(--text);font-size:14px;
+    }
+    .custom-select-option:hover{
+      background:rgba(99,102,241,0.15);color:var(--primary);
+    }
+    .custom-select-option.selected{
+      background:rgba(99,102,241,0.2);color:var(--primary);font-weight:600;
+    }
+    .custom-select-search{
+      padding:0.75rem 1rem;border-bottom:1px solid rgba(99,102,241,0.15);
+      position:sticky;top:0;background:rgba(26,26,36,0.98);
+      backdrop-filter:blur(20px);z-index:1;
+    }
+    .custom-select-search input{
+      margin:0;padding:0.5rem 0.75rem;font-size:13px;
+      background:rgba(18,18,26,0.7);
+      border:1px solid rgba(99,102,241,0.2);
+    }
+    
     button:not(.nav-center a):not(.dropdown-menu button),.btn{
       background:linear-gradient(135deg,var(--primary),var(--secondary));
       color:#fff;border:none;cursor:pointer;
@@ -319,6 +386,226 @@
       .card{padding:1.5rem}
     }
   </style>
+  <script>
+  // Custom Dropdown Component - Défini dans le HEAD pour être disponible partout
+  class CustomSelect {
+    constructor(element, options = {}) {
+      this.element = element;
+      this.options = options;
+      this.selectedValue = options.defaultValue || '';
+      this.searchable = options.searchable || element.hasAttribute('data-searchable');
+      this.onChange = options.onChange || (() => {});
+      
+      // Ajouter un attribut pour tracking
+      this.element.setAttribute('data-custom-select-status', 'initializing');
+      
+      this.init();
+    }
+
+    init() {
+      const nativeSelect = this.element.querySelector('select');
+      if (!nativeSelect) {
+        this.element.setAttribute('data-custom-select-status', 'error-no-select');
+        return;
+      }
+
+      // Check if already initialized
+      if (this.element.querySelector('.custom-select-trigger')) {
+        this.element.setAttribute('data-custom-select-status', 'already-initialized');
+        return;
+      }
+
+      this.nativeSelect = nativeSelect;
+      this.selectedValue = nativeSelect.value;
+
+      // Create custom dropdown HTML
+      const customHTML = this.createCustomHTML();
+      this.element.insertAdjacentHTML('beforeend', customHTML);
+
+      // Get references
+      this.trigger = this.element.querySelector('.custom-select-trigger');
+      this.dropdown = this.element.querySelector('.custom-select-dropdown');
+      this.arrow = this.element.querySelector('.custom-select-arrow');
+      this.optionsContainer = this.element.querySelector('.custom-select-options');
+
+      if (!this.trigger || !this.dropdown || !this.optionsContainer) {
+        this.element.setAttribute('data-custom-select-status', 'error-missing-elements');
+        return;
+      }
+
+      // Hide native select
+      nativeSelect.style.display = 'none';
+
+      // Bind events
+      this.bindEvents();
+      
+      // Marquer comme initialisé avec succès
+      this.element.setAttribute('data-custom-select-status', 'initialized');
+      this.element.classList.add('custom-select-ready');
+    }
+
+    createCustomHTML() {
+      const options = Array.from(this.nativeSelect.options);
+      const selectedOption = options.find(opt => opt.value === this.selectedValue);
+      const selectedText = selectedOption ? selectedOption.text : options[0]?.text || 'Sélectionner...';
+
+      let searchHTML = '';
+      if (this.searchable) {
+        searchHTML = `
+          <div class="custom-select-search">
+            <input type="text" placeholder="Rechercher..." class="custom-select-search-input" autocomplete="off">
+          </div>
+        `;
+      }
+
+      const optionsHTML = options.map(opt => `
+        <div class="custom-select-option ${opt.value === this.selectedValue ? 'selected' : ''}" data-value="${opt.value}">
+          ${opt.text}
+        </div>
+      `).join('');
+
+      return `
+        <div class="custom-select-trigger">
+          <span class="custom-select-label">${selectedText}</span>
+          <span class="custom-select-arrow"></span>
+        </div>
+        <div class="custom-select-dropdown">
+          ${searchHTML}
+          <div class="custom-select-options">
+            ${optionsHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    bindEvents() {
+      // Toggle dropdown
+      this.trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggle();
+      });
+
+      // Select option
+      this.optionsContainer.addEventListener('click', (e) => {
+        const option = e.target.closest('.custom-select-option');
+        if (option) {
+          this.selectOption(option);
+        }
+      });
+
+      // Search functionality
+      if (this.searchable) {
+        const searchInput = this.element.querySelector('.custom-select-search-input');
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            this.filterOptions(e.target.value);
+          });
+          searchInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+        }
+      }
+
+      // Close on outside click
+      const closeHandler = (e) => {
+        if (!this.element.contains(e.target)) {
+          this.close();
+        }
+      };
+      document.addEventListener('click', closeHandler);
+      
+      // Store handler for cleanup if needed
+      this.closeHandler = closeHandler;
+
+      // Keyboard navigation
+      this.element.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') this.close();
+      });
+    }
+
+    toggle() {
+      console.log('Toggle called, current state:', this.element.classList.contains('open'));
+      if (this.element.classList.contains('open')) {
+        this.close();
+      } else {
+        this.open();
+      }
+    }
+
+    open() {
+      console.log('Opening dropdown...');
+      // Close all other custom selects
+      document.querySelectorAll('.custom-select.open').forEach(sel => {
+        if (sel !== this.element) sel.classList.remove('open');
+      });
+      
+      this.element.classList.add('open');
+      this.element.setAttribute('data-custom-select-state', 'open');
+      console.log('Dropdown opened, classes:', this.element.className);
+      
+      if (this.searchable) {
+        const searchInput = this.element.querySelector('.custom-select-search-input');
+        setTimeout(() => searchInput?.focus(), 50);
+      }
+    }
+
+    close() {
+      this.element.classList.remove('open');
+      this.element.setAttribute('data-custom-select-state', 'closed');
+      
+      if (this.searchable) {
+        const searchInput = this.element.querySelector('.custom-select-search-input');
+        if (searchInput) {
+          searchInput.value = '';
+          this.filterOptions('');
+        }
+      }
+    }
+
+    selectOption(optionElement) {
+      const value = optionElement.dataset.value;
+      this.selectedValue = value;
+
+      // Update native select
+      this.nativeSelect.value = value;
+
+      // Trigger change event on native select
+      const event = new Event('change', { bubbles: true });
+      this.nativeSelect.dispatchEvent(event);
+
+      // Update UI
+      const labelElement = this.trigger.querySelector('.custom-select-label');
+      if (labelElement) {
+        labelElement.textContent = optionElement.textContent.trim();
+      }
+      
+      this.optionsContainer.querySelectorAll('.custom-select-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      optionElement.classList.add('selected');
+
+      // Call onChange callback
+      this.onChange(value);
+
+      this.close();
+    }
+
+    filterOptions(query) {
+      const options = this.optionsContainer.querySelectorAll('.custom-select-option');
+      const lowerQuery = query.toLowerCase();
+      
+      options.forEach(opt => {
+        const text = opt.textContent.toLowerCase();
+        if (text.includes(lowerQuery)) {
+          opt.style.display = '';
+        } else {
+          opt.style.display = 'none';
+        }
+      });
+    }
+  }
+  </script>
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -405,5 +692,39 @@
   {% endif %}
   {% block content %}{% endblock %}
 </main>
+<script>
+// Initialize custom selects on page load (classe définie dans le HEAD)
+document.addEventListener('DOMContentLoaded', () => {
+  // Attendre que le DOM soit complètement chargé
+  setTimeout(() => {
+    const allSelects = document.querySelectorAll('.custom-select');
+    console.log(`Found ${allSelects.length} custom-select elements to initialize`);
+    
+    allSelects.forEach((element, index) => {
+      // Check if this element is NOT inside a Vue app
+      const isInVueApp = element.closest('#exerciseApp, #nutritionApp');
+      
+      if (!isInVueApp) {
+        console.log(`Initializing dropdown ${index + 1}...`);
+        // Ajouter une classe temporaire pour le debug
+        element.classList.add('custom-select-processing');
+        
+        try {
+          new CustomSelect(element);
+          console.log(`✓ Dropdown ${index + 1} initialized successfully`);
+        } catch (error) {
+          console.error(`✗ Failed to init dropdown ${index + 1}:`, error);
+          element.setAttribute('data-custom-select-status', 'error-init-failed');
+          element.classList.add('custom-select-error');
+        }
+        
+        element.classList.remove('custom-select-processing');
+      } else {
+        console.log(`Skipping dropdown ${index + 1} (inside Vue app)`);
+      }
+    });
+  }, 150);
+});
+</script>
 </body>
 </html>
