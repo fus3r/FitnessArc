@@ -1,0 +1,57 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Nos Producteurs - Comptoir Local Saclay{% endblock %}
+{% block nav_producers %}active{% endblock %}
+
+{% block header %}
+<header class="bg-primary-custom py-5 text-white">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center">
+            <h1 class="display-4 fw-bolder">Nos Producteurs Partenaires</h1>
+            <p class="lead fw-normal mb-0">Rencontrez les artisans qui cultivent vos produits</p>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        {% if producers %}
+        <div class="row gx-4 gx-lg-5">
+            {% for producer in producers %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary-custom text-white rounded-circle p-3 me-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-person-badge fs-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">{{ producer.name }}</h5>
+                                <span class="badge bg-success">{{ producer.products.count }} produit{{ producer.products.count|pluralize }}</span>
+                            </div>
+                        </div>
+                        
+                        {% if producer.email %}
+                        <p class="text-muted mb-3">
+                            <i class="bi bi-envelope"></i> {{ producer.email }}
+                        </p>
+                        {% endif %}
+                        
+                        <a href="{% url 'producer_detail' producer.id %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-arrow-right-circle"></i> Voir les produits
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle"></i> Aucun producteur enregistré pour le moment.
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
