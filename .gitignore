@@ -1,5 +1,44 @@
+# macOS
 .DS_Store
-__pycache__
-*.pyc
-venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Django
 *.sqlite3
+*.log
+db.sqlite3
+media/
+staticfiles/
+*.pot
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local

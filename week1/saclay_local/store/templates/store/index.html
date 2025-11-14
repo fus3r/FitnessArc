@@ -66,9 +66,18 @@
             <div class="col mb-5">
                 <div class="card h-100">
                     <!-- Product image-->
+                    {% if product.image %}
                     <img class="card-img-top" 
-                         src="https://via.placeholder.com/450x300/28a745/ffffff?text={{ product.name }}" 
-                         alt="{{ product.name }}" />
+                         src="{{ product.image.url }}" 
+                         alt="{{ product.name }}"
+                         style="height: 200px; object-fit: cover;" />
+                    {% else %}
+                    <img class="card-img-top" 
+                         src="{{ MEDIA_URL }}products/default.jpg" 
+                         alt="{{ product.name }}"
+                         style="height: 200px; object-fit: cover;"
+                         onerror="this.src='https://via.placeholder.com/450x300/28a745/ffffff?text={{ product.name }}'" />
+                    {% endif %}
                     
                     <!-- Stock badge -->
                     {% if product.stock_quantity > 0 %}
