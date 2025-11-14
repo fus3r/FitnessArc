@@ -32,11 +32,22 @@ def info_product_v0(request,product_id):
     return HttpResponse(info_msg, content_type="text/plain; charset=utf-8")
 
 def search_products(request, query):
-    product = Product.objects.filter(name=query)
-    if product:
-        return info_product(request, product.first().id)
-    error_msg = f'Erreur : Le produit "{query}" n\'existe pas dans notre catalogue.'
-    return HttpResponse(error_msg, content_type="text/plain; charset=utf-8", status=404)
+    products = Product.objects.filter(name__icontains=query)
+    if products.count() == 1:
+        return redirect('product_detail', product_id=products.first().id)
+    elif products.exists():
+        return render(request, 'store/search_results.html', {
+            'query': query,
+            'products': products,
+            'scope': 'product'
+        })
+    else:
+        return render(request, 'store/search_results.html', {
+            'query': query,
+            'products': [],
+            'scope': 'product',
+            'error': f'Aucun produit trouvé pour "{query}"'
+        })
 
 def search_products_v0(request, query):
     for idx, product in enumerate(PRODUCTS):
@@ -47,20 +58,22 @@ def search_products_v0(request, query):
     return HttpResponse(error_msg, content_type="text/plain; charset=utf-8", status=404)
 
 def search_producers(request, query):
-    producer = Producer.objects.filter(name=query)
-    if producer:
-        producer_products = Product.objects.filter(producer=producer.first())
-        if producer_products.exists():
-            response = f"Produits de {producer.first().name}:\n"
-            response += '\n'.join([f"- {product.name}" for product in producer_products])
-            return HttpResponse(response, content_type="text/plain; charset=utf-8")
-        else:
-            return HttpResponse(
-                f"Le producteur {producer.first().name} n'a pas de produits listés.",
-                content_type="text/plain; charset=utf-8"
-            )
-    error_msg = f'Erreur : Le producteur "{query}" n\'existe pas dans notre base.'
-    return HttpResponse(error_msg, content_type="text/plain; charset=utf-8", status=404)
+    producers = Producer.objects.filter(name__icontains=query)
+    if producers.count() == 1:
+        return redirect('producer_detail', producer_id=producers.first().id)
+    elif producers.exists():
+        return render(request, 'store/search_results.html', {
+            'query': query,
+            'producers': producers,
+            'scope': 'producer'
+        })
+    else:
+        return render(request, 'store/search_results.html', {
+            'query': query,
+            'producers': [],
+            'scope': 'producer',
+            'error': f'Aucun producteur trouvé pour "{query}"'
+        })
 
 def search_producers_v0(request, query):
     for producer_id, producer_info in PRODUCERS.items():

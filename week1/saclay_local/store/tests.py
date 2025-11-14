@@ -359,19 +359,38 @@ class SearchTest(TestCase):
             name="Ferme de Viltain",
             email="contact@ferme-viltain.fr"
         )
+        self.producer2 = Producer.objects.create(
+            name="Ferme de Vilgénis",
+            email="contact@ferme-vilgenis.fr"
+        )
         self.product = Product.objects.create(
             name="Yaourt Vanille",
             price=Decimal("2.50"),
             stock_quantity=20,
             producer=self.producer
         )
+        self.product2 = Product.objects.create(
+            name="Yaourt Fraise",
+            price=Decimal("2.50"),
+            stock_quantity=15,
+            producer=self.producer
+        )
     
-    def test_search_product_found(self):
+    def test_search_product_found_exact_match_redirects(self):
         response = self.client.get(
             reverse('search'),
             {'query': 'Yaourt Vanille', 'scope': 'product'}
         )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('product_detail', args=[self.product.id]))
+    
+    def test_search_product_partial_match_shows_results(self):
+        response = self.client.get(
+            reverse('search'),
+            {'query': 'Yaourt', 'scope': 'product'}
+        )
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'store/search_results.html')
         self.assertContains(response, "Yaourt Vanille")
     
     def test_search_product_not_found(self):
@@ -379,12 +398,24 @@ class SearchTest(TestCase):
             reverse('search'),
             {'query': 'Produit Inexistant', 'scope': 'product'}
         )
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'store/search_results.html')
+        self.assertContains(response, "Aucun produit trouvé")
     
-    def test_search_producer_found(self):
+    def test_search_producer_found_exact_match_redirects(self):
         response = self.client.get(
             reverse('search'),
             {'query': 'Ferme de Viltain', 'scope': 'producer'}
         )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('producer_detail', args=[self.producer.id]))
+    
+    def test_search_producer_partial_match_shows_results(self):
+        response = self.client.get(
+            reverse('search'),
+            {'query': 'Ferme', 'scope': 'producer'}
+        )
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'store/search_results.html')
         self.assertContains(response, "Ferme de Viltain")
+        self.assertContains(response, "Ferme de Vilgénis")
