@@ -1,0 +1,139 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Mon Panier - Comptoir Local Saclay{% endblock %}
+
+{% block header %}
+<header class="bg-primary-custom py-4 text-white">
+    <div class="container px-4 px-lg-5">
+        <div class="text-center">
+            <h1 class="display-6 fw-bolder"><i class="bi bi-cart-fill"></i> Mon Panier</h1>
+            <p class="lead fw-normal mb-0">Gérez vos articles</p>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if cart_items %}
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-basket"></i> Articles dans votre panier ({{ total_items }})</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for item in cart_items %}
+                        <div class="row mb-4 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="col-md-3">
+                                <img src="https://via.placeholder.com/150x100/28a745/ffffff?text={{ item.name }}" 
+                                     class="img-fluid rounded" alt="{{ item.name }}">
+                            </div>
+                            <div class="col-md-5">
+                                <h5 class="mb-2">{{ item.name }}</h5>
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-person"></i> {{ item.producer }}
+                                </p>
+                                <p class="text-success fw-bold mb-0">{{ item.price }} EUR / unité</p>
+                            </div>
+                            <div class="col-md-2">
+                                <form method="POST" action="{% url 'update_cart' item.id %}" class="d-flex align-items-center">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                           min="1" class="form-control form-control-sm" 
+                                           onchange="this.form.submit()" style="width: 70px;">
+                                </form>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <p class="fw-bold mb-2">{{ item.total|floatformat:2 }} EUR</p>
+                                <a href="{% url 'remove_from_cart' item.id %}" 
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Retirer cet article du panier ?')">
+                                    <i class="bi bi-trash"></i> Retirer
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="text-end mt-3">
+                            <a href="{% url 'clear_cart' %}" class="btn btn-outline-danger"
+                               onclick="return confirm('Vider tout le panier ?')">
+                                <i class="bi bi-trash"></i> Vider le panier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm sticky-top" style="top: 20px;">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Récapitulatif</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Sous-total :</span>
+                            <span class="fw-bold">{{ total_price|floatformat:2 }} EUR</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Livraison :</span>
+                            <span class="text-success">Gratuite</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="h5 mb-0">Total :</span>
+                            <span class="h5 mb-0 text-success">{{ total_price|floatformat:2 }} EUR</span>
+                        </div>
+                        
+                        <button class="btn btn-primary-custom btn-lg w-100 mb-2" disabled>
+                            <i class="bi bi-credit-card"></i> Passer la commande
+                        </button>
+                        <small class="text-muted d-block text-center">(Fonctionnalité à venir)</small>
+                        
+                        <a href="{% url 'products_list' %}" class="btn btn-outline-success w-100 mt-3">
+                            <i class="bi bi-arrow-left"></i> Continuer mes achats
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check text-success fs-1 mb-2"></i>
+                        <p class="mb-0"><strong>Paiement sécurisé</strong></p>
+                        <small class="text-muted">Vos données sont protégées</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-sm text-center p-5">
+                    <i class="bi bi-cart-x text-muted mb-4" style="font-size: 5rem;"></i>
+                    <h3 class="mb-3">Votre panier est vide</h3>
+                    <p class="text-muted mb-4">Parcourez notre catalogue et ajoutez des produits frais et locaux !</p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'products_list' %}" class="btn btn-primary-custom btn-lg">
+                            <i class="bi bi-basket"></i> Découvrir nos produits
+                        </a>
+                        <a href="{% url 'index' %}" class="btn btn-outline-success btn-lg">
+                            <i class="bi bi-house"></i> Retour à l'accueil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

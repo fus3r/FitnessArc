@@ -1,9 +1,7 @@
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from .models import *
-
-# Create your views here.
 
 def index(request):
     products = Product.objects.all()
@@ -34,7 +32,7 @@ def info_product_v0(request,product_id):
     return HttpResponse(info_msg, content_type="text/plain; charset=utf-8")
 
 def search_products(request, query):
-    product = Product.objects.filter(name=query) #A faire: lowercase, etc.
+    product = Product.objects.filter(name=query)
     if product:
         return info_product(request, product.first().id)
     error_msg = f'Erreur : Le produit "{query}" n\'existe pas dans notre catalogue.'
@@ -49,7 +47,7 @@ def search_products_v0(request, query):
     return HttpResponse(error_msg, content_type="text/plain; charset=utf-8", status=404)
 
 def search_producers(request, query):
-    producer = Producer.objects.filter(name=query) #A faire: lowercase, etc.
+    producer = Producer.objects.filter(name=query)
     if producer:
         producer_products = Product.objects.filter(producer=producer.first())
         if producer_products.exists():
@@ -106,10 +104,7 @@ def search(request):
         return search_producers(request, query)
     else:
         return HttpResponse("Erreur : Paramètre de scope manquant ou invalide", content_type="text/plain; charset=utf-8", status=400)
-    # If no scope matches (shouldn't happen due to earlier validation)
     return HttpResponse("Erreur: Scope de recherche invalide", content_type="text/plain; charset=utf-8", status=400)
-
-# New views for the templates
 def products_list(request):
     products = Product.objects.all()
     return render(request, 'store/products_list.html', {'products': products})
@@ -129,3 +124,112 @@ def producer_detail(request, producer_id):
 
 def about(request):
     return render(request, 'store/about.html')
+
+def get_cart(request):
+    cart = request.session.get('cart', {})
+    return cart
+
+def get_cart_total(request):
+    cart = get_cart(request)
+    total_items = sum(item['quantity'] for item in cart.values())
+    total_price = sum(item['quantity'] * float(item['price']) for item in cart.values())
+    return total_items, total_price
+
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    
+    cart = request.session.get('cart', {})
+    product_id_str = str(product_id)
+    
+    current_quantity = cart.get(product_id_str, {}).get('quantity', 0)
+    new_quantity = current_quantity + 1
+    
+    if new_quantity > product.stock_quantity:
+        from django.contrib import messages
+        messages.error(request, f'Stock insuffisant pour {product.name}. Disponible : {product.stock_quantity} unités.')
+        return redirect(request.META.get('HTTP_REFERER', 'cart'))
+    
+    if product_id_str in cart:
+        cart[product_id_str]['quantity'] = new_quantity
+    else:
+        cart[product_id_str] = {
+            'name': product.name,
+            'price': str(product.price),
+            'quantity': 1,
+            'producer': product.producer.name
+        }
+    
+    request.session['cart'] = cart
+    request.session.modified = True
+    from django.contrib import messages
+    messages.success(request, f'{product.name} a été ajouté au panier !')
+    
+    return redirect(request.META.get('HTTP_REFERER', 'cart'))
+
+def view_cart(request):
+    cart = get_cart(request)
+    cart_items = []
+    total_price = 0
+    
+    for product_id, item in cart.items():
+        item_total = float(item['price']) * item['quantity']
+        cart_items.append({
+            'id': product_id,
+            'name': item['name'],
+            'price': item['price'],
+            'quantity': item['quantity'],
+            'producer': item['producer'],
+            'total': item_total
+        })
+        total_price += item_total
+    
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'total_items': sum(item['quantity'] for item in cart.values())
+    }
+    
+    return render(request, 'store/cart.html', context)
+
+def update_cart(request, product_id):
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))
+        cart = request.session.get('cart', {})
+        product_id_str = str(product_id)
+        
+        if quantity > 0 and product_id_str in cart:
+            product = get_object_or_404(Product, pk=product_id)
+            
+            if quantity > product.stock_quantity:
+                from django.contrib import messages
+                messages.error(request, f'Stock insuffisant pour {product.name}. Disponible : {product.stock_quantity} unités.')
+                return redirect('cart')
+            
+            cart[product_id_str]['quantity'] = quantity
+            request.session['cart'] = cart
+            request.session.modified = True
+        
+    return redirect('cart')
+
+def remove_from_cart(request, product_id):
+    cart = request.session.get('cart', {})
+    product_id_str = str(product_id)
+    
+    if product_id_str in cart:
+        del cart[product_id_str]
+        request.session['cart'] = cart
+        request.session.modified = True
+        
+        from django.contrib import messages
+        messages.success(request, 'Produit retiré du panier.')
+    
+    return redirect('cart')
+
+def clear_cart(request):
+    request.session['cart'] = {}
+    request.session.modified = True
+    
+    from django.contrib import messages
+    messages.success(request, 'Panier vidé.')
+    
+    return redirect('cart')
