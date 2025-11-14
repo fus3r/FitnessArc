@@ -1,0 +1,26 @@
+# Requirements for CodingWeek Project (Week 1 & Week 2)
+# Python 3.13+
+
+# Django Framework
+Django==5.2.8
+
+# Image Processing (for product images in week1)
+Pillow==11.3.0
+
+# Development Tools
+django-debug-toolbar==6.1.0
+
+# Testing & Coverage
+coverage==7.11.3
+
+# Database (SQLite3 is included with Python, no need to install)
+
+# Notes:
+# - Week 1 (Comptoir Local Saclay): Django e-commerce platform for local producers
+# - Week 2 (FitnessArc): Fitness tracking and workout management application
+# 
+# Installation:
+# pip install -r requirements.txt
+#
+# Or with Python 3:
+# pip3 install -r requirements.txt
