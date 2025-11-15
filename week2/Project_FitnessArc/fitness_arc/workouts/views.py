@@ -150,6 +150,12 @@ def complete_session(request, pk):
         except ValueError:
             pass
         
+        # Si la séance dure moins de 30 secondes (0 minutes), on l'annule (supprime)
+        if sess.duration_minutes == 0 and sess.set_logs.count() == 0:
+            sess.delete()
+            messages.info(request, "Séance annulée.")
+            return redirect("workouts:template_list")
+        
         sess.is_completed = True
         sess.save()
         messages.success(request, f"Séance terminée ! Durée : {sess.duration_minutes} min | Calories : {sess.estimated_calories_burned} kcal")

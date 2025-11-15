@@ -41,30 +41,34 @@
       </div>
     </div>
 
-    <!-- Filtres existants -->
+    <!-- Filtres avec custom dropdowns -->
     <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;align-items:end">
       <label>
         Groupe musculaire
-        <select v-model="filters.muscle" @change="applyFilters">
-          <option value="">Tous</option>
-          <option value="chest">Pectoraux</option>
-          <option value="back">Dos</option>
-          <option value="legs">Jambes</option>
-          <option value="shoulders">Épaules</option>
-          <option value="arms">Bras</option>
-          <option value="core">Abdos</option>
-        </select>
+        <div class="custom-select" ref="muscleDropdown">
+          <select v-model="filters.muscle" @change="applyFilters">
+            <option value="">Tous</option>
+            <option value="chest">Pectoraux</option>
+            <option value="back">Dos</option>
+            <option value="legs">Jambes</option>
+            <option value="shoulders">Épaules</option>
+            <option value="arms">Bras</option>
+            <option value="core">Abdos</option>
+          </select>
+        </div>
       </label>
       <label>
         Équipement
-        <select v-model="filters.equipment" @change="applyFilters">
-          <option value="">Tous</option>
-          <option value="barbell">Barre</option>
-          <option value="dumbbell">Haltères</option>
-          <option value="machine">Machine</option>
-          <option value="cable">Poulie</option>
-          <option value="bodyweight">Poids du corps</option>
-        </select>
+        <div class="custom-select" ref="equipmentDropdown">
+          <select v-model="filters.equipment" @change="applyFilters">
+            <option value="">Tous</option>
+            <option value="barbell">Barre</option>
+            <option value="dumbbell">Haltères</option>
+            <option value="machine">Machine</option>
+            <option value="cable">Poulie</option>
+            <option value="bodyweight">Poids du corps</option>
+          </select>
+        </div>
       </label>
       <button @click="resetFilters" class="btn btn-secondary">Réinitialiser</button>
     </div>
@@ -185,6 +189,55 @@ createApp({
     handleImageError(e) {
       e.target.style.display = 'none';
     }
+  },
+  mounted() {
+    console.log('Vue app mounted, initializing custom selects...');
+    console.log('CustomSelect class available:', typeof CustomSelect);
+    
+    // Initialize custom selects after Vue renders
+    this.$nextTick(() => {
+      // Wait a bit more to ensure DOM is fully ready
+      setTimeout(() => {
+        console.log('Refs:', this.$refs);
+        
+        // Try with refs first
+        if (this.$refs.muscleDropdown) {
+          console.log('Muscle dropdown ref found:', this.$refs.muscleDropdown);
+          try {
+            new CustomSelect(this.$refs.muscleDropdown);
+            console.log('✓ Muscle dropdown initialized');
+          } catch (error) {
+            console.error('✗ Failed to init muscle dropdown:', error);
+          }
+        }
+        
+        if (this.$refs.equipmentDropdown) {
+          console.log('Equipment dropdown ref found:', this.$refs.equipmentDropdown);
+          try {
+            new CustomSelect(this.$refs.equipmentDropdown);
+            console.log('✓ Equipment dropdown initialized');
+          } catch (error) {
+            console.error('✗ Failed to init equipment dropdown:', error);
+          }
+        }
+        
+        // Fallback: find all custom selects
+        const customSelects = this.$el.querySelectorAll('.custom-select');
+        console.log(`Found ${customSelects.length} custom select(s) in Vue app`);
+        
+        customSelects.forEach((element, index) => {
+          if (!element.hasAttribute('data-custom-select-status')) {
+            try {
+              console.log(`Initializing dropdown ${index + 1}...`);
+              new CustomSelect(element);
+              console.log(`✓ Dropdown ${index + 1} initialized`);
+            } catch (error) {
+              console.error(`✗ Failed to init dropdown ${index + 1}:`, error);
+            }
+          }
+        });
+      }, 300);
+    });
   }
 }).mount('#exerciseApp');
 </script>

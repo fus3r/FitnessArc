@@ -1,68 +1,249 @@
 {% extends "base.html" %}
-{% block title %}Template · {{ template.name }}{% endblock %}
+{% block title %}{{ template.name }}{% endblock %}
 {% block content %}
-<h1>
-  Template : {{ template.name }}
-  {% if template.is_public %}
-    <span style="background:#ffc107;color:#000;padding:4px 10px;border-radius:6px;font-size:0.9rem;margin-left:0.5rem">PUBLIC</span>
-  {% endif %}
-</h1>
 
-<p style="margin:.5rem 0 1rem">
-  <a class="btn" href="{% url 'workouts:start_session' template.pk %}">Démarrer une séance</a>
-  <a class="btn" href="{% url 'workouts:template_list' %}">← Retour à mes templates</a>
-  {% if is_owner %}
-    <a href="{% url 'workouts:template_delete' template.pk %}" class="btn" style="background:#dc3545;margin-left:0.5rem">Supprimer ce template</a>
-  {% endif %}
-</p>
+<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:2rem;flex-wrap:wrap;gap:1rem">
+  <div>
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem">
+      <h1 style="margin:0">{{ template.name }}</h1>
+      {% if template.is_public %}
+      <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--warning);border:1px solid rgba(245,158,11,0.4);font-size:0.85rem">
+        PUBLIC
+      </span>
+      {% endif %}
+    </div>
+    <p style="color:var(--text-dim);margin:0">
+      {{ items|length }} exercice{{ items|length|pluralize }} • 
+      {% with total_sets=items|length|add:"0" %}{{ total_sets }}{% endwith %} série{{ items|length|pluralize }} au total
+    </p>
+  </div>
+  
+  <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+    <a href="{% url 'workouts:start_session' template.pk %}" class="btn" style="display:flex;align-items:center;gap:0.5rem">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+      Démarrer
+    </a>
+    {% if is_owner %}
+    <a href="{% url 'workouts:template_delete' template.pk %}" class="btn" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:var(--danger)">
+      Supprimer
+    </a>
+    {% endif %}
+    <a href="{% url 'workouts:template_list' %}" class="btn-secondary">
+      Retour
+    </a>
+  </div>
+</div>
 
 {% if not is_owner and template.is_public %}
-  <div style="background:#fff3cd;border:1px solid #ffc107;padding:1rem;border-radius:8px;margin:1rem 0">
-    ℹ️ <strong>Template public :</strong> Vous pouvez démarrer une séance mais ne pouvez pas modifier ce template.
+<div class="card" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37,99,235,0.08));border:1px solid rgba(59,130,246,0.3);margin-bottom:2rem">
+  <div style="display:flex;align-items:start;gap:1rem">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);flex-shrink:0;margin-top:0.125rem">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    <div>
+      <p style="margin:0;font-weight:600;color:var(--text)">Template public</p>
+      <p style="margin:0.5rem 0 0;color:var(--text-dim);font-size:0.95rem">
+        Vous pouvez démarrer une séance mais ne pouvez pas modifier ce template.
+      </p>
+    </div>
   </div>
+</div>
 {% endif %}
 
-<h3>Items du template</h3>
-<table>
-  <thead>
-    <tr><th>#</th><th>Exercice</th><th>Sets</th><th>Reps</th><th>Repos (s)</th>
-    {% if is_owner %}<th></th>{% endif %}
-    </tr>
-  </thead>
-  <tbody>
+<div class="card">
+  <h3 style="margin:0 0 1.5rem">Exercices du programme</h3>
+  
+  {% if items %}
+  <div style="display:flex;flex-direction:column;gap:1rem">
     {% for it in items %}
-      <tr>
-        <td>{{ it.order }}</td>
-        <td>{{ it.exercise.name }}</td>
-        <td>{{ it.sets }}</td>
-        <td>{{ it.reps }}</td>
-        <td>{{ it.rest_seconds }}</td>
+    <div class="exercise-item">
+      <div class="exercise-order">{{ it.order }}</div>
+      <div class="exercise-content">
+        <div class="exercise-header">
+          <h4 style="margin:0;font-size:1.05rem;font-weight:600">{{ it.exercise.name }}</h4>
+          <div class="exercise-params">
+            <span class="param-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+              </svg>
+              {{ it.sets }} × {{ it.reps }}
+            </span>
+            <span class="param-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ it.rest_seconds }}s repos
+            </span>
+          </div>
+        </div>
         {% if is_owner %}
-        <td>
-          <form method="post" action="{% url 'workouts:template_item_delete' template.pk it.pk %}">
-            {% csrf_token %}
-            <button class="btn" type="submit">Supprimer</button>
-          </form>
-        </td>
+        <form method="post" action="{% url 'workouts:template_item_delete' template.pk it.pk %}" style="margin:0">
+          {% csrf_token %}
+          <button type="submit" class="delete-btn" title="Supprimer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </form>
         {% endif %}
-      </tr>
-    {% empty %}
-      <tr><td colspan="{% if is_owner %}6{% else %}5{% endif %}"><em>Aucun item pour l'instant.</em></td></tr>
+      </div>
+    </div>
     {% endfor %}
-  </tbody>
-</table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:2rem;background:rgba(99,102,241,0.05);border:1px dashed rgba(99,102,241,0.3);border-radius:12px">
+    <p style="color:var(--text-dim);margin:0">Aucun exercice dans ce programme</p>
+  </div>
+  {% endif %}
+</div>
 
 {% if is_owner %}
-<h3 style="margin-top:1.5rem">Ajouter un item</h3>
-<form method="post">
-  {% csrf_token %}
-  <div style="display:grid;grid-template-columns:2fr repeat(3,1fr) auto;gap:.5rem;align-items:end;max-width:900px">
-    <label>Exercice<br>{{ form.exercise }}</label>
-    <label>Sets<br>{{ form.sets }}</label>
-    <label>Reps<br>{{ form.reps }}</label>
-    <label>Repos (s)<br>{{ form.rest_seconds }}</label>
-    <button class="btn" type="submit">Ajouter</button>
-  </div>
-</form>
+<div class="card" style="margin-top:2rem">
+  <h3 style="margin:0 0 1.5rem">Ajouter un exercice</h3>
+  <form method="post" id="addItemForm">
+    {% csrf_token %}
+    <div style="display:grid;grid-template-columns:2fr repeat(3,1fr) auto;gap:1rem;align-items:end">
+      <label style="margin:0">
+        <span style="display:block;margin-bottom:0.5rem;font-size:0.9rem;font-weight:600">Exercice</span>
+        <div class="custom-select" data-searchable>
+          {{ form.exercise }}
+        </div>
+      </label>
+      <label style="margin:0">
+        <span style="display:block;margin-bottom:0.5rem;font-size:0.9rem;font-weight:600">Séries</span>
+        {{ form.sets }}
+      </label>
+      <label style="margin:0">
+        <span style="display:block;margin-bottom:0.5rem;font-size:0.9rem;font-weight:600">Reps</span>
+        {{ form.reps }}
+      </label>
+      <label style="margin:0">
+        <span style="display:block;margin-bottom:0.5rem;font-size:0.9rem;font-weight:600">Repos (s)</span>
+        {{ form.rest_seconds }}
+      </label>
+      <button class="btn" type="submit" style="padding:0.875rem 1.5rem;margin-bottom:0.5rem">
+        Ajouter
+      </button>
+    </div>
+  </form>
+</div>
 {% endif %}
+
+<style>
+.exercise-item {
+  display:flex;
+  gap:1rem;
+  padding:1.25rem;
+  background:rgba(26,26,36,0.4);
+  border:1px solid rgba(99,102,241,0.15);
+  border-radius:12px;
+  transition:all 0.2s;
+}
+
+.exercise-item:hover {
+  border-color:rgba(99,102,241,0.3);
+  background:rgba(26,26,36,0.6);
+}
+
+.exercise-order {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:#fff;
+  flex-shrink:0;
+}
+
+.exercise-content {
+  flex:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+}
+
+.exercise-header {
+  flex:1;
+}
+
+.exercise-params {
+  display:flex;
+  gap:0.75rem;
+  margin-top:0.5rem;
+}
+
+.param-badge {
+  display:flex;
+  align-items:center;
+  gap:0.375rem;
+  padding:0.375rem 0.75rem;
+  background:rgba(99,102,241,0.1);
+  border:1px solid rgba(99,102,241,0.2);
+  border-radius:20px;
+  font-size:0.85rem;
+  color:var(--text-dim);
+}
+
+.param-badge svg {
+  color:var(--primary);
+  opacity:0.7;
+}
+
+.delete-btn {
+  background:rgba(239,68,68,0.15);
+  border:1px solid rgba(239,68,68,0.3);
+  color:var(--danger);
+  padding:0.5rem;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.delete-btn:hover {
+  background:rgba(239,68,68,0.25);
+  border-color:rgba(239,68,68,0.5);
+  transform:scale(1.05);
+}
+
+.btn-secondary {
+  background:rgba(71,85,105,0.8);
+  color:var(--text);
+  border:1px solid rgba(100,116,139,0.3);
+  padding:0.625rem 1.25rem;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:500;
+  transition:all 0.2s;
+  display:inline-block;
+}
+
+.btn-secondary:hover {
+  background:rgba(71,85,105,1);
+  transform:translateY(-1px);
+}
+
+@media(max-width:768px) {
+  .exercise-content {
+    flex-direction:column;
+    align-items:start;
+  }
+  
+  .exercise-params {
+    flex-wrap:wrap;
+  }
+}
+</style>
 {% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Résultats de recherche - Comptoir Local Saclay{% endblock %}
+
+{% block header %}
+<header class="bg-primary-custom py-4 text-white">
+    <div class="container px-4 px-lg-5">
+        <div class="text-center">
+            <h1 class="display-6 fw-bolder">Résultats de recherche</h1>
+            <p class="lead fw-normal mb-0">{{ query }}</p>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Accueil</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Recherche</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        
+        {% if error %}
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ error }}
+            </div>
+            
+            <div class="card">
+                <div class="card-body text-center p-5">
+                    <h4 class="mb-4">Suggestions</h4>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'products_list' %}" class="btn btn-primary-custom">
+                            <i class="bi bi-basket"></i> Voir tous les produits
+                        </a>
+                        <a href="{% url 'producers_list' %}" class="btn btn-outline-success">
+                            <i class="bi bi-people"></i> Voir tous les producteurs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% elif products %}
+            <div class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle"></i> {{ products|length }} résultat{{ products|length|pluralize }} trouvé{{ products|length|pluralize }}
+            </div>
+            
+            <h2 class="mb-4">Produits trouvés</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4">
+                {% for product in products %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <img class="card-img-top" 
+                                 src="https://via.placeholder.com/450x300/28a745/ffffff?text={{ product.name }}" 
+                                 alt="{{ product.name }}" />
+                            
+                            {% if product.stock_quantity > 0 %}
+                            <div class="badge bg-success position-absolute" style="top: 0.5rem; right: 0.5rem">
+                                <i class="bi bi-check-circle"></i> En stock
+                            </div>
+                            {% endif %}
+                            
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <p class="text-muted small">{{ product.producer.name }}</p>
+                                    <div class="fw-bold text-success fs-5">{{ product.price }} EUR</div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-success" href="{% url 'product_detail' product.id %}">
+                                        <i class="bi bi-eye"></i> Voir détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif producers %}
+            <div class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle"></i> {{ producers|length }} résultat{{ producers|length|pluralize }} trouvé{{ producers|length|pluralize }}
+            </div>
+            
+            <h2 class="mb-4">Producteurs trouvés</h2>
+            <div class="row gx-4 gx-lg-5">
+                {% for producer in producers %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary-custom text-white rounded-circle p-3 me-3" 
+                                         style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-person-badge fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="card-title mb-1">{{ producer.name }}</h5>
+                                    </div>
+                                </div>
+                                
+                                {% if producer.email %}
+                                <p class="text-muted mb-3">
+                                    <i class="bi bi-envelope"></i> {{ producer.email }}
+                                </p>
+                                {% endif %}
+                                
+                                <a href="{% url 'producer_detail' producer.id %}" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-arrow-right-circle"></i> Voir les produits
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

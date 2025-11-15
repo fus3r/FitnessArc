@@ -9,27 +9,45 @@
   <br><a href="{% url 'workouts:session_summary' session.pk %}" class="btn" style="margin-top:0.5rem">Voir le récapitulatif →</a>
 </div>
 {% else %}
-<div class="card" style="text-align:center;margin-bottom:2rem;background:#f8f9fa">
-  <h2 style="font-size:3rem;margin:1rem 0;font-weight:bold;font-family:monospace" id="timer">00:00:00</h2>
-  <div>
-    <button class="btn" id="pauseBtn" onclick="pauseTimer()" style="background:#ffc107">⏸ Pause</button>
-    <button class="btn" id="resumeBtn" onclick="resumeTimer()" style="display:none">▶️ Reprendre</button>
-    <button class="btn" onclick="resetTimer()" style="background:#6c757d">🔄 Réinitialiser</button>
+<div class="timer-card" style="text-align:center;margin-bottom:2rem">
+  <div class="timer-display" id="timer">00:00:00</div>
+  <div class="timer-controls">
+    <button class="timer-btn timer-btn-pause" id="pauseBtn" onclick="pauseTimer()">
+      <svg class="timer-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="6" y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
+      <span class="timer-btn-text">Pause</span>
+    </button>
+    <button class="timer-btn timer-btn-resume" id="resumeBtn" onclick="resumeTimer()" style="display:none">
+      <svg class="timer-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+      <span class="timer-btn-text">Reprendre</span>
+    </button>
+    <button class="timer-btn timer-btn-reset" onclick="resetTimer()">
+      <svg class="timer-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+      </svg>
+      <span class="timer-btn-text">Réinitialiser</span>
+    </button>
   </div>
 </div>
 
 <h3>Ajouter une série</h3>
-<form method="post" style="margin-bottom:1rem">
+<form method="post" style="margin-bottom:1rem" id="addSetForm">
   {% csrf_token %}
   <input type="hidden" name="duration_minutes" id="duration_minutes" value="0">
   <label>Exercice :
-    <select name="exercise_id" required>
-      {% if session.from_template %}
-        {% for item in session.from_template.items.all %}
-          <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
-        {% endfor %}
-      {% endif %}
-    </select>
+    <div class="custom-select">
+      <select name="exercise_id" required>
+        {% if session.from_template %}
+          {% for item in session.from_template.items.all %}
+            <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
   </label>
   <label>Série # :
     <input type="number" name="set_number" min="1" value="{{ session.set_logs.count|add:'1' }}">
@@ -42,6 +60,15 @@
   </label>
   <button type="submit" class="btn" onclick="saveDuration()">Ajouter</button>
 </form>
+<script>
+// Initialize custom select for session form
+document.addEventListener('DOMContentLoaded', () => {
+  const sessionSelect = document.querySelector('#addSetForm .custom-select');
+  if (sessionSelect) {
+    new CustomSelect(sessionSelect);
+  }
+});
+</script>
 {% endif %}
 
 <h3>Logs</h3>
@@ -62,25 +89,327 @@
   </tbody>
 </table>
 
-{% if not session.is_completed and session.set_logs.count > 0 %}
-<div style="margin-top:2rem;text-align:center">
+{% if not session.is_completed %}
+<div class="finish-workout-container" id="finishContainer">
   <form method="post" action="{% url 'workouts:complete_session' session.pk %}" onsubmit="saveDuration()">
     {% csrf_token %}
     <input type="hidden" name="duration_minutes" id="complete_duration_minutes" value="0">
-    <button type="submit" class="btn" style="background:#28a745;font-size:1.2rem;padding:12px 24px">
-      🏁 Terminer la séance
+    <button type="submit" class="btn-finish-workout" id="finishBtn">
+      <svg class="finish-icon" id="finishIcon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>
+      </svg>
+      <span class="finish-text" id="finishText">Terminer la séance</span>
     </button>
   </form>
+  <p class="finish-hint" id="finishHint">Vous pouvez terminer la séance à tout moment</p>
 </div>
 {% endif %}
 
 <style>
-  #timer {
-    color: #0b5ed7;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  .timer-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(99, 102, 241, 0.1) inset,
+      0 0 60px rgba(99, 102, 241, 0.15);
+    position: relative;
+    overflow: hidden;
   }
-  .card {
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+  .timer-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+  }
+  
+  .timer-display {
+    font-size: 5rem;
+    font-weight: 800;
+    margin: 1rem 0 2rem 0;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+    filter: drop-shadow(0 4px 20px rgba(99, 102, 241, 0.4));
+    position: relative;
+    z-index: 1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .timer-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .timer-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+  
+  .timer-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .timer-btn:hover::before {
+    opacity: 1;
+  }
+  
+  .timer-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
+  
+  .timer-btn:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+  
+  .timer-btn-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .timer-btn-pause {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(249, 115, 22, 0.9) 100%);
+    color: #fff;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 
+      0 4px 16px rgba(245, 158, 11, 0.3),
+      0 0 0 1px rgba(245, 158, 11, 0.1) inset;
+  }
+  
+  .timer-btn-pause:hover {
+    box-shadow: 
+      0 8px 24px rgba(245, 158, 11, 0.4),
+      0 0 0 1px rgba(245, 158, 11, 0.2) inset;
+  }
+  
+  .timer-btn-resume {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%);
+    color: #fff;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 
+      0 4px 16px rgba(16, 185, 129, 0.3),
+      0 0 0 1px rgba(16, 185, 129, 0.1) inset;
+  }
+  
+  .timer-btn-resume:hover {
+    box-shadow: 
+      0 8px 24px rgba(16, 185, 129, 0.4),
+      0 0 0 1px rgba(16, 185, 129, 0.2) inset;
+  }
+  
+  .timer-btn-reset {
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.9) 0%, rgba(75, 85, 99, 0.9) 100%);
+    color: #fff;
+    border: 1px solid rgba(107, 114, 128, 0.4);
+    box-shadow: 
+      0 4px 16px rgba(107, 114, 128, 0.3),
+      0 0 0 1px rgba(107, 114, 128, 0.1) inset;
+  }
+  
+  .timer-btn-reset:hover {
+    box-shadow: 
+      0 8px 24px rgba(107, 114, 128, 0.4),
+      0 0 0 1px rgba(107, 114, 128, 0.2) inset;
+  }
+  
+  .finish-workout-container {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+  }
+  
+  .finish-workout-container.finish-mode {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  
+  .finish-workout-container.cancel-mode {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  
+  .finish-workout-container.finish-mode::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  
+  .finish-workout-container.cancel-mode::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  
+  .btn-finish-workout {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 3rem;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .btn-finish-workout.btn-finish {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
+    box-shadow: 
+      0 8px 24px rgba(16, 185, 129, 0.4),
+      0 0 0 1px rgba(16, 185, 129, 0.2) inset,
+      0 0 60px rgba(16, 185, 129, 0.15);
+  }
+  
+  .btn-finish-workout.btn-cancel {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
+    box-shadow: 
+      0 8px 24px rgba(239, 68, 68, 0.4),
+      0 0 0 1px rgba(239, 68, 68, 0.2) inset,
+      0 0 60px rgba(239, 68, 68, 0.15);
+  }
+  
+  .btn-finish-workout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+  }
+  
+  .btn-finish-workout.btn-finish:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      0 12px 36px rgba(16, 185, 129, 0.5),
+      0 0 0 1px rgba(16, 185, 129, 0.3) inset,
+      0 0 80px rgba(16, 185, 129, 0.2);
+  }
+  
+  .btn-finish-workout.btn-cancel:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      0 12px 36px rgba(239, 68, 68, 0.5),
+      0 0 0 1px rgba(239, 68, 68, 0.3) inset,
+      0 0 80px rgba(239, 68, 68, 0.2);
+  }
+  
+  .btn-finish-workout:hover::before {
+    opacity: 1;
+  }
+  
+  .btn-finish-workout:active {
+    transform: translateY(-2px) scale(1);
+  }
+  
+  .finish-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+  
+  .finish-text {
+    letter-spacing: 0.02em;
+  }
+  
+  .finish-hint {
+    position: relative;
+    z-index: 1;
+    margin-top: 1rem;
+    color: rgba(229, 231, 235, 0.7);
+    font-size: 0.95rem;
+    font-style: italic;
+  }
+  
+  @media (max-width: 768px) {
+    .timer-display {
+      font-size: 3.5rem;
+    }
+    
+    .timer-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+    }
+    
+    .btn-finish-workout {
+      padding: 1rem 2rem;
+      font-size: 1.15rem;
+    }
+    
+    .finish-icon {
+      font-size: 1.5rem;
+    }
   }
 </style>
 
@@ -132,6 +461,39 @@ function updateDisplay() {
   const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
   const secs = (seconds % 60).toString().padStart(2, '0');
   document.getElementById('timer').textContent = `${hrs}:${mins}:${secs}`;
+  
+  // Mettre à jour le bouton selon la durée
+  updateFinishButton();
+}
+
+function updateFinishButton() {
+  const finishBtn = document.getElementById('finishBtn');
+  const finishIcon = document.getElementById('finishIcon');
+  const finishText = document.getElementById('finishText');
+  const finishContainer = document.getElementById('finishContainer');
+  const finishHint = document.getElementById('finishHint');
+  
+  if (!finishBtn) return;
+  
+  if (seconds < 30) {
+    // Moins de 30 secondes : mode Annuler (icône X)
+    finishIcon.innerHTML = '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2"/>';
+    finishText.textContent = 'Annuler le workout';
+    finishBtn.classList.add('btn-cancel');
+    finishBtn.classList.remove('btn-finish');
+    finishContainer.classList.add('cancel-mode');
+    finishContainer.classList.remove('finish-mode');
+    finishHint.textContent = 'Le workout sera annulé (< 30 secondes)';
+  } else {
+    // 30 secondes ou plus : mode Terminer (icône drapeau)
+    finishIcon.innerHTML = '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" fill="currentColor"/>';
+    finishText.textContent = 'Terminer la séance';
+    finishBtn.classList.add('btn-finish');
+    finishBtn.classList.remove('btn-cancel');
+    finishContainer.classList.add('finish-mode');
+    finishContainer.classList.remove('cancel-mode');
+    finishHint.textContent = 'Vous pouvez terminer la séance à tout moment';
+  }
 }
 
 function saveDuration() {
@@ -144,6 +506,7 @@ function saveDuration() {
 
 window.addEventListener('load', () => {
   startTimer();
+  updateFinishButton();
 });
 </script>
 {% endif %}

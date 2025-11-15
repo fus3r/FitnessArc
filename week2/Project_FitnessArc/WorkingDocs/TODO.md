@@ -23,8 +23,6 @@
 - [x] Icône Friends fancy dans navbar avec compteur de notifications ✅
 - [x] Dashboard ami visible uniquement si amis acceptés ✅
 - [x] Recherche utilisateurs en temps réel ✅
-- [x] **Commande `create_demo_users` pour partager les comptes entre collaborateurs** ✅
-- [x] **README.md complet avec setup et comptes de test** ✅
 
 ---
 

@@ -1,0 +1,101 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ producer.name }} - Comptoir Local Saclay{% endblock %}
+{% block nav_producers %}active{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Producer Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary-custom text-white rounded-circle p-4 me-4" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-person-badge fs-1"></i>
+                        </div>
+                        <div>
+                            <h1 class="display-5 mb-2">{{ producer.name }}</h1>
+                            {% if producer.email %}
+                            <p class="lead text-muted mb-0">
+                                <i class="bi bi-envelope"></i> {{ producer.email }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Producer's Products -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="bi bi-basket"></i> Produits de {{ producer.name }}
+            </h2>
+        </div>
+    </div>
+    
+    {% if products %}
+    <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4">
+        {% for product in products %}
+        <div class="col mb-5">
+            <div class="card h-100">
+                <!-- Product image-->
+                <img class="card-img-top" 
+                     src="https://via.placeholder.com/450x300/28a745/ffffff?text={{ product.name }}" 
+                     alt="{{ product.name }}" />
+                
+                <!-- Stock badge -->
+                {% if product.stock_quantity > 0 %}
+                <div class="badge bg-success position-absolute" style="top: 0.5rem; right: 0.5rem">
+                    <i class="bi bi-check-circle"></i> En stock
+                </div>
+                {% else %}
+                <div class="badge bg-danger position-absolute" style="top: 0.5rem; right: 0.5rem">
+                    Rupture
+                </div>
+                {% endif %}
+                
+                <!-- Product details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+                        <div class="fw-bold text-success fs-5">{{ product.price }} EUR</div>
+                        <small class="text-muted">Stock: {{ product.stock_quantity }} unités</small>
+                    </div>
+                </div>
+                
+                <!-- Product actions-->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center d-grid gap-2">
+                        <a class="btn btn-outline-success" href="{% url 'product_detail' product.id %}">
+                            <i class="bi bi-eye"></i> Voir détails
+                        </a>
+                        {% if product.stock_quantity > 0 %}
+                        <a class="btn btn-success" href="{% url 'add_to_cart' product.id %}">
+                            <i class="bi bi-cart-plus"></i> Ajouter au panier
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> Ce producteur n'a pas encore de produits référencés.
+    </div>
+    {% endif %}
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'producers_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Retour aux producteurs
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

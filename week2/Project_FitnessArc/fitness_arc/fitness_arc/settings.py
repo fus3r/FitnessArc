@@ -137,3 +137,7 @@ LOGOUT_REDIRECT_URL = "/accounts/login/"  # ← Rediriger vers login après déc
 # Media files (uploaded content)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Debug toolbar (optional, for development)
+if DEBUG:
+    INTERNAL_IPS = ['127.0.0.1']

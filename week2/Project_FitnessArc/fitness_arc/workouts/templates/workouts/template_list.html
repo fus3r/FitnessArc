@@ -1,57 +1,238 @@
 {% extends "base.html" %}
-{% block title %}Mes templates{% endblock %}
+{% block title %}Mes Workouts{% endblock %}
 {% block content %}
-<h1>Mes templates</h1>
 
-<p><a class="btn" href="{% url 'workouts:template_create' %}">+ Nouveau template</a></p>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem">
+  <div>
+    <h1 style="margin:0 0 0.5rem">Mes Workouts</h1>
+    <p style="color:var(--text-dim);margin:0">Gérez vos programmes d'entraînement</p>
+  </div>
+  <a href="{% url 'workouts:template_create' %}" class="btn" style="display:flex;align-items:center;gap:0.5rem">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Nouveau Workout
+  </a>
+</div>
 
-<h2 style="margin-top:2rem">📝 Mes templates personnalisés</h2>
-<table>
-  <thead>
-    <tr><th>Nom</th><th>Items</th><th>Actions</th></tr>
-  </thead>
-  <tbody>
+<div class="card" style="margin-bottom:2rem">
+  <h3 style="margin:0 0 1.5rem">Mes Programmes Personnalisés</h3>
+  
+  {% if my_templates %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem">
     {% for tpl in my_templates %}
-      <tr>
-        <td><a href="{% url 'workouts:template_detail' tpl.pk %}">{{ tpl.name }}</a></td>
-        <td>{{ tpl.items.count }}</td>
-        <td>
-          {% if tpl.items.count %}
-            <a class="btn" href="{% url 'workouts:start_session' tpl.pk %}">Démarrer une séance</a>
-            <a class="btn" href="{% url 'workouts:template_detail' tpl.pk %}">Gérer les items</a>
-          {% else %}
-            <a class="btn" href="{% url 'workouts:template_detail' tpl.pk %}">Ajouter des items</a>
-          {% endif %}
-          <a href="{% url 'workouts:template_delete' tpl.pk %}" class="btn" style="background:#dc3545;margin-left:0.5rem">Supprimer</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3"><em>Aucun template personnel. Créez-en un ou utilisez les templates publics ci-dessous.</em></td></tr>
+    <div class="template-card personal-template">
+      <div class="template-header">
+        <h4 style="margin:0;font-size:1.1rem;font-weight:600">{{ tpl.name }}</h4>
+        <span class="badge badge-primary">PERSO</span>
+      </div>
+      
+      <div class="template-stats">
+        <div class="stat-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+          <span>{{ tpl.items.count }} exercice{{ tpl.items.count|pluralize }}</span>
+        </div>
+        <div class="stat-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>~{{ tpl.items.count|add:"10"|floatformat:"0" }} min</span>
+        </div>
+        <div class="stat-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+          </svg>
+          <span>{{ tpl.items.aggregate.total_sets|default:"0" }} série{{ tpl.items.aggregate.total_sets|default:"0"|pluralize }}</span>
+        </div>
+      </div>
+      
+      <div class="template-actions">
+        <a href="{% url 'workouts:template_detail' tpl.pk %}" class="btn-secondary">
+          Modifier
+        </a>
+        <a href="{% url 'workouts:start_session' tpl.pk %}" class="btn-primary">
+          Démarrer
+        </a>
+      </div>
+    </div>
     {% endfor %}
-  </tbody>
-</table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:3rem 1rem;background:rgba(99,102,241,0.05);border:1px dashed rgba(99,102,241,0.3);border-radius:12px">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-dim);margin-bottom:1rem">
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+    </svg>
+    <p style="color:var(--text-dim);margin:0 0 1.5rem;font-size:1.05rem">
+      Vous n'avez pas encore de workout personnalisé
+    </p>
+    <a href="{% url 'workouts:template_create' %}" class="btn">
+      Créer mon premier workout
+    </a>
+  </div>
+  {% endif %}
+</div>
 
-<h2 style="margin-top:3rem">🌟 Templates publics (Push/Pull/Legs)</h2>
-<table>
-  <thead>
-    <tr><th>Nom</th><th>Items</th><th>Actions</th></tr>
-  </thead>
-  <tbody>
+{% if public_templates %}
+<div class="card" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.08));border:1px solid rgba(245,158,11,0.3)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+    <h3 style="margin:0;display:flex;align-items:center;gap:0.75rem">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warning)">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+      Templates Publics
+    </h3>
+    <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--warning);border:1px solid rgba(245,158,11,0.4)">
+      {{ public_templates|length }} disponible{{ public_templates|length|pluralize }}
+    </span>
+  </div>
+  <p style="color:var(--text-dim);font-size:0.95rem;margin-bottom:1.5rem">
+    Programmes pré-conçus pour débuter rapidement
+  </p>
+  
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem">
     {% for tpl in public_templates %}
-      <tr>
-        <td>
-          <a href="{% url 'workouts:template_detail' tpl.pk %}">{{ tpl.name }}</a>
-          <span style="background:#ffc107;color:#000;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-left:0.5rem">PUBLIC</span>
-        </td>
-        <td>{{ tpl.items.count }}</td>
-        <td>
-          <a class="btn" href="{% url 'workouts:start_session' tpl.pk %}">Démarrer une séance</a>
-          <a class="btn" style="background:#6c757d" href="{% url 'workouts:template_detail' tpl.pk %}">Voir le détail</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3"><em>Aucun template public disponible.</em></td></tr>
+    <div class="template-card public-template">
+      <div class="template-header">
+        <h4 style="margin:0;font-size:1.1rem;font-weight:600">{{ tpl.name }}</h4>
+        <span class="badge badge-warning">PUBLIC</span>
+      </div>
+      
+      <div class="template-stats">
+        <div class="stat-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+          <span>{{ tpl.items.count }} exercice{{ tpl.items.count|pluralize }}</span>
+        </div>
+        <div class="stat-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>~{{ tpl.items.count|add:"10"|floatformat:"0" }} min</span>
+        </div>
+      </div>
+      
+      <div class="template-actions">
+        <a href="{% url 'workouts:template_detail' tpl.pk %}" class="btn-secondary">
+          Voir détails
+        </a>
+        <a href="{% url 'workouts:start_session' tpl.pk %}" class="btn-primary">
+          Démarrer
+        </a>
+      </div>
+    </div>
     {% endfor %}
-  </tbody>
-</table>
+  </div>
+</div>
+{% endif %}
+
+<style>
+.template-card {
+  background:rgba(26,26,36,0.6);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(99,102,241,0.15);
+  border-radius:16px;
+  padding:1.5rem;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  display:flex;
+  flex-direction:column;
+  gap:1.25rem;
+}
+
+.template-card:hover {
+  border-color:rgba(99,102,241,0.4);
+  transform:translateY(-4px);
+  box-shadow:0 12px 32px rgba(0,0,0,0.5);
+}
+
+.public-template {
+  border-color:rgba(245,158,11,0.2);
+}
+
+.public-template:hover {
+  border-color:rgba(245,158,11,0.5);
+  box-shadow:0 12px 32px rgba(245,158,11,0.2);
+}
+
+.template-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:start;
+  gap:1rem;
+}
+
+.template-stats {
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem;
+  padding:1rem 0;
+  border-top:1px solid rgba(99,102,241,0.1);
+  border-bottom:1px solid rgba(99,102,241,0.1);
+}
+
+.stat-item {
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  color:var(--text-dim);
+  font-size:0.9rem;
+}
+
+.stat-item svg {
+  color:var(--primary);
+  opacity:0.7;
+}
+
+.template-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0.75rem;
+  margin-top:auto;
+}
+
+.btn-secondary, .btn-primary {
+  padding:0.625rem 1rem;
+  border-radius:8px;
+  text-decoration:none;
+  text-align:center;
+  font-weight:500;
+  font-size:0.9rem;
+  transition:all 0.2s;
+  border:none;
+  cursor:pointer;
+}
+
+.btn-secondary {
+  background:rgba(71,85,105,0.8);
+  color:var(--text);
+  border:1px solid rgba(100,116,139,0.3);
+}
+
+.btn-secondary:hover {
+  background:rgba(71,85,105,1);
+  transform:translateY(-1px);
+}
+
+.btn-primary {
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;
+  box-shadow:0 2px 8px rgba(99,102,241,0.25);
+}
+
+.btn-primary:hover {
+  box-shadow:0 4px 12px rgba(99,102,241,0.4);
+  transform:translateY(-1px);
+}
+
+.badge-warning {
+  background:rgba(245,158,11,0.2);
+  color:var(--warning);
+  border:1px solid rgba(245,158,11,0.4);
+}
+</style>
 {% endblock %}

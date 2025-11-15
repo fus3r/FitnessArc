@@ -1,0 +1,153 @@
+{% extends 'store/base.html' %}
+
+{% block title %}À propos - Comptoir Local Saclay{% endblock %}
+{% block nav_about %}active{% endblock %}
+
+{% block header %}
+<header class="bg-primary-custom py-5 text-white">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center">
+            <h1 class="display-4 fw-bolder">À propos du Comptoir Local</h1>
+            <p class="lead fw-normal mb-0">Notre mission : Connecter producteurs locaux et consommateurs</p>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <!-- Notre Mission -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="mb-4">
+                            <i class="bi bi-bullseye text-success"></i> Notre Mission
+                        </h2>
+                        <p class="lead">
+                            Le Comptoir Local de Paris Saclay est une plateforme dédiée à la promotion 
+                            des produits locaux et de qualité. Nous mettons en relation directe les 
+                            producteurs de la région avec les consommateurs soucieux de manger local 
+                            et responsable.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Nos Valeurs -->
+        <div class="row mb-5">
+            <div class="col-12 text-center mb-4">
+                <h2>
+                    <i class="bi bi-heart text-success"></i> Nos Valeurs
+                </h2>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success text-white rounded-circle mx-auto mb-3" 
+                             style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-geo-alt fs-1"></i>
+                        </div>
+                        <h4 class="mb-3">Local</h4>
+                        <p class="text-muted">
+                            Nous privilégions les circuits courts et les producteurs de la région 
+                            parisienne pour réduire l'empreinte carbone et soutenir l'économie locale.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success text-white rounded-circle mx-auto mb-3" 
+                             style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-award fs-1"></i>
+                        </div>
+                        <h4 class="mb-3">Qualité</h4>
+                        <p class="text-muted">
+                            Tous nos produits sont sélectionnés avec soin pour leur fraîcheur 
+                            et leur qualité exceptionnelle.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success text-white rounded-circle mx-auto mb-3" 
+                             style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-people fs-1"></i>
+                        </div>
+                        <h4 class="mb-3">Transparence</h4>
+                        <p class="text-muted">
+                            Nous mettons en avant chaque producteur et l'origine de chaque produit 
+                            pour une consommation en toute confiance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notre Histoire -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="mb-4">
+                            <i class="bi bi-clock-history text-success"></i> Notre Histoire
+                        </h2>
+                        <p>
+                            Fondé en 2024, le Comptoir Local de Paris Saclay est né de la volonté 
+                            de créer un lien direct entre les producteurs locaux et les habitants 
+                            du plateau de Saclay.
+                        </p>
+                        <p>
+                            Face à la demande croissante pour des produits frais, locaux et de qualité, 
+                            nous avons développé cette plateforme pour faciliter l'accès aux meilleurs 
+                            produits de notre terroir.
+                        </p>
+                        <p class="mb-0">
+                            Aujourd'hui, nous sommes fiers de compter plusieurs producteurs partenaires 
+                            et de proposer une large gamme de produits frais et locaux.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm bg-light">
+                    <div class="card-body p-5 text-center">
+                        <h2 class="mb-4">
+                            <i class="bi bi-envelope text-success"></i> Nous Contacter
+                        </h2>
+                        <p class="lead mb-4">
+                            Une question ? Une suggestion ? N'hésitez pas à nous contacter !
+                        </p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <i class="bi bi-envelope-fill text-success fs-4"></i>
+                                <p class="mb-0 mt-2">
+                                    <strong>Email</strong><br>
+                                    contact@comptoir-saclay.fr
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <i class="bi bi-telephone-fill text-success fs-4"></i>
+                                <p class="mb-0 mt-2">
+                                    <strong>Téléphone</strong><br>
+                                    01 23 45 67 89
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
