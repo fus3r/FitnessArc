@@ -564,7 +564,19 @@
       letter-spacing: 0.08em;
       opacity: 0.8;
     ">
-      Mois en cours • Cliquez pour explorer
+       <a href="?year={{ prev_month_year }}&month={{ prev_month_month }}"
+         style="color:#9ca3af;text-decoration:none;padding:0.2rem 0.5rem;border-radius:999px;border:1px solid #374151;margin-right:0.5rem;">
+        ‹ Mois précédent
+      </a>
+
+      <span style="color:#e5e7eb;font-weight:700;margin:0 0.5rem;">
+        {{ current_month_label }}
+      </span>
+
+      <a href="?year={{ next_month_year }}&month={{ next_month_month }}"
+         style="color:#9ca3af;text-decoration:none;padding:0.2rem 0.5rem;border-radius:999px;border:1px solid #374151;margin-left:0.5rem;">
+        Mois suivant ›
+      </a>
     </p>
   </div>
 
