@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recettes - FitnessArc{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="bi bi-book"></i> Recettes Suggérées
+            </h1>
+        </div>
+    </div>
+
+    <!-- Résumé nutritionnel -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Objectif Calories</h6>
+                    <h3 class="mb-0">{{ daily_goal.kcal }}</h3>
+                    <small class="text-muted">kcal/jour</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Consommé Aujourd'hui</h6>
+                    <h3 class="mb-0">{{ current_intake.kcal|floatformat:0 }}</h3>
+                    <small class="text-muted">kcal</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center {% if remaining.kcal < 0 %}bg-danger text-white{% endif %}">
+                <div class="card-body">
+                    <h6 class="{% if remaining.kcal < 0 %}text-white{% else %}text-muted{% endif %} mb-2">Restant</h6>
+                    <h3 class="mb-0">{{ remaining.kcal|floatformat:0 }}</h3>
+                    <small class="{% if remaining.kcal < 0 %}text-white{% else %}text-muted{% endif %}">kcal</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Objectif</h6>
+                    <h3 class="mb-0">
+                        {% if user_goal == 'bulk' %}
+                            <span class="badge bg-success">Prise de masse</span>
+                        {% elif user_goal == 'cut' %}
+                            <span class="badge bg-warning">Perte de poids</span>
+                        {% else %}
+                            <span class="badge bg-info">Maintien</span>
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Macros restantes -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <small class="text-muted">Protéines restantes</small>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ remaining.protein|floatformat:0 }}g</h5>
+                        <span class="text-muted">/ {{ daily_goal.protein }}g</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 5px;">
+                        <div class="progress-bar bg-danger" style="width: {{ current_intake.protein|floatformat:0|add:'0' }}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <small class="text-muted">Glucides restants</small>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ remaining.carbs|floatformat:0 }}g</h5>
+                        <span class="text-muted">/ {{ daily_goal.carbs }}g</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 5px;">
+                        <div class="progress-bar bg-warning" style="width: {{ current_intake.carbs|floatformat:0|add:'0' }}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <small class="text-muted">Lipides restants</small>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ remaining.fat|floatformat:0 }}g</h5>
+                        <span class="text-muted">/ {{ daily_goal.fat }}g</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 5px;">
+                        <div class="progress-bar bg-success" style="width: {{ current_intake.fat|floatformat:0|add:'0' }}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="meal_type" class="form-label">Type de repas</label>
+                            <select name="meal_type" id="meal_type" class="form-select">
+                                <option value="">Tous</option>
+                                {% for value, label in meal_types %}
+                                <option value="{{ value }}" {% if request.GET.meal_type == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="difficulty" class="form-label">Difficulté</label>
+                            <select name="difficulty" id="difficulty" class="form-select">
+                                <option value="">Toutes</option>
+                                {% for value, label in difficulties %}
+                                <option value="{{ value }}" {% if request.GET.difficulty == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-funnel"></i> Filtrer
+                            </button>
+                            <a href="{% url 'recipe_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Réinitialiser
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des recettes -->
+    <div class="row">
+        {% if recipes %}
+            {% for recipe in recipes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    {% if recipe.image_url %}
+                    <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recipe.name }}</h5>
+                        
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ recipe.get_meal_type_display }}</span>
+                            <span class="badge bg-secondary">{{ recipe.get_difficulty_display }}</span>
+                        </div>
+                        
+                        <p class="card-text text-muted small">
+                            {{ recipe.description|truncatewords:20 }}
+                        </p>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-3">
+                                <small class="text-muted d-block">Temps</small>
+                                <strong>{{ recipe.total_time_minutes }}min</strong>
+                            </div>
+                            <div class="col-3">
+                                <small class="text-muted d-block">Kcal</small>
+                                <strong>{{ recipe.kcal_per_serving|floatformat:0 }}</strong>
+                            </div>
+                            <div class="col-3">
+                                <small class="text-muted d-block">Prot.</small>
+                                <strong>{{ recipe.protein_per_serving|floatformat:0 }}g</strong>
+                            </div>
+                            <div class="col-3">
+                                <small class="text-muted d-block">Portions</small>
+                                <strong>{{ recipe.servings }}</strong>
+                            </div>
+                        </div>
+                        
+                        <a href="{% url 'recipe_detail' recipe.slug %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-eye"></i> Voir la recette
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Aucune recette trouvée avec ces critères.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.hover-shadow {
+    transition: box-shadow 0.3s ease;
+}
+.hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+</style>
+{% endblock %}
