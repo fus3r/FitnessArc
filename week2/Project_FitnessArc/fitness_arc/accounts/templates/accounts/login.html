@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Connexion{% endblock %}
+
 {% block content %}
 <div class="card">
   <h1>Se connecter</h1>
+
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Connexion</button>
+
+    <div class="actions">
+      <button type="submit" class="btn">Connexion</button>
+      <a href="{% url 'accounts:password_reset' %}" class="btn btn-ghost">Mot de passe oublié ?</a>
+      <a href="{% url 'accounts:signup' %}" class="btn btn-secondary">Créer un compte</a>
+    </div>
   </form>
-  <p>Pas de compte ? <a href="{% url 'accounts:signup' %}">Créer un compte</a></p>
 </div>
 {% endblock %}
