@@ -6,6 +6,5 @@ class AccountsConfig(AppConfig):
     name = 'accounts'
 
     def ready(self):
-        # Enregistre les signaux au démarrage de l’app
-        from . import signals  # noqa: F401
+        from . import signals  
 
