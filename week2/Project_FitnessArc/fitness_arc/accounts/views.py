@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User  # ← AJOUTER
+from django.contrib.auth.models import User  
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -8,9 +8,27 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, UpdateView
 from django.db.models import Q
-
+from django.conf import settings
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import PasswordChangeFormFR
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.views import PasswordChangeView  
+from django.urls import reverse
+from .tokens import activation_token
 from .forms import SignupForm, ProfileForm
 from .models import Profile, Friendship
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 
 class SignupView(View):
@@ -21,20 +39,35 @@ class SignupView(View):
 
     def post(self, request):
         form = SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save()  # crée l'user (+ profile via signal) et applique le goal
-            # Authentifie et connecte
-            user_auth = authenticate(
-                request,
-                username=user.username,
-                password=form.cleaned_data["password1"],
-            )
-            if user_auth is not None:
-                login(request, user_auth)
-            messages.success(request, "Compte créé avec succès. Bienvenue !")
-            return redirect("accounts:profile")  # → /accounts/profile/
-        return render(request, self.template_name, {"form": form})
 
+        if not form.is_valid():
+            logger.error("Signup errors: %s", form.errors.as_json())
+            messages.error(request, "Le formulaire contient des erreurs. Merci de corriger et réessayer.")
+            return render(request, self.template_name, {"form": form})
+
+        user = form.save()
+
+        if user.is_active: 
+            user.is_active = False
+            user.save(update_fields=["is_active"])
+
+        try:
+            send_activation_email(request, user)
+        except Exception:
+            logger.exception("Erreur d'envoi de l'email d'activation")
+
+            if getattr(settings, "DEBUG", False):
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = activation_token.make_token(user)
+                activate_url = f"{request.scheme}://{request.get_host()}{reverse('accounts:activate', args=[uid, token])}"
+                messages.warning(request, f"Email non envoyé. Active ton compte via ce lien DEV : {activate_url}")
+                return redirect("accounts:activation_sent")
+
+            messages.error(request, "Impossible d'envoyer l'email d'activation. Réessaie plus tard.")
+            return render(request, self.template_name, {"form": form})
+
+        messages.success(request, "Compte créé ! Vérifie ta boîte mail pour activer ton compte.")
+        return redirect("accounts:activation_sent")
 
 class ProfileDetailView(LoginRequiredMixin, TemplateView):
     template_name = "accounts/profile.html"
@@ -64,19 +97,15 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 @login_required
 def friends_list(request):
     """Liste des amis + demandes en attente"""
-    # Amis acceptés (bidirectionnel)
     friends = User.objects.filter(
         Q(friendships_received__from_user=request.user, friendships_received__status='accepted') |
         Q(friendships_sent__to_user=request.user, friendships_sent__status='accepted')
     ).distinct()
     
-    # Demandes reçues en attente
     pending_requests = Friendship.objects.filter(to_user=request.user, status='pending')
     
-    # Demandes envoyées en attente
     sent_requests = Friendship.objects.filter(from_user=request.user, status='pending')
     
-    # Tous les utilisateurs (pour recherche)
     all_users = User.objects.exclude(pk=request.user.pk).order_by('username')
     
     context = {
@@ -96,7 +125,6 @@ def send_friend_request(request, user_id):
         messages.error(request, "Vous ne pouvez pas vous ajouter vous-même !")
         return redirect('accounts:friends_list')
     
-    # Vérifier si une demande existe déjà
     existing = Friendship.objects.filter(
         Q(from_user=request.user, to_user=to_user) |
         Q(from_user=to_user, to_user=request.user)
@@ -147,7 +175,6 @@ def friend_dashboard(request, user_id):
     """Voir le dashboard d'un ami"""
     friend = get_object_or_404(User, pk=user_id)
     
-    # Vérifier qu'ils sont amis
     is_friend = Friendship.objects.filter(
         Q(from_user=request.user, to_user=friend, status='accepted') |
         Q(from_user=friend, to_user=request.user, status='accepted')
@@ -157,9 +184,87 @@ def friend_dashboard(request, user_id):
         messages.error(request, "Vous devez être ami avec cet utilisateur pour voir son dashboard")
         return redirect('accounts:friends_list')
     
-    # Importer les données dashboard
     from dashboard.services import get_dashboard_data
     dashboard_data = get_dashboard_data(friend)
     dashboard_data['friend'] = friend
     
     return render(request, 'accounts/friend_dashboard.html', dashboard_data)
+
+
+
+class PasswordChangeProfileView(LoginRequiredMixin, PasswordChangeView):
+    template_name = "accounts/password_change.html"  # ton fichier existe déjà
+    success_url = reverse_lazy("accounts:profile")
+    form_class = PasswordChangeFormFR
+    login_url = "accounts:login"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Mot de passe mis à jour.")
+        return response
+
+
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
+def send_activation_email(request, user):
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = activation_token.make_token(user)
+    scheme = "https" if request.is_secure() else "http"
+    domain = request.get_host()
+    activate_url = f"{scheme}://{domain}{reverse('accounts:activate', args=[uid, token])}"
+
+    context = {
+        "user": user,
+        "activate_url": activate_url,
+        "project_name": "Fitness Arc",
+    }
+
+    try:
+        subject = render_to_string("accounts/email/activation_subject.txt", context).strip()
+    except Exception:
+        subject = f"Active ton compte sur Fitness Arc"
+
+    try:
+        text_body = render_to_string("accounts/email/activation_body.txt", context)
+    except Exception:
+        text_body = f"Bonjour {user.username},\n\nActive ton compte : {activate_url}\n"
+
+    try:
+        html_body = render_to_string("accounts/email/activation_body.html", context)
+    except Exception:
+        html_body = f"<p>Bonjour <strong>{user.username}</strong>,</p><p><a href='{activate_url}'>Activer mon compte</a></p>"
+
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", settings.EMAIL_HOST_USER)
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=text_body,
+        from_email=from_email,
+        to=[user.email],
+    )
+    email.attach_alternative(html_body, "text/html")
+    email.send(fail_silently=False)  
+
+class ActivateAccountView(View):
+    template_invalid = "accounts/activation_invalid.html"
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except Exception:
+            user = None
+
+        if user is not None and activation_token.check_token(user, token):
+            if not user.is_active:
+                user.is_active = True
+                user.save(update_fields=["is_active"])
+            messages.success(request, "Ton compte est activé ✅ Bienvenue !")
+            login(request, user)
+            return redirect("accounts:profile")
+        else:
+            return render(request, self.template_invalid, {})
