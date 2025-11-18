@@ -187,6 +187,15 @@
                  inset 0 1px 2px rgba(255,255,255,0.05);
       position:relative;
     }
+    .errorlist{color:var(--danger);list-style:none;margin:.25rem 0 .5rem;padding:0;font-weight:600}
+
+    .auth-footer{
+      display:flex;
+      gap:.5rem;
+      align-items:center;
+      margin-top:.75rem;
+    }
+    .text-dim{ color: var(--text-dim); font-size: 0.95rem; }
     .nav-friends-icon a::before{
       content:'';position:absolute;inset:-2px;border-radius:50%;
       background:conic-gradient(from 0deg, transparent, rgba(99,102,241,0.6), transparent);
@@ -418,6 +427,19 @@
       background:linear-gradient(135deg,var(--danger),#dc2626);
       box-shadow:0 2px 8px rgba(239,68,68,0.25);
     }
+    .actions{
+  display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; margin-top:.75rem;
+    }
+    .btn-ghost{
+      background:transparent;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.15);
+    }
+    .btn-ghost:hover{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.35);
+    }
+
     table{
       width:100%;border-collapse:separate;border-spacing:0;
       margin:1.5rem 0;border-radius:16px;overflow:hidden;
