@@ -1,0 +1,11 @@
+Bonjour {{ user.username }},
+
+Bienvenue sur {{ project_name }} !
+
+Pour activer ton compte, clique sur le lien suivant :
+{{ activate_url }}
+
+Si tu n'es pas à l'origine de cette inscription, ignore simplement cet email.
+
+À très vite,
+L’équipe {{ project_name }}

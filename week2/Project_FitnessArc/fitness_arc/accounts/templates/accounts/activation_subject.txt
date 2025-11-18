@@ -1,0 +1,1 @@
+Active ton compte sur {{ project_name }}

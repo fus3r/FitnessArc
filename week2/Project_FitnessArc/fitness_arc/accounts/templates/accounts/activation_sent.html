@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Active ton compte{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Vérifie ta boîte mail 📧</h1>
+  <p class="text-dim">
+    Nous t’avons envoyé un lien d’activation. Clique dessus pour activer ton compte.
+  </p>
+  <p class="text-dim">Tu n’as rien reçu ? Pense à vérifier tes spams.</p>
+  <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Retour à la connexion</a>
+</div>
+{% endblock %}

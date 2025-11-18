@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="fr">
+  <body style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
+    <h2>Bienvenue sur {{ project_name }} 👋</h2>
+    <p>Bonjour <strong>{{ user.username }}</strong>,</p>
+    <p>Pour activer ton compte, clique sur le bouton ci-dessous :</p>
+    <p>
+      <a href="{{ activate_url }}" style="background:#6366f1;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;display:inline-block">
+        Activer mon compte
+      </a>
+    </p>
+    <p>Ou copie/colle ce lien dans ton navigateur :</p>
+    <p><a href="{{ activate_url }}">{{ activate_url }}</a></p>
+    <hr>
+    <p style="color:#666;font-size:13px">
+      Si tu n'es pas à l'origine de cette inscription, ignore cet email.
+    </p>
+  </body>
+</html>
