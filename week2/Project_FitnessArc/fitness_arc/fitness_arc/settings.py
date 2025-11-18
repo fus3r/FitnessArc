@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,17 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # Fitness Arc Apps
-    'accounts.apps.AccountsConfig',      # ← Mergé par Personne A
-    'workouts.apps.WorkoutsConfig',      # ← Ton app (Personne B)
-    'nutrition.apps.NutritionConfig',    # ← À venir (Personne D)
-    'dashboard.apps.DashboardConfig',    # ← À venir (Personne E)
+    
+    'accounts.apps.AccountsConfig',      
+    'workouts.apps.WorkoutsConfig',      
+    'nutrition.apps.NutritionConfig',    
+    'dashboard.apps.DashboardConfig',    
     'common.apps.CommonConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -69,7 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
-                'accounts.context_processors.friends_requests_count',  # ← AJOUTER
+                'accounts.context_processors.friends_requests_count',  
             ],
         },
     },
@@ -111,9 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
@@ -131,13 +132,23 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/dashboard/"  # ← Rediriger vers dashboard après connexion
-LOGOUT_REDIRECT_URL = "/accounts/login/"  # ← Rediriger vers login après déconnexion
+LOGIN_REDIRECT_URL = "/dashboard/"  
+LOGOUT_REDIRECT_URL = "/accounts/login/"  
 
-# Media files (uploaded content)
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Debug toolbar (optional, for development)
+
 if DEBUG:
     INTERNAL_IPS = ['127.0.0.1']
+
+import os
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+DEFAULT_FROM_EMAIL = "Fitness Arc <tototest024@gmail.com>"
