@@ -1,0 +1,157 @@
+[
+  {
+    "model": "nutrition.recipe",
+    "pk": 1,
+    "fields": {
+      "name": "Omelette protéinée",
+      "slug": "omelette-proteinee",
+      "description": "Parfaite pour le petit-déjeuner, riche en protéines et rapide à préparer",
+      "instructions": "1. Battre les œufs dans un bol avec du sel et du poivre\n2. Chauffer l'huile dans une poêle\n3. Verser les œufs et cuire à feu moyen\n4. Ajouter le fromage avant de plier l'omelette\n5. Servir chaud",
+      "prep_time_minutes": 5,
+      "cook_time_minutes": 5,
+      "servings": 1,
+      "difficulty": "easy",
+      "meal_type": "breakfast",
+      "image_url": "",
+      "is_public": true,
+      "created_by": null,
+      "created_at": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "nutrition.recipe",
+    "pk": 2,
+    "fields": {
+      "name": "Bowl de poulet et riz",
+      "slug": "bowl-poulet-riz",
+      "description": "Repas complet et équilibré, idéal pour la prise de masse",
+      "instructions": "1. Cuire le riz selon les instructions\n2. Faire griller le poulet avec un peu d'huile d'olive\n3. Couper le poulet en morceaux\n4. Assembler le bowl avec le riz, le poulet et les légumes\n5. Assaisonner selon vos goûts",
+      "prep_time_minutes": 10,
+      "cook_time_minutes": 20,
+      "servings": 1,
+      "difficulty": "easy",
+      "meal_type": "lunch",
+      "image_url": "",
+      "is_public": true,
+      "created_by": null,
+      "created_at": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "nutrition.recipe",
+    "pk": 3,
+    "fields": {
+      "name": "Salade de thon complète",
+      "slug": "salade-thon-complete",
+      "description": "Salade fraîche et protéinée, parfaite pour la perte de poids",
+      "instructions": "1. Laver et couper la salade\n2. Égoutter le thon\n3. Couper les tomates en dés\n4. Mélanger tous les ingrédients\n5. Assaisonner avec l'huile d'olive et le citron",
+      "prep_time_minutes": 10,
+      "cook_time_minutes": 0,
+      "servings": 1,
+      "difficulty": "easy",
+      "meal_type": "lunch",
+      "image_url": "",
+      "is_public": true,
+      "created_by": null,
+      "created_at": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "nutrition.recipe",
+    "pk": 4,
+    "fields": {
+      "name": "Smoothie protéiné banane",
+      "slug": "smoothie-proteine-banane",
+      "description": "Collation liquide idéale post-entraînement",
+      "instructions": "1. Mettre tous les ingrédients dans le blender\n2. Mixer jusqu'à obtenir une texture lisse\n3. Servir immédiatement",
+      "prep_time_minutes": 3,
+      "cook_time_minutes": 0,
+      "servings": 1,
+      "difficulty": "easy",
+      "meal_type": "snack",
+      "image_url": "",
+      "is_public": true,
+      "created_by": null,
+      "created_at": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "nutrition.recipe",
+    "pk": 5,
+    "fields": {
+      "name": "Saumon et brocoli vapeur",
+      "slug": "saumon-brocoli-vapeur",
+      "description": "Dîner léger et riche en oméga-3",
+      "instructions": "1. Faire cuire le brocoli à la vapeur pendant 8 minutes\n2. Pendant ce temps, faire cuire le saumon à la poêle ou au four\n3. Assaisonner avec du citron et des herbes\n4. Servir ensemble",
+      "prep_time_minutes": 5,
+      "cook_time_minutes": 15,
+      "servings": 1,
+      "difficulty": "medium",
+      "meal_type": "dinner",
+      "image_url": "",
+      "is_public": true,
+      "created_by": null,
+      "created_at": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "nutrition.recipeingredient",
+    "pk": 1,
+    "fields": {
+      "recipe": 1,
+      "food": 1,
+      "quantity": 200,
+      "notes": "3 œufs entiers"
+    }
+  },
+  {
+    "model": "nutrition.recipeingredient",
+    "pk": 2,
+    "fields": {
+      "recipe": 2,
+      "food": 2,
+      "quantity": 200,
+      "notes": "blanc de poulet grillé"
+    }
+  },
+  {
+    "model": "nutrition.recipeingredient",
+    "pk": 3,
+    "fields": {
+      "recipe": 2,
+      "food": 3,
+      "quantity": 100,
+      "notes": "cuit"
+    }
+  },
+  {
+    "model": "nutrition.recipeingredient",
+    "pk": 4,
+    "fields": {
+      "recipe": 3,
+      "food": 5,
+      "quantity": 150,
+      "notes": "égoutté"
+    }
+  },
+  {
+    "model": "nutrition.recipeingredient",
+    "pk": 5,
+    "fields": {
+      "recipe": 4,
+      "food": 4,
+      "quantity": 120,
+      "notes": "1 banane moyenne"
+    }
+  },
+  {
+    "model": "nutrition.recipeingredient",
+    "pk": 6,
+    "fields": {
+      "recipe": 5,
+      "food": 7,
+      "quantity": 150,
+      "notes": "filet de saumon"
+    }
+  }
+]
