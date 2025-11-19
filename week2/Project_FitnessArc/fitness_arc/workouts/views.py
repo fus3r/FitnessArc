@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.db.models import Max
 from .forms import TemplateItemForm
 import json
+from django.db.models import Max
+from .models import WorkoutSession, SetLog, PR 
 
 def exercise_list(request):
     exercises = Exercise.objects.all()
@@ -138,6 +140,60 @@ def template_delete(request, pk):
         return redirect("workouts:template_list")
     return render(request, "workouts/template_confirm_delete.html", {"template": tpl})
 
+def update_prs_for_session(session):
+    """
+    Met à jour les PR (records) de l'utilisateur pour tous les exercices
+    présents dans cette séance.
+    """
+    user = session.owner
+
+    # Tous les exercices utilisés dans cette séance
+    exercise_ids = (
+        session.set_logs
+        .values_list('exercise_id', flat=True)
+        .distinct()
+    )
+
+    for ex_id in exercise_ids:
+
+        # ----- PR de CHARGE MAX (max_weight) -----
+        agg_weight = (
+            SetLog.objects
+            .filter(session__owner=user, exercise_id=ex_id)
+            .aggregate(max_w=Max("weight_kg"))
+        )
+        max_weight = agg_weight["max_w"]
+
+        if max_weight is not None:
+            pr, created = PR.objects.get_or_create(
+                owner=user,
+                exercise_id=ex_id,
+                metric="max_weight",
+                defaults={"value": max_weight},
+            )
+            if not created and max_weight > pr.value:
+                pr.value = max_weight
+                pr.save()
+
+        # ----- PR de REPS MAX (max_reps) -----
+        agg_reps = (
+            SetLog.objects
+            .filter(session__owner=user, exercise_id=ex_id)
+            .aggregate(max_r=Max("reps"))
+        )
+        max_reps = agg_reps["max_r"]
+
+        if max_reps is not None:
+            pr, created = PR.objects.get_or_create(
+                owner=user,
+                exercise_id=ex_id,
+                metric="max_reps",
+                defaults={"value": max_reps},
+            )
+            if not created and max_reps > pr.value:
+                pr.value = max_reps
+                pr.save()
+
 @login_required
 def complete_session(request, pk):
     """Terminer une séance et afficher le récapitulatif"""
@@ -158,6 +214,7 @@ def complete_session(request, pk):
         
         sess.is_completed = True
         sess.save()
+        update_prs_for_session(sess)
         messages.success(request, f"Séance terminée ! Durée : {sess.duration_minutes} min | Calories : {sess.estimated_calories_burned} kcal")
         return redirect("workouts:session_summary", pk=sess.pk)
     
