@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'nutrition.apps.NutritionConfig',    
     'dashboard.apps.DashboardConfig',    
     'common.apps.CommonConfig',
+    'leaderboard.apps.LeaderboardConfig',
 ]
 
 MIDDLEWARE = [

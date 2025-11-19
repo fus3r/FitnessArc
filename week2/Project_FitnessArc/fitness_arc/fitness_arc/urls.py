@@ -27,6 +27,7 @@ urlpatterns = [
     path('workouts/', include('workouts.urls')),
     path('nutrition/', include('nutrition.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('leaderboard/', include('leaderboard.urls')),
     
     # Test page for dropdowns
     path('test-dropdown/', TemplateView.as_view(template_name='test_dropdown.html'), name='test_dropdown'),
