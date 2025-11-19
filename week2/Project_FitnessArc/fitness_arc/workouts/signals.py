@@ -9,9 +9,14 @@ def create_default_templates_for_new_user(sender, instance, created, **kwargs):
     """
     Signal qui crée automatiquement les templates publics par défaut
     (Push/Pull/Legs) pour chaque nouvel utilisateur.
+    Ignore les superusers et staff (comptes admin).
     """
     if not created:
         # L'utilisateur existe déjà, ne rien faire
+        return
+    
+    # Ignorer les superusers et staff
+    if instance.is_superuser or instance.is_staff:
         return
     
     # Vérifier si l'utilisateur a déjà des templates

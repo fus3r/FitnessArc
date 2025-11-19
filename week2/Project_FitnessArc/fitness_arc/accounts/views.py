@@ -106,7 +106,8 @@ def friends_list(request):
     
     sent_requests = Friendship.objects.filter(from_user=request.user, status='pending')
     
-    all_users = User.objects.exclude(pk=request.user.pk).order_by('username')
+    # Exclure l'utilisateur actuel ET les comptes admin/staff
+    all_users = User.objects.exclude(pk=request.user.pk).exclude(is_superuser=True).exclude(is_staff=True).order_by('username')
     
     context = {
         'friends': friends,
