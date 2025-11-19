@@ -11,13 +11,15 @@ from .models import WorkoutSession, SetLog, PR
 def exercise_list(request):
     exercises = Exercise.objects.all().select_related('sport_category')
     
-    # Récupérer toutes les catégories de sports
-    sport_categories = SportCategory.objects.all().order_by('order')
+    # Récupérer uniquement les catégories qui ont des exercices
+    sport_categories = SportCategory.objects.filter(
+        exercises__isnull=False
+    ).distinct().order_by('order')
     
     # Filtres
     muscle = request.GET.get('muscle')
     equip = request.GET.get('equip')
-    sport_cats = request.GET.getlist('sport_category')  # Liste des catégories sélectionnées
+    sport_cats = request.GET.getlist('sport_category')
     
     if muscle:
         exercises = exercises.filter(muscle_group=muscle)
