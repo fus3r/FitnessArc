@@ -628,6 +628,160 @@
       "fat_per_100g": "0.00",
       "is_public": true
     }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 49,
+    "fields": {
+      "name": "Yaourt grec",
+      "slug": "yaourt-grec",
+      "kcal_per_100g": "59.00",
+      "protein_per_100g": "10.20",
+      "carbs_per_100g": "3.60",
+      "fat_per_100g": "0.40",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 50,
+    "fields": {
+      "name": "Amandes",
+      "slug": "amandes",
+      "kcal_per_100g": "579.00",
+      "protein_per_100g": "21.15",
+      "carbs_per_100g": "21.55",
+      "fat_per_100g": "49.93",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 51,
+    "fields": {
+      "name": "Patate douce",
+      "slug": "patate-douce",
+      "kcal_per_100g": "86.00",
+      "protein_per_100g": "1.60",
+      "carbs_per_100g": "20.12",
+      "fat_per_100g": "0.10",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 52,
+    "fields": {
+      "name": "Blanc de poulet grillé",
+      "slug": "blanc-poulet-grille",
+      "kcal_per_100g": "165.00",
+      "protein_per_100g": "31.00",
+      "carbs_per_100g": "0.00",
+      "fat_per_100g": "3.60",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 53,
+    "fields": {
+      "name": "Barre protéinée",
+      "slug": "barre-proteineee",
+      "kcal_per_100g": "350.00",
+      "protein_per_100g": "30.00",
+      "carbs_per_100g": "35.00",
+      "fat_per_100g": "10.00",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 54,
+    "fields": {
+      "name": "Yaourt nature entier",
+      "slug": "yaourt-nature-entier",
+      "kcal_per_100g": "66.00",
+      "protein_per_100g": "3.50",
+      "carbs_per_100g": "4.70",
+      "fat_per_100g": "3.30",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 55,
+    "fields": {
+      "name": "Raisins secs",
+      "slug": "raisins-secs",
+      "kcal_per_100g": "299.00",
+      "protein_per_100g": "3.07",
+      "carbs_per_100g": "79.98",
+      "fat_per_100g": "0.30",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 56,
+    "fields": {
+      "name": "Pneu énergie",
+      "slug": "barres-energie",
+      "kcal_per_100g": "400.00",
+      "protein_per_100g": "8.00",
+      "carbs_per_100g": "50.00",
+      "fat_per_100g": "20.00",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 57,
+    "fields": {
+      "name": "Courge butternut cuite",
+      "slug": "courge-butternut-cuite",
+      "kcal_per_100g": "45.00",
+      "protein_per_100g": "1.00",
+      "carbs_per_100g": "11.00",
+      "fat_per_100g": "0.10",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 58,
+    "fields": {
+      "name": "Crevettes cuites",
+      "slug": "crevettes-cuites",
+      "kcal_per_100g": "99.00",
+      "protein_per_100g": "24.00",
+      "carbs_per_100g": "0.00",
+      "fat_per_100g": "0.30",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 59,
+    "fields": {
+      "name": "Fraise",
+      "slug": "fraise",
+      "kcal_per_100g": "32.00",
+      "protein_per_100g": "0.70",
+      "carbs_per_100g": "7.70",
+      "fat_per_100g": "0.30",
+      "unit_type": "unit",
+      "is_public": true
+    }
   }
 ]
 
