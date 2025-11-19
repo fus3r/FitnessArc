@@ -2,7 +2,14 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import Exercise, WorkoutTemplate, TemplateItem, WorkoutSession, SetLog, PR
+from .models import Exercise, WorkoutTemplate, TemplateItem, WorkoutSession, SetLog, PR, SportCategory
+
+@admin.register(SportCategory)
+class SportCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "icon", "has_specific_exercises", "order")
+    list_filter = ("has_specific_exercises",)
+    search_fields = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
 
 class TemplateItemInline(admin.TabularInline):
     model = TemplateItem
@@ -15,8 +22,8 @@ class WorkoutTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(Exercise)
 class ExerciseAdmin(admin.ModelAdmin):
-    list_display = ("name","muscle_group","equipment","difficulty")
-    list_filter = ("muscle_group","equipment","difficulty")
+    list_display = ("name","sport_category","muscle_group","equipment","difficulty")
+    list_filter = ("sport_category","muscle_group","equipment","difficulty")
     search_fields = ("name",)
 
 class SetLogInline(admin.TabularInline):
