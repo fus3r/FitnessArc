@@ -27,20 +27,46 @@
             </div>
         </div>
         
-        {% if results %}
-            <div class="alert alert-success" role="alert">
-                <i class="bi bi-check-circle"></i> {{ results|length }} résultat{{ results|length|pluralize }} trouvé{{ results|length|pluralize }}
+        {% if error %}
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ error }}
             </div>
             
-            {% if scope == 'product' %}
-                <h2 class="mb-4">Produits trouvés</h2>
-                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4">
-                    {% for product in results %}
+            <div class="card">
+                <div class="card-body text-center p-5">
+                    <h4 class="mb-4">Suggestions</h4>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'products_list' %}" class="btn btn-primary-custom">
+                            <i class="bi bi-basket"></i> Voir tous les produits
+                        </a>
+                        <a href="{% url 'producers_list' %}" class="btn btn-outline-success">
+                            <i class="bi bi-people"></i> Voir tous les producteurs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% elif products %}
+            <div class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle"></i> {{ products|length }} résultat{{ products|length|pluralize }} trouvé{{ products|length|pluralize }}
+            </div>
+            
+            <h2 class="mb-4">Produits trouvés</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4">
+                {% for product in products %}
                     <div class="col mb-5">
                         <div class="card h-100">
+                            {% if product.image %}
                             <img class="card-img-top" 
-                                 src="https://via.placeholder.com/450x300/28a745/ffffff?text={{ product.name }}" 
-                                 alt="{{ product.name }}" />
+                                 src="{{ product.image.url }}" 
+                                 alt="{{ product.name }}"
+                                 style="height: 200px; object-fit: cover;" />
+                            {% else %}
+                            <img class="card-img-top" 
+                                 src="{{ MEDIA_URL }}products/default.jpg" 
+                                 alt="{{ product.name }}"
+                                 style="height: 200px; object-fit: cover;"
+                                 onerror="this.src='https://via.placeholder.com/450x300/28a745/ffffff?text={{ product.name }}'" />
+                            {% endif %}
                             
                             {% if product.stock_quantity > 0 %}
                             <div class="badge bg-success position-absolute" style="top: 0.5rem; right: 0.5rem">
@@ -65,12 +91,16 @@
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-            {% elif scope == 'producer' %}
-                <h2 class="mb-4">Producteurs trouvés</h2>
-                <div class="row gx-4 gx-lg-5">
-                    {% for producer in results %}
+                {% endfor %}
+            </div>
+        {% elif producers %}
+            <div class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle"></i> {{ producers|length }} résultat{{ producers|length|pluralize }} trouvé{{ producers|length|pluralize }}
+            </div>
+            
+            <h2 class="mb-4">Producteurs trouvés</h2>
+            <div class="row gx-4 gx-lg-5">
+                {% for producer in producers %}
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="card h-100 shadow-sm">
                             <div class="card-body">
@@ -96,26 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% else %}
-            <div class="alert alert-warning" role="alert">
-                <i class="bi bi-exclamation-triangle"></i> Aucun résultat trouvé pour "{{ query }}"
-            </div>
-            
-            <div class="card">
-                <div class="card-body text-center p-5">
-                    <h4 class="mb-4">Suggestions</h4>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                        <a href="{% url 'products_list' %}" class="btn btn-primary-custom">
-                            <i class="bi bi-basket"></i> Voir tous les produits
-                        </a>
-                        <a href="{% url 'producers_list' %}" class="btn btn-outline-success">
-                            <i class="bi bi-people"></i> Voir tous les producteurs
-                        </a>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         {% endif %}
     </div>

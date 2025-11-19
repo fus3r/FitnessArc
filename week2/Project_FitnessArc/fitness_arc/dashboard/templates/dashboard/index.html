@@ -75,7 +75,7 @@
     text-align: center;
   }
 
-  /* calendrier - Design ULTRA MODERNE & NOVATEUR 🚀 */
+  /* calendrier */
   .calendar-grid {
     margin-top: 1.5rem;
     display: flex;
@@ -564,7 +564,19 @@
       letter-spacing: 0.08em;
       opacity: 0.8;
     ">
-      Mois en cours • Cliquez pour explorer
+       <a href="?year={{ prev_month_year }}&month={{ prev_month_month }}"
+         style="color:#9ca3af;text-decoration:none;padding:0.2rem 0.5rem;border-radius:999px;border:1px solid #374151;margin-right:0.5rem;">
+        ‹ Mois précédent
+      </a>
+
+      <span style="color:#e5e7eb;font-weight:700;margin:0 0.5rem;">
+        {{ current_month_label }}
+      </span>
+
+      <a href="?year={{ next_month_year }}&month={{ next_month_month }}"
+         style="color:#9ca3af;text-decoration:none;padding:0.2rem 0.5rem;border-radius:999px;border:1px solid #374151;margin-left:0.5rem;">
+        Mois suivant ›
+      </a>
     </p>
   </div>
 
@@ -829,6 +841,72 @@
 {% endif %}
 -->
 
+{% if best_prs_grouped %}
+<div class="card" style="margin-top:1.5rem;">
+  <h3>🏋️ Mes PR par exercice</h3>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+    {% for ex in best_prs_grouped %}
+    <div style="
+         padding:0.9rem 1rem;
+         border-radius:12px;
+         border:1px solid rgba(99,102,241,0.35);
+         background:linear-gradient(145deg,rgba(15,23,42,0.9),rgba(17,24,39,0.95));
+         box-shadow:0 4px 16px rgba(0,0,0,0.35);
+       ">
+      <div style="font-weight:700;color:#e5e7eb;margin-bottom:0.4rem;font-size:0.95rem;">
+        {{ ex.exercise }}
+      </div>
+      <ul style="list-style:none;margin:0;padding:0;font-size:0.85rem;color:#cbd5e1;">
+        {% for pr in ex.prs %}
+        <li style="margin-bottom:0.25rem;">
+          <span style="opacity:0.9;">{{ pr.metric_label }} :</span>
+          <strong style="margin-left:0.25rem;">{{ pr.value }}</strong>
+          <span style="opacity:0.7;">( {{ pr.date|date:"d/m/Y" }} )</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="card" style="margin-top:1.5rem;">
+  <h3>🏋️ Mes PR par exercice</h3>
+  <p style="font-size:0.9rem;color:#9ca3af;margin-top:0.5rem;">
+    Aucun PR enregistré pour l’instant.  
+    Les records apparaîtront ici dès que des PR seront créés à partir de tes séances.
+  </p>
+</div>
+{% endif %}
+
+<!--
+{% if best_prs %}
+<div class="card" style="margin-top:1.5rem">
+  <h3>🏋️ Meilleurs PR par exercice</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Exercice</th>
+        <th>Type</th>
+        <th>Record</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pr in best_prs %}
+      <tr>
+        <td>{{ pr.exercise.name }}</td>
+        <td>{{ pr.get_metric_display }}</td>
+        <td><strong>{{ pr.value }}</strong></td>
+        <td>{{ pr.date|date:"d/m/Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
 {% if recent_prs %}
 <div class="card" style="margin-top:1.5rem">
   <h3>🏆 Records Récents (PRs)</h3>
@@ -847,7 +925,7 @@
   </table>
 </div>
 {% endif %}
-
+-->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const days = document.querySelectorAll('.calendar-day');

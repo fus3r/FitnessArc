@@ -7,13 +7,20 @@
 <div class="container my-5">
     <div class="row">
         <!-- Product Image -->
-        <div class="col-md-5">
-            <div class="card shadow">
-                <img src="https://via.placeholder.com/500x400/28a745/ffffff?text={{ product.name }}" 
-                     class="card-img-top" 
-                     alt="{{ product.name }}">
-            </div>
-        </div>
+                <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                {% if product.image %}
+                <img class="card-img-top mb-5 mb-md-0" 
+                     src="{{ product.image.url }}" 
+                     alt="{{ product.name }}"
+                     style="max-height: 500px; object-fit: cover; width: 100%;" />
+                {% else %}
+                <img class="card-img-top mb-5 mb-md-0" 
+                     src="{{ MEDIA_URL }}products/default.jpg" 
+                     alt="{{ product.name }}"
+                     style="max-height: 500px; object-fit: cover; width: 100%;"
+                     onerror="this.src='https://via.placeholder.com/600x700/28a745/ffffff?text={{ product.name }}'" />
+                {% endif %}
         
         <!-- Product Details -->
         <div class="col-md-7">

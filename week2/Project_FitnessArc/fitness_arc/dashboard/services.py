@@ -5,15 +5,41 @@ from collections import defaultdict
 from workouts.models import WorkoutSession, SetLog, PR
 from nutrition.models import FoodLog
 import calendar 
-def get_dashboard_data(user):
+def get_dashboard_data(user, ref_date=None):
     """Calcule toutes les données du dashboard pour un utilisateur"""
     today = timezone.now().date()
     week_ago = today - timedelta(days=7)
     month_ago = today - timedelta(days=30)
     five_weeks_ago = today - timedelta(days=35)
-    month_start = today.replace(day=1)
-    last_day = calendar.monthrange(today.year, today.month)[1]
+
+    if ref_date is None:
+        focus_date = today         
+    else:
+        focus_date = ref_date
+    month_start = focus_date.replace(day=1)
+    last_day = calendar.monthrange(focus_date.year, today.month)[1]
     month_end = today.replace(day=last_day)
+    # --- Navigation de mois pour le calendrier ---
+    current_month = month_start  
+
+    # Mois précédent
+    if current_month.month == 1:
+        prev_month_year = current_month.year - 1
+        prev_month_month = 12
+    else:
+        prev_month_year = current_month.year
+        prev_month_month = current_month.month - 1
+
+    # Mois suivant
+    if current_month.month == 12:
+        next_month_year = current_month.year + 1
+        next_month_month = 1
+    else:
+        next_month_year = current_month.year
+        next_month_month = current_month.month + 1
+
+    # Nom mois
+    current_month_label = current_month.strftime("%B %Y")
 
     
     # Calories nutrition (aujourd'hui)
@@ -38,7 +64,34 @@ def get_dashboard_data(user):
     
     # PRs récents (5 derniers)
     recent_prs = PR.objects.filter(owner=user).order_by('-date')[:5]
+    all_prs = PR.objects.filter(owner=user).select_related('exercise').order_by(
+        'exercise__name', 'metric', '-value'
+    )
+
+    best_prs_dict = {}
+    for pr in all_prs:
+        key = (pr.exercise_id, pr.metric)
+        if key not in best_prs_dict:   # on garde le PR avec la plus grande valeur
+            best_prs_dict[key] = pr
+
+    best_prs = list(best_prs_dict.values())
+
+    # Groupement par exercice pour l'affichage "onglet PR"
+    grouped = defaultdict(list)
+    for pr in best_prs:
+        grouped[pr.exercise.name].append({
+            'metric_label': pr.get_metric_display(),
+            'value': pr.value,
+            'date': pr.date,
+        })
     
+    best_prs_grouped = []
+    for ex_name, prs_list in grouped.items():
+        best_prs_grouped.append({
+            'exercise': ex_name,
+            'prs': prs_list,
+        })
+
     # Nombre de séances cette semaine
     sessions_count = recent_sessions.count()
 
@@ -94,13 +147,13 @@ def get_dashboard_data(user):
     cal = calendar.Calendar(firstweekday=0)  # 0 = lundi
     calendar_weeks = []
 
-    for week in cal.monthdatescalendar(today.year, today.month):
+    for week in cal.monthdatescalendar(focus_date.year, focus_date.month):
         week_days = []
         for d in week:
             week_days.append({
                 'date': d,                            
                 'day': d.day,                         
-                'in_month': (d.month == today.month), 
+                'in_month': (d.month == focus_date.month), 
                 'is_today': (d == today),
                 'has_workout': d in sessions_by_date,
                 'sessions': sessions_by_date.get(d, []),
@@ -188,4 +241,12 @@ def get_dashboard_data(user):
         'weekly_volume_labels': weekly_volume_labels,
         'weekly_volume_data': weekly_volume_data,
         'calendar_weeks': calendar_weeks,
+        'current_month_label': current_month_label,
+        'prev_month_year': prev_month_year,
+        'prev_month_month': prev_month_month,
+        'next_month_year': next_month_year,
+        'next_month_month': next_month_month,
+        'recent_prs': recent_prs,
+        'best_prs': best_prs,
+        'best_prs_grouped': best_prs_grouped,
     }

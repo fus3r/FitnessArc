@@ -25,6 +25,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2,
                                 validators=[MinValueValidator(0)])
     stock_quantity = models.PositiveIntegerField(default=0)
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
     producer = models.ForeignKey(
         Producer, on_delete=models.CASCADE, related_name='products'
     )
