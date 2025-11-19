@@ -104,24 +104,24 @@ def recipe_list(request):
     today = timezone.now().date()
     logs = FoodLog.objects.filter(owner=request.user, date=today)
     current_intake = {
-        'kcal': sum(float(log.kcal) for log in logs),
-        'protein': sum(float(log.protein) for log in logs),
-        'carbs': sum(float(log.carbs) for log in logs),
-        'fat': sum(float(log.fat) for log in logs)
+        'kcal': sum(Decimal(str(log.kcal)) for log in logs),
+        'protein': sum(Decimal(str(log.protein)) for log in logs),
+        'carbs': sum(Decimal(str(log.carbs)) for log in logs),
+        'fat': sum(Decimal(str(log.fat)) for log in logs)
     }
     
     remaining = {
-        'kcal': daily_goal['kcal'] - current_intake['kcal'],
-        'protein': daily_goal['protein'] - current_intake['protein'],
-        'carbs': daily_goal['carbs'] - current_intake['carbs'],
-        'fat': daily_goal['fat'] - current_intake['fat']
+        'kcal': Decimal(str(daily_goal['kcal'])) - current_intake['kcal'],
+        'protein': Decimal(str(daily_goal['protein'])) - current_intake['protein'],
+        'carbs': Decimal(str(daily_goal['carbs'])) - current_intake['carbs'],
+        'fat': Decimal(str(daily_goal['fat'])) - current_intake['fat']
     }
     
     # Tri des recettes par pertinence (calories proches du restant)
     if remaining['kcal'] > 0:
         recipes_with_score = []
         for recipe in recipes:
-            kcal_diff = abs(recipe.kcal_per_serving - remaining['kcal'])
+            kcal_diff = abs(Decimal(str(recipe.kcal_per_serving)) - remaining['kcal'])
             recipes_with_score.append((recipe, kcal_diff))
         recipes_with_score.sort(key=lambda x: x[1])
         recipes = [r[0] for r in recipes_with_score]
