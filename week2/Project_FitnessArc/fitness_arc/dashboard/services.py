@@ -64,7 +64,34 @@ def get_dashboard_data(user, ref_date=None):
     
     # PRs récents (5 derniers)
     recent_prs = PR.objects.filter(owner=user).order_by('-date')[:5]
+    all_prs = PR.objects.filter(owner=user).select_related('exercise').order_by(
+        'exercise__name', 'metric', '-value'
+    )
+
+    best_prs_dict = {}
+    for pr in all_prs:
+        key = (pr.exercise_id, pr.metric)
+        if key not in best_prs_dict:   # on garde le PR avec la plus grande valeur
+            best_prs_dict[key] = pr
+
+    best_prs = list(best_prs_dict.values())
+
+    # Groupement par exercice pour l'affichage "onglet PR"
+    grouped = defaultdict(list)
+    for pr in best_prs:
+        grouped[pr.exercise.name].append({
+            'metric_label': pr.get_metric_display(),
+            'value': pr.value,
+            'date': pr.date,
+        })
     
+    best_prs_grouped = []
+    for ex_name, prs_list in grouped.items():
+        best_prs_grouped.append({
+            'exercise': ex_name,
+            'prs': prs_list,
+        })
+
     # Nombre de séances cette semaine
     sessions_count = recent_sessions.count()
 
@@ -219,4 +246,7 @@ def get_dashboard_data(user, ref_date=None):
         'prev_month_month': prev_month_month,
         'next_month_year': next_month_year,
         'next_month_month': next_month_month,
+        'recent_prs': recent_prs,
+        'best_prs': best_prs,
+        'best_prs_grouped': best_prs_grouped,
     }
