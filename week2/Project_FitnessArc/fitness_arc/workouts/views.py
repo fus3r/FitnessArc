@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Exercise, WorkoutTemplate, TemplateItem, WorkoutSession, SetLog
+from .models import Exercise, WorkoutTemplate, TemplateItem, WorkoutSession, SetLog, SportCategory
 from django.contrib import messages
 from django.db.models import Max
 from .forms import TemplateItemForm
@@ -9,15 +9,22 @@ from django.db.models import Max
 from .models import WorkoutSession, SetLog, PR 
 
 def exercise_list(request):
-    exercises = Exercise.objects.all()
+    exercises = Exercise.objects.all().select_related('sport_category')
+    
+    # Récupérer toutes les catégories de sports
+    sport_categories = SportCategory.objects.all().order_by('order')
     
     # Filtres
     muscle = request.GET.get('muscle')
     equip = request.GET.get('equip')
+    sport_cats = request.GET.getlist('sport_category')  # Liste des catégories sélectionnées
+    
     if muscle:
         exercises = exercises.filter(muscle_group=muscle)
     if equip:
         exercises = exercises.filter(equipment=equip)
+    if sport_cats:
+        exercises = exercises.filter(sport_category__id__in=sport_cats)
     
     # JSON pour Vue.js
     exercises_json = json.dumps([
@@ -28,14 +35,21 @@ def exercise_list(request):
             'equipment': ex.equipment,
             'difficulty': ex.difficulty,
             'description': ex.description,
-            'image': ex.image.name if ex.image else ''
+            'image': ex.image.name if ex.image else '',
+            'sport_category': {
+                'id': ex.sport_category.id,
+                'name': ex.sport_category.name,
+                'icon': ex.sport_category.icon
+            } if ex.sport_category else None
         }
         for ex in exercises
     ])
     
     return render(request, 'workouts/exercise_list.html', {
         'exercises': exercises,
-        'exercises_json': exercises_json  # ← Assurez-vous que c'est bien passé
+        'exercises_json': exercises_json,
+        'sport_categories': sport_categories,
+        'selected_sport_cats': [int(sc) for sc in sport_cats] if sport_cats else []
     })
 
 @login_required

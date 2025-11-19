@@ -4,16 +4,46 @@ from django.db import models
 User = settings.AUTH_USER_MODEL
 
 # Create your models here.
+class SportCategory(models.Model):
+    """Catégories de sports : Musculation, Sports collectifs, Natation, etc."""
+    name = models.CharField(max_length=100, unique=True, help_text="Nom de la catégorie (ex: Musculation, Football)")
+    slug = models.SlugField(unique=True)
+    icon = models.CharField(max_length=50, blank=True, help_text="Emoji ou classe d'icône (ex: 🏋️, ⚽)")
+    description = models.TextField(blank=True)
+    has_specific_exercises = models.BooleanField(default=True, help_text="True si ce sport a ses propres exercices spécifiques")
+    order = models.PositiveIntegerField(default=0, help_text="Ordre d'affichage")
+    
+    class Meta:
+        ordering = ['order', 'name']
+        verbose_name = "Catégorie de sport"
+        verbose_name_plural = "Catégories de sports"
+    
+    def __str__(self):
+        return f"{self.icon} {self.name}" if self.icon else self.name
+
 class Exercise(models.Model):
     MUSCLE = [
         ("chest","Pecs"), ("back","Dos"), ("legs","Jambes"),
-        ("shoulders","Épaules"), ("arms","Bras"), ("core","Abdos"), ("fullbody","Corps complet")
+        ("shoulders","Épaules"), ("arms","Bras"), ("core","Abdos"), ("fullbody","Corps complet"),
+        ("cardio","Cardio"), ("technique","Technique")
     ]
     EQUIP = [("barbell","Barre"),("dumbbell","Haltères"),
-             ("machine","Machine"),("cable","Poulie"),("bodyweight","Poids du corps")]
+             ("machine","Machine"),("cable","Poulie"),("bodyweight","Poids du corps"),
+             ("ball","Ballon"),("racket","Raquette"),("water","Eau"),("none","Aucun")]
+    
+    # Catégorie de sport (Musculation, Football, Natation, etc.)
+    sport_category = models.ForeignKey(
+        SportCategory, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name="exercises",
+        help_text="Catégorie de sport de cet exercice"
+    )
+    
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True)
-    muscle_group = models.CharField(max_length=20, choices=MUSCLE)
+    muscle_group = models.CharField(max_length=20, choices=MUSCLE, blank=True)
     equipment = models.CharField(max_length=20, choices=EQUIP)
     difficulty = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(blank=True)
