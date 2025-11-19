@@ -126,6 +126,7 @@ def send_friend_request(request, user_id):
         messages.error(request, "Vous ne pouvez pas vous ajouter vous-même !")
         return redirect('accounts:friends_list')
     
+    # Vérifier d'abord si une relation existe déjà (dans les deux sens)
     existing = Friendship.objects.filter(
         Q(from_user=request.user, to_user=to_user) |
         Q(from_user=to_user, to_user=request.user)
@@ -136,9 +137,19 @@ def send_friend_request(request, user_id):
             messages.info(request, f"Vous êtes déjà ami avec {to_user.username}")
         elif existing.status == 'pending':
             messages.info(request, f"Demande déjà envoyée à {to_user.username}")
-    else:
-        Friendship.objects.create(from_user=request.user, to_user=to_user)
+        return redirect('accounts:friends_list')
+    
+    # Utiliser get_or_create pour éviter les doublons en cas de double-clic
+    friendship, created = Friendship.objects.get_or_create(
+        from_user=request.user,
+        to_user=to_user,
+        defaults={'status': 'pending'}
+    )
+    
+    if created:
         messages.success(request, f"Demande d'ami envoyée à {to_user.username} !")
+    else:
+        messages.info(request, f"Demande déjà envoyée à {to_user.username}")
     
     return redirect('accounts:friends_list')
 
