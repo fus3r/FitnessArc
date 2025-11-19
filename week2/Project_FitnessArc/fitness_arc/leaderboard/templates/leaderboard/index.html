@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+<h1>Leaderboard</h1>
+<p style="color:var(--text-dim);margin-bottom:1.5rem">
+  Classement basé sur l'activité des 30 derniers jours (séances, volume, PR).
+</p>
+
+{% if me %}
+  <!-- Carte "Mon profil de progression" -->
+  <div class="card" style="margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem">
+    <div>
+      <h2 style="margin:0 0 .5rem;font-size:1.2rem">
+        🧑‍💪 {{ request.user.username }}
+      </h2>
+      <p style="margin:0;color:var(--text-dim);font-size:.9rem">
+        Ligue : <strong>{{ me.league }}</strong> • Niveau <strong>{{ me.level }}</strong> • XP : <strong>{{ me.xp|floatformat:0 }}</strong>
+      </p>
+      <p style="margin:.4rem 0 0;color:var(--text-dim);font-size:.9rem">
+        Rang global : <strong>#{{ current_rank }}</strong> sur {{ total_players }}
+      </p>
+    </div>
+    <div style="text-align:right">
+      <p style="margin:0;color:var(--text-dim);font-size:.8rem">30 derniers jours :</p>
+      <p style="margin:.2rem 0 0;font-size:.9rem">
+        {{ me.sessions_30d }} séances • {{ me.volume_30d|floatformat:0 }} kg • {{ me.prs_count }} PR
+      </p>
+    </div>
+  </div>
+{% endif %}
+
+<!-- Tableau Top 10 -->
+<div class="card">
+  <h3 style="margin:0 0 1rem;">🏆 Top 10 global</h3>
+  {% if top_10 %}
+    <table style="width:100%;border-collapse:collapse;font-size:.9rem">
+      <thead>
+        <tr style="text-align:left;border-bottom:1px solid #1f2937">
+          <th style="padding:.5rem .25rem;">#</th>
+          <th style="padding:.5rem .25rem;">Utilisateur</th>
+          <th style="padding:.5rem .25rem;">Ligue</th>
+          <th style="padding:.5rem .25rem;">Niveau</th>
+          <th style="padding:.5rem .25rem;">XP</th>
+          <th style="padding:.5rem .25rem;">Séances (30j)</th>
+          <th style="padding:.5rem .25rem;">Volume (30j)</th>
+          <th style="padding:.5rem .25rem;">PR</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in top_10 %}
+          <tr style="border-bottom:1px solid rgba(15,23,42,0.8);{% if row.user == request.user %}background:rgba(129,140,248,0.1);{% endif %}">
+            <td style="padding:.4rem .25rem;">{{ forloop.counter }}</td>
+            <td style="padding:.4rem .25rem;">
+              {{ row.user.username }}
+              {% if row.user == request.user %}
+                <span style="color:var(--accent);font-size:.8rem;">(toi)</span>
+              {% endif %}
+            </td>
+            <td style="padding:.4rem .25rem;">{{ row.league }}</td>
+            <td style="padding:.4rem .25rem;">{{ row.level }}</td>
+            <td style="padding:.4rem .25rem;">{{ row.xp|floatformat:0 }}</td>
+            <td style="padding:.4rem .25rem;">{{ row.sessions_30d }}</td>
+            <td style="padding:.4rem .25rem;">{{ row.volume_30d|floatformat:0 }} kg</td>
+            <td style="padding:.4rem .25rem;">{{ row.prs_count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:var(--text-dim);font-size:.9rem">
+      Aucun utilisateur avec des séances complétées pour l'instant.
+    </p>
+  {% endif %}
+</div>
+
+{% endblock %}

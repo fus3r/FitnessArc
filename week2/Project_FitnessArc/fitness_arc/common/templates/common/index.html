@@ -39,6 +39,13 @@
       </div>
       <span class="hover-indicator">Ouvrir →</span>
     </a>
+    <a href="{% url 'leaderboard:index' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
+      <div class="card-content">
+        <h3 style="margin:0 0 0.75rem">Leaderboard</h3>
+        <p style="color:var(--text-dim);margin:0">Voir votre classement et votre rang</p>
+      </div>
+      <span class="hover-indicator">Ouvrir →</span>
+    </a>
     
     {% if user.is_authenticated %}
     <a href="{% url 'accounts:profile' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
