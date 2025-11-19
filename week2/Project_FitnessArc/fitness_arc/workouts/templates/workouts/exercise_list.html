@@ -5,7 +5,7 @@
   <h1>Bibliothèque d'exercices</h1>
   <p style="color:var(--text-dim);margin-bottom:2rem"><span v-text="exercises.length"></span> exercices disponibles</p>
 
-  <div class="card" style="margin-bottom:2rem">
+  <div class="card" style="margin-bottom:2rem;position:relative;z-index:10">
     <!-- Barre de recherche fancy -->
     <div style="position:relative;margin-bottom:1.5rem">
       <input 
@@ -44,13 +44,13 @@
     <!-- Filtres Sports (Checkboxes) -->
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.75rem;font-weight:600;color:var(--primary)">
-        Sports
+        Catégorie de sport
       </label>
-      <div style="display:flex;flex-wrap:wrap;gap:0.75rem">
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
         <label 
           v-for="cat in sportCategories" 
           :key="cat.id"
-          style="display:flex;align-items:center;padding:0.5rem 1rem;border-radius:8px;cursor:pointer;transition:all 0.2s;border:2px solid rgba(99,102,241,0.3);background:rgba(18,18,26,0.6)"
+          style="display:flex;align-items:center;padding:0.5rem 0.85rem;border-radius:6px;cursor:pointer;transition:all 0.2s;border:2px solid rgba(99,102,241,0.3);background:rgba(18,18,26,0.6);font-size:0.9rem;min-width:fit-content"
           :style="{
             borderColor: filters.sportCategories.includes(cat.id) ? 'var(--primary)' : 'rgba(99,102,241,0.3)',
             background: filters.sportCategories.includes(cat.id) ? 'rgba(99,102,241,0.2)' : 'rgba(18,18,26,0.6)'
@@ -60,9 +60,8 @@
             :value="cat.id" 
             v-model="filters.sportCategories"
             @change="applyFilters"
-            style="margin-right:0.5rem">
-          <span :style="{fontSize: '1.25rem', marginRight: '0.5rem'}" v-text="cat.icon"></span>
-          <span v-text="cat.name"></span>
+            style="margin:0;flex-shrink:0;width:16px;height:16px;cursor:pointer">
+          <span v-text="cat.name" style="margin-left:0.5rem;white-space:nowrap"></span>
         </label>
       </div>
     </div>
@@ -138,24 +137,15 @@
   </div>
 
   <!-- Message si aucun résultat -->
-  <div v-else class="card" style="text-align:center;padding:3rem;margin-top:2rem">
-    <p style="color:var(--text-dim)">
+  <div v-else class="card" style="text-align:center;padding:3rem;margin-top:2rem;position:relative;z-index:1">
+    <p style="color:var(--text-dim);font-size:1.1rem;margin-bottom:1.5rem">
       <span v-if="searchQuery">Aucun exercice trouvé pour "<span v-text="searchQuery"></span>"</span>
-      <span v-else-if="filters.muscle || filters.equipment">Aucun exercice trouvé avec ces filtres</span>
+      <span v-else-if="filters.muscle || filters.equipment || filters.sportCategories.length > 0">Aucun exercice trouvé avec ces filtres</span>
       <span v-else>Chargement des exercices...</span>
     </p>
-    <button @click="resetFilters" class="btn" style="margin-top:1rem" v-if="searchQuery || filters.muscle || filters.equipment">
+    <button @click="resetFilters" class="btn" style="margin-top:1rem" v-if="searchQuery || filters.muscle || filters.equipment || filters.sportCategories.length > 0">
       Réinitialiser les filtres
     </button>
-    
-    <!-- Debug info -->
-    <div style="margin-top:2rem;padding:1rem;background:rgba(239,68,68,0.1);border-radius:8px;font-size:0.9rem">
-      <p><strong>Debug:</strong></p>
-      <p>Total exercices: <span v-text="exercises.length"></span></p>
-      <p>Recherche: "<span v-text="searchQuery || 'vide'"></span>"</p>
-      <p>Filtre muscle: <span v-text="filters.muscle || 'aucun'"></span></p>
-      <p>Filtre équipement: <span v-text="filters.equipment || 'aucun'"></span></p>
-    </div>
   </div>
 </div>
 
@@ -168,7 +158,7 @@ createApp({
       exercises: {{ exercises_json|safe }},
       sportCategories: [
         {% for cat in sport_categories %}
-        { id: {{ cat.id }}, name: "{{ cat.name }}", icon: "{{ cat.icon }}" }{% if not forloop.last %},{% endif %}
+        { id: {{ cat.id }}, name: "{{ cat.name }}" }{% if not forloop.last %},{% endif %}
         {% endfor %}
       ],
       searchQuery: '',
