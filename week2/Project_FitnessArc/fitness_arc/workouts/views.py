@@ -41,7 +41,8 @@ def exercise_list(request):
 @login_required
 def template_list(request):
     my_templates = WorkoutTemplate.objects.filter(owner=request.user, is_public=False)
-    public_templates = WorkoutTemplate.objects.filter(is_public=True)
+    # Templates publics par défaut de l'utilisateur (Push/Pull/Legs)
+    public_templates = WorkoutTemplate.objects.filter(owner=request.user, is_public=True)
     
     return render(request, "workouts/template_list.html", {
         "my_templates": my_templates,
