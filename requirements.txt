@@ -13,7 +13,12 @@ django-debug-toolbar==6.1.0
 # Testing & Coverage
 coverage==7.11.3
 
-# Database (SQLite3 is included with Python, no need to install)
+# Database
+psycopg2-binary==2.9.11  # PostgreSQL adapter for Railway
+dj-database-url==3.0.1   # Parse DATABASE_URL environment variable
+
+# Environment Variables
+python-dotenv==1.0.1     # Load .env files
 
 # Notes:
 # - Week 1 (Comptoir Local Saclay): Django e-commerce platform for local producers
