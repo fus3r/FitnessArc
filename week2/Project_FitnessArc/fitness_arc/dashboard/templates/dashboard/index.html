@@ -476,12 +476,109 @@
   </div>
 </div>
 
-  
 
-<!-- Graphiques Analytics -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem">
+  <!-- Séances par semaine -->
+  <div class="card">
+    <h3 style="margin:0 0 .5rem;font-size:.9rem;color:var(--text-dim)">Séances (7 derniers jours)</h3>
+    <p style="margin:0;font-size:1.6rem;font-weight:700;color:var(--text)">
+      {{ week_sessions_current }}
+    </p>
+    <p style="margin:.3rem 0 0;font-size:.85rem;color:var(--text-dim)">
+      Semaine précédente : {{ week_sessions_previous }}
+      {% if week_sessions_diff > 0 %}
+        <span style="color:var(--success)">(+{{ week_sessions_diff }})</span>
+      {% elif week_sessions_diff < 0 %}
+        <span style="color:var(--danger)">({{ week_sessions_diff }})</span>
+      {% else %}
+        <span>(inchangé)</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Volume -->
+  <div class="card">
+    <h3 style="margin:0 0 .5rem;font-size:.9rem;color:var(--text-dim)">Volume (7 jours)</h3>
+    <p style="margin:0;font-size:1.6rem;font-weight:700;color:var(--text)">
+      {{ week_volume_current|floatformat:0 }} kg
+    </p>
+    <p style="margin:.3rem 0 0;font-size:.85rem;color:var(--text-dim)">
+      Semaine précédente : {{ week_volume_previous|floatformat:0 }} kg
+      {% if week_volume_diff > 0 %}
+        <span style="color:var(--success)">(+{{ week_volume_diff|floatformat:0 }} kg)</span>
+      {% elif week_volume_diff < 0 %}
+        <span style="color:var(--danger)">({{ week_volume_diff|floatformat:0 }} kg)</span>
+      {% else %}
+        <span>(inchangé)</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Temps d'entraînement -->
+  <div class="card">
+    <h3 style="margin:0 0 .5rem;font-size:.9rem;color:var(--text-dim)">Temps d'entraînement (7 jours)</h3>
+    <p style="margin:0;font-size:1.6rem;font-weight:700;color:var(--text)">
+      {{ week_training_time_current }} min
+    </p>
+    <p style="margin:.3rem 0 0;font-size:.85rem;color:var(--text-dim)">
+      Semaine précédente : {{ week_training_time_previous }} min
+      {% if week_training_time_diff > 0 %}
+        <span style="color:var(--success)">(+{{ week_training_time_diff }} min)</span>
+      {% elif week_training_time_diff < 0 %}
+        <span style="color:var(--danger)">({{ week_training_time_diff }} min)</span>
+      {% else %}
+        <span>(inchangé)</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Calories brûlées -->
+  <div class="card">
+    <h3 style="margin:0 0 .5rem;font-size:.9rem;color:var(--text-dim)">Calories brûlées (7 jours)</h3>
+    <p style="margin:0;font-size:1.6rem;font-weight:700;color:var(--text)">
+      {{ week_calories_current|floatformat:0 }} kcal
+    </p>
+    <p style="margin:.3rem 0 0;font-size:.85rem;color:var(--text-dim)">
+      Semaine précédente : {{ week_calories_previous|floatformat:0 }} kcal
+      {% if week_calories_diff > 0 %}
+        <span style="color:var(--success)">(+{{ week_calories_diff|floatformat:0 }} kcal)</span>
+      {% elif week_calories_diff < 0 %}
+        <span style="color:var(--danger)">({{ week_calories_diff|floatformat:0 }} kcal)</span>
+      {% else %}
+        <span>(inchangé)</span>
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem">
+  <div>
+    <h3 style="margin:0 0 .5rem;font-size:1rem;color:var(--text)">Streak d'entraînement</h3>
+    <p style="margin:0;font-size:2rem;font-weight:800;color:var(--accent)">
+      {{ current_streak }} <span style="font-size:1rem;font-weight:500;color:var(--text-dim)">jour(s)</span>
+    </p>
+    <p style="margin:.4rem 0 0;font-size:.85rem;color:var(--text-dim)">
+      Meilleur streak : <strong>{{ best_streak }}</strong> jour(s)
+    </p>
+  </div>
+
+  <div style="text-align:right">
+    <h4 style="margin:0 0 .25rem;font-size:.95rem;color:var(--text)">Assiduité ce mois-ci</h4>
+    <p style="margin:0;font-size:1.6rem;font-weight:700;color:var(--success)">
+      {{ monthly_consistency }}%
+    </p>
+    <p style="margin:.3rem 0 0;font-size:.8rem;color:var(--text-dim)">
+      Jours actifs : {{ active_days_this_month }} / {{ days_passed_in_month }}
+    </p>
+  </div>
+</div>
+
+
+<!-- Graphiques Analytics 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem">
-  <!-- ... tes autres stat-cards (calories, balance, volume, etc.) ... -->
+ ... autres stat-cards (calories, balance, volume, etc.) ... -->
 
+  <!--
   <div class="stat-card stat-card-circle">
     <div class="round-clock">
       <span class="round-clock-time">
@@ -494,7 +591,7 @@
     </div>
   </div>
 </div>
-
+-->
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem;margin-bottom:2rem">   
   <div class="card">
     <h3>Workouts par Semaine (5 dernières)</h3>
@@ -502,7 +599,7 @@
       <canvas id="weeklyWorkoutsChart"></canvas>
     </div>
   </div>
-  
+
   <div class="card">
     <h3>Calories Journalières (7 derniers jours)</h3>
     <div class="chart-container">
@@ -521,6 +618,13 @@
     <h3>Répartition Macros (Aujourd'hui)</h3>
     <div class="chart-container">
       <canvas id="macrosChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Volume par groupe musculaire (30 derniers jours)</h3>
+    <div class="chart-container">
+      <canvas id="muscleRadarChart"></canvas>
     </div>
   </div>
 </div>
@@ -841,6 +945,43 @@
 {% endif %}
 -->
 
+<div class="card" style="margin-top:2rem;margin-bottom:2rem">
+  <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text)">
+    📆 Résumé du mois de {{ today|date:"F Y" }}
+  </h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;font-size:.9rem">
+    <div>
+      <div style="color:var(--text-dim);margin-bottom:.2rem">Séances complétées</div>
+      <div style="font-size:1.5rem;font-weight:700">{{ month_sessions_count }}</div>
+    </div>
+    <div>
+      <div style="color:var(--text-dim);margin-bottom:.2rem">Temps total</div>
+      <div style="font-size:1.5rem;font-weight:700">
+        {{ month_total_duration }} min
+      </div>
+    </div>
+    <div>
+      <div style="color:var(--text-dim);margin-bottom:.2rem">Volume total</div>
+      <div style="font-size:1.5rem;font-weight:700">
+        {{ month_total_volume|floatformat:0 }} kg
+      </div>
+    </div>
+    <div>
+      <div style="color:var(--text-dim);margin-bottom:.2rem">Calories brûlées</div>
+      <div style="font-size:1.5rem;font-weight:700">
+        {{ month_total_calories_burned|floatformat:0 }} kcal
+      </div>
+    </div>
+    <div>
+      <div style="color:var(--text-dim);margin-bottom:.2rem">PR obtenus</div>
+      <div style="font-size:1.5rem;font-weight:700">
+        {{ month_prs_count }}
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% if best_prs_grouped %}
 <div class="card" style="margin-top:1.5rem;">
   <h3>🏋️ Mes PR par exercice</h3>
@@ -1152,5 +1293,50 @@ if (macrosCtx) {
     }
   });
 }
+
+const radarCtx = document.getElementById('muscleRadarChart');
+  if (radarCtx) {
+    const labelsRadar = {{ muscle_groups_labels|default:"[]"|safe }};
+    const dataRadar = {{ muscle_groups_values|default:"[]"|safe }};
+
+    if (labelsRadar.length > 0) {
+      new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: labelsRadar,
+          datasets: [{
+            label: 'Volume (kg × reps)',
+            data: dataRadar,
+            borderWidth: 2,
+            borderColor: 'rgba(59,130,246,0.9)',
+            backgroundColor: 'rgba(59,130,246,0.25)',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              beginAtZero: true,
+              grid: { color: 'rgba(148,163,184,0.2)' },
+              angleLines: { color: 'rgba(148,163,184,0.3)' },
+              ticks: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15,23,42,0.95)',
+              borderColor: 'rgba(59,130,246,0.5)',
+              borderWidth: 1,
+              padding: 10,
+            }
+          }
+        }
+      });
+    }
+  }
 </script>
 {% endblock %}
