@@ -1,0 +1,362 @@
+[
+  {
+    "model": "workouts.exercise",
+    "pk": 200,
+    "fields": {
+      "name": "Crawl - Éducatifs rattrapé",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Éducatif de crawl avec une main qui attend l'autre devant"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 201,
+    "fields": {
+      "name": "Crawl - Respiration 3 temps",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Respiration alternée tous les 3 coups de bras"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 202,
+    "fields": {
+      "name": "Brasse - Technique complète",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Nage brasse avec coordination bras-jambes"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 203,
+    "fields": {
+      "name": "Papillon - Ondulation",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 3,
+      "description": "Travail de l'ondulation du corps en papillon"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 204,
+    "fields": {
+      "name": "Dos crawlé",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Nage sur le dos avec mouvement de crawl"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 205,
+    "fields": {
+      "name": "Battements de jambes - Planche",
+      "sport_category": 2,
+      "muscle_group": "legs",
+      "equipment": "water",
+      "difficulty": 1,
+      "description": "Battements avec planche pour travailler les jambes"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 206,
+    "fields": {
+      "name": "Pull buoy - Bras seuls",
+      "sport_category": 2,
+      "muscle_group": "back",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Nage avec pull buoy pour isoler le travail des bras"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 207,
+    "fields": {
+      "name": "Virages - Culbute",
+      "sport_category": 2,
+      "muscle_group": "technique",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Technique de virage en culbute"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 208,
+    "fields": {
+      "name": "Sprint 25m",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Sprint sur 25 mètres à intensité maximale"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 209,
+    "fields": {
+      "name": "Endurance 400m",
+      "sport_category": 2,
+      "muscle_group": "cardio",
+      "equipment": "water",
+      "difficulty": 2,
+      "description": "Nage continue sur 400 mètres"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 210,
+    "fields": {
+      "name": "Endurance Zone 2 (60-70% FTP)",
+      "sport_category": 3,
+      "muscle_group": "cardio",
+      "equipment": "none",
+      "difficulty": 1,
+      "description": "Sortie longue à faible intensité pour développer l'endurance de base"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 211,
+    "fields": {
+      "name": "Tempo Zone 3 (75-85% FTP)",
+      "sport_category": 3,
+      "muscle_group": "cardio",
+      "equipment": "none",
+      "difficulty": 2,
+      "description": "Rythme soutenu mais confortable, améliore la capacité aérobie"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 212,
+    "fields": {
+      "name": "Seuil Zone 4 (90-95% FTP)",
+      "sport_category": 3,
+      "muscle_group": "cardio",
+      "equipment": "none",
+      "difficulty": 3,
+      "description": "Effort au seuil lactique, intensité difficile mais soutenable"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 213,
+    "fields": {
+      "name": "VO2max Zone 5 (105-120% FTP)",
+      "sport_category": 3,
+      "muscle_group": "cardio",
+      "equipment": "none",
+      "difficulty": 3,
+      "description": "Intervalles courts à haute intensité pour développer la VO2max"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 214,
+    "fields": {
+      "name": "Sprint côte",
+      "sport_category": 3,
+      "muscle_group": "legs",
+      "equipment": "none",
+      "difficulty": 3,
+      "description": "Sprint en montée pour développer la puissance"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 215,
+    "fields": {
+      "name": "Récupération active",
+      "sport_category": 3,
+      "muscle_group": "cardio",
+      "equipment": "none",
+      "difficulty": 1,
+      "description": "Sortie légère pour favoriser la récupération"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 220,
+    "fields": {
+      "name": "Bloc - Traversée",
+      "sport_category": 4,
+      "muscle_group": "back",
+      "equipment": "none",
+      "difficulty": 2,
+      "description": "Grimpe en bloc avec déplacement latéral"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 221,
+    "fields": {
+      "name": "Campus board - Montées",
+      "sport_category": 4,
+      "muscle_group": "arms",
+      "equipment": "none",
+      "difficulty": 3,
+      "description": "Entraînement de force sur campus board"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 222,
+    "fields": {
+      "name": "Hangboard - Suspensions",
+      "sport_category": 4,
+      "muscle_group": "arms",
+      "equipment": "none",
+      "difficulty": 3,
+      "description": "Suspensions pour renforcer la force des doigts"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 223,
+    "fields": {
+      "name": "Voie - Endurance",
+      "sport_category": 4,
+      "muscle_group": "back",
+      "equipment": "none",
+      "difficulty": 2,
+      "description": "Grimpe longue pour développer l'endurance"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 224,
+    "fields": {
+      "name": "Dévers - Puissance",
+      "sport_category": 4,
+      "muscle_group": "core",
+      "equipment": "none",
+      "difficulty": 3,
+      "description": "Grimpe en dévers pour la puissance et le gainage"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 225,
+    "fields": {
+      "name": "Dalle - Technique",
+      "sport_category": 4,
+      "muscle_group": "legs",
+      "equipment": "none",
+      "difficulty": 2,
+      "description": "Grimpe en dalle pour travailler la technique et l'équilibre"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 230,
+    "fields": {
+      "name": "Muscle-up",
+      "sport_category": 5,
+      "muscle_group": "back",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Transition de traction à dips sur barre ou anneaux"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 231,
+    "fields": {
+      "name": "Front Lever",
+      "sport_category": 5,
+      "muscle_group": "back",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Position horizontale face à la barre"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 232,
+    "fields": {
+      "name": "Back Lever",
+      "sport_category": 5,
+      "muscle_group": "back",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Position horizontale dos à la barre"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 233,
+    "fields": {
+      "name": "Planche",
+      "sport_category": 5,
+      "muscle_group": "shoulders",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Position horizontale en appui sur les mains"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 234,
+    "fields": {
+      "name": "Handstand Push-ups",
+      "sport_category": 5,
+      "muscle_group": "shoulders",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Pompes en équilibre sur les mains"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 235,
+    "fields": {
+      "name": "L-Sit",
+      "sport_category": 5,
+      "muscle_group": "core",
+      "equipment": "bodyweight",
+      "difficulty": 2,
+      "description": "Maintien des jambes tendues à 90° en appui"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 236,
+    "fields": {
+      "name": "Dragon Flag",
+      "sport_category": 5,
+      "muscle_group": "core",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Descente et montée du corps entier tendu"
+    }
+  },
+  {
+    "model": "workouts.exercise",
+    "pk": 237,
+    "fields": {
+      "name": "Human Flag",
+      "sport_category": 5,
+      "muscle_group": "core",
+      "equipment": "bodyweight",
+      "difficulty": 3,
+      "description": "Position horizontale latérale sur un support vertical"
+    }
+  }
+]

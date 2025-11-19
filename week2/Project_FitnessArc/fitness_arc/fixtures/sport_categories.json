@@ -1,0 +1,158 @@
+[
+  {
+    "model": "workouts.sportcategory",
+    "pk": 1,
+    "fields": {
+      "name": "Musculation",
+      "slug": "musculation",
+      "icon": "🏋️",
+      "description": "Entraînement avec poids et résistance",
+      "has_specific_exercises": true,
+      "order": 1
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 2,
+    "fields": {
+      "name": "Natation",
+      "slug": "natation",
+      "icon": "🏊",
+      "description": "Nage et exercices aquatiques",
+      "has_specific_exercises": true,
+      "order": 2
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 3,
+    "fields": {
+      "name": "Cyclisme",
+      "slug": "cyclisme",
+      "icon": "🚴",
+      "description": "Vélo route, VTT, spinning",
+      "has_specific_exercises": true,
+      "order": 3
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 4,
+    "fields": {
+      "name": "Escalade",
+      "slug": "escalade",
+      "icon": "🧗",
+      "description": "Bloc, voie, entraînement force",
+      "has_specific_exercises": true,
+      "order": 4
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 5,
+    "fields": {
+      "name": "Gymnastique",
+      "slug": "gymnastique",
+      "icon": "🤸",
+      "description": "Calisthenics et mouvements complexes",
+      "has_specific_exercises": true,
+      "order": 5
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 10,
+    "fields": {
+      "name": "Football",
+      "slug": "football",
+      "icon": "⚽",
+      "description": "Sport collectif",
+      "has_specific_exercises": false,
+      "order": 10
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 11,
+    "fields": {
+      "name": "Basketball",
+      "slug": "basketball",
+      "icon": "🏀",
+      "description": "Sport collectif",
+      "has_specific_exercises": false,
+      "order": 11
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 12,
+    "fields": {
+      "name": "Tennis",
+      "slug": "tennis",
+      "icon": "🎾",
+      "description": "Sport de raquette",
+      "has_specific_exercises": false,
+      "order": 12
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 13,
+    "fields": {
+      "name": "Ping-pong",
+      "slug": "ping-pong",
+      "icon": "🏓",
+      "description": "Tennis de table",
+      "has_specific_exercises": false,
+      "order": 13
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 14,
+    "fields": {
+      "name": "Boxe",
+      "slug": "boxe",
+      "icon": "🥊",
+      "description": "Sports de combat",
+      "has_specific_exercises": false,
+      "order": 14
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 15,
+    "fields": {
+      "name": "Volleyball",
+      "slug": "volleyball",
+      "icon": "🏐",
+      "description": "Sport collectif",
+      "has_specific_exercises": false,
+      "order": 15
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 16,
+    "fields": {
+      "name": "Rugby",
+      "slug": "rugby",
+      "icon": "🏉",
+      "description": "Sport collectif",
+      "has_specific_exercises": false,
+      "order": 16
+    }
+  },
+  {
+    "model": "workouts.sportcategory",
+    "pk": 17,
+    "fields": {
+      "name": "Badminton",
+      "slug": "badminton",
+      "icon": "🏸",
+      "description": "Sport de raquette",
+      "has_specific_exercises": false,
+      "order": 17
+    }
+  }
+]
