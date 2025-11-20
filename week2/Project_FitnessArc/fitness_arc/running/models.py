@@ -25,16 +25,47 @@ class StravaAuth(models.Model):
         return f"Strava auth de {self.user.username}"
 
 
+class GarminAuth(models.Model):
+    """
+    Stocke les identifiants Garmin Connect d'un utilisateur.
+    Utilise python-garminconnect qui nécessite email/password.
+    """
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="garmin_auth",
+    )
+    email = models.EmailField(help_text="Email Garmin Connect")
+    # Note: Stockage du mot de passe chiffré recommandé en production
+    password = models.CharField(max_length=255, help_text="Mot de passe Garmin Connect (chiffré)")
+    
+    is_active = models.BooleanField(default=True, help_text="Connexion active")
+    last_sync = models.DateTimeField(null=True, blank=True, help_text="Dernière synchronisation")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Garmin auth de {self.user.username}"
+
+
 class Run(models.Model):
     """
-    Une sortie running (activité Strava type 'Run').
+    Une sortie running (activité depuis Strava ou Garmin Connect).
     """
+    SOURCE_CHOICES = [
+        ('strava', 'Strava'),
+        ('garmin', 'Garmin Connect'),
+    ]
+    
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="runs",
     )
-    strava_id = models.BigIntegerField(unique=True)  
+    source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default='strava', help_text="Source de l'activité")
+    strava_id = models.BigIntegerField(null=True, blank=True, unique=True)
+    garmin_id = models.BigIntegerField(null=True, blank=True, help_text="ID activité Garmin")  
 
     name = models.CharField(max_length=255)
     distance_m = models.FloatField()          

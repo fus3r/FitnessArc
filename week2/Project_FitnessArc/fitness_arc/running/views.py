@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from urllib.parse import urlencode
 
+
 from .models import Run, StravaAuth
 
 
@@ -24,6 +25,49 @@ def my_runs(request):
         "strava_connected": strava_connected,
     }
     return render(request, "running/run_list.html", context)
+
+
+# --- Garmin Integration (stubs) ---
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+
+
+from garminconnect import Garmin
+from django import forms
+
+class GarminLoginForm(forms.Form):
+    email = forms.EmailField(label="Email Garmin Connect")
+    password = forms.CharField(widget=forms.PasswordInput, label="Mot de passe")
+
+@login_required
+def garmin_connect(request):
+    message = None
+    if request.method == "POST":
+        form = GarminLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            try:
+                # Authentification Garmin
+                client = Garmin(email, password)
+                client.login()
+                # Stocker le token dans la session (ou en base pour prod)
+                request.session["garmin_email"] = email
+                request.session["garmin_password"] = password
+                request.session["garmin_authenticated"] = True
+                return HttpResponseRedirect(reverse("running:my_runs"))
+            except Exception as e:
+                message = f"Erreur d'authentification Garmin: {e}"
+    else:
+        form = GarminLoginForm()
+    return render(request, "running/garmin_connect.html", {"form": form, "message": message})
+
+@login_required
+def garmin_sync(request):
+    """
+    Stub: Synchronisation Garmin (à remplacer par logique réelle)
+    """
+    return HttpResponse("Synchronisation Garmin à implémenter.")
 
 
 @login_required

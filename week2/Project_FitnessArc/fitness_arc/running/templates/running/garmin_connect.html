@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Connexion Garmin Connect{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Connexion à Garmin Connect</h2>
+  {% if message %}
+    <div style="color:red;">{{ message }}</div>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn" style="background:#0072ce;border-color:#0072ce">Se connecter</button>
+  </form>
+</div>
+{% endblock %}

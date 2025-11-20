@@ -5,17 +5,43 @@
 <div class="card">
   <h1>Mes sorties running</h1>
 
-  {% if not strava_connected %}
-    <p>Tu n'as pas encore connecté ton compte Strava.</p>
-    <a href="{% url 'running:strava_connect' %}" class="btn">
-      Connecter Strava
-    </a>
-  {% else %}
-    <p>Compte Strava connecté ✅</p>
-    <a href="{% url 'running:strava_connect' %}" class="btn" style="margin-bottom:1rem;">
-      Re-synchroniser avec Strava
-    </a>
-  {% endif %}
+  <!-- Section Strava -->
+  <div style="margin-bottom:2rem;padding:1rem;background:rgba(252,76,2,0.1);border-radius:8px;border:2px solid rgba(252,76,2,0.3)">
+    <h3 style="margin-top:0;display:flex;align-items:center;gap:0.5rem">
+      <span style="font-size:1.5rem">🏃</span>
+      Strava
+    </h3>
+    {% if not strava_connected %}
+      <p style="margin:0.5rem 0">Tu n'as pas encore connecté ton compte Strava.</p>
+      <a href="{% url 'running:strava_connect' %}" class="btn" style="background:#fc4c02;border-color:#fc4c02">
+        Connecter Strava
+      </a>
+    {% else %}
+      <p style="margin:0.5rem 0">Compte Strava connecté ✅</p>
+      <a href="{% url 'running:strava_connect' %}" class="btn" style="background:#fc4c02;border-color:#fc4c02">
+        Re-synchroniser avec Strava
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Section Garmin -->
+  <div style="margin-bottom:2rem;padding:1rem;background:rgba(0,114,206,0.1);border-radius:8px;border:2px solid rgba(0,114,206,0.3)">
+    <h3 style="margin-top:0;display:flex;align-items:center;gap:0.5rem">
+      <span style="font-size:1.5rem">⌚</span>
+      Garmin Connect
+    </h3>
+    {% if not garmin_connected %}
+      <p style="margin:0.5rem 0">Tu n'as pas encore connecté ton compte Garmin Connect.</p>
+      <a href="{% url 'running:garmin_connect' %}" class="btn" style="background:#0072ce;border-color:#0072ce">
+        Connecter Garmin Connect
+      </a>
+    {% else %}
+      <p style="margin:0.5rem 0">Compte Garmin Connect connecté ✅</p>
+      <a href="{% url 'running:garmin_sync' %}" class="btn" style="background:#0072ce;border-color:#0072ce">
+        Re-synchroniser avec Garmin
+      </a>
+    {% endif %}
+  </div>
 
   {% if runs %}
     <table>

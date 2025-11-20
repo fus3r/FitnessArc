@@ -20,6 +20,9 @@ dj-database-url==3.0.1   # Parse DATABASE_URL environment variable
 # Environment Variables
 python-dotenv==1.0.1     # Load .env files
 
+# HTTP Library
+requests==2.32.3         # HTTP library for API calls (Strava, etc.)
+
 # Notes:
 # - Week 1 (Comptoir Local Saclay): Django e-commerce platform for local producers
 # - Week 2 (FitnessArc): Fitness tracking and workout management application
