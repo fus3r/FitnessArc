@@ -758,6 +758,10 @@
       <a href="{% url 'workouts:exercise_list' %}" {% if request.resolver_match.url_name == 'exercise_list' %}class="active"{% endif %}>Exercices</a>
       <a href="{% url 'workouts:template_list' %}" {% if request.resolver_match.url_name == 'template_list' or request.resolver_match.url_name == 'template_detail' %}class="active"{% endif %}>Workouts</a>
       <a href="{% url 'nutrition_today' %}" {% if 'nutrition' in request.path %}class="active"{% endif %}>Nutrition</a>
+      <a href="{% url 'running:my_runs' %}"
+          {% if request.resolver_match.namespace == 'running' %}class="active"{% endif %}>
+        Running
+      </a>
        <a href="{% url 'leaderboard:index' %}" {% if request.resolver_match.namespace == 'leaderboard' %}class="active"{% endif %}>Leaderboard</a>
     </div>
     

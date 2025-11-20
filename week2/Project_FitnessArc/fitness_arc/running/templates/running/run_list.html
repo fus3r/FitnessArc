@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Mes sorties running{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h1>Mes sorties running</h1>
+
+  {% if not strava_connected %}
+    <p>Tu n'as pas encore connecté ton compte Strava.</p>
+    <a href="{% url 'running:strava_connect' %}" class="btn">
+      Connecter Strava
+    </a>
+  {% else %}
+    <p>Compte Strava connecté ✅</p>
+    <a href="{% url 'running:strava_connect' %}" class="btn" style="margin-bottom:1rem;">
+      Re-synchroniser avec Strava
+    </a>
+  {% endif %}
+
+  {% if runs %}
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Nom</th>
+          <th>Distance</th>
+          <th>Durée</th>
+          <th>Allure moyenne</th>
+          <th>D+</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+          <tr>
+            <td>{{ run.start_date|date:"d/m/Y H:i" }}</td>
+            <td>{{ run.name }}</td>
+            <td>{{ run.distance_km|floatformat:2 }} km</td>
+            <td>{{ run.moving_time_hms }}</td>
+            <td>
+              {% if run.pace_min_per_km %}
+                {{ run.pace_min_per_km }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ run.elevation_gain_m|default:"0"|floatformat:0 }} m</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Aucune sortie enregistrée pour le moment.</p>
+  {% endif %}
+</div>
+{% endblock %}
