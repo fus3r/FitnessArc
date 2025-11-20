@@ -14,5 +14,7 @@ urlpatterns = [
     path("sessions/<int:pk>/", views.session_detail, name="session_detail"),
     path("sessions/<int:pk>/complete/", views.complete_session, name="complete_session"),
     path("sessions/<int:pk>/summary/", views.session_summary, name="session_summary"),
+    path("sessions/<int:pk>/delete/", views.session_delete, name="session_delete"),
+    path("sessions/<int:session_pk>/logs/<int:log_pk>/delete/", views.set_log_delete, name="set_log_delete"),
 ]
 

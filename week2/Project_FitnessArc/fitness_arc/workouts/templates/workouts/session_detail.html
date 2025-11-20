@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <h3>Logs</h3>
 <table>
-  <thead><tr><th>#</th><th>Exercice</th><th>Reps</th><th>Poids</th><th>Volume</th></tr></thead>
+  <thead><tr><th>#</th><th>Exercice</th><th>Reps</th><th>Poids</th><th>Volume</th><th>Actions</th></tr></thead>
   <tbody>
     {% for s in session.set_logs.all %}
       <tr>
@@ -82,9 +82,17 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>{{ s.reps }}</td>
         <td>{{ s.weight_kg }} kg</td>
         <td>{{ s.volume }}</td>
+        <td>
+          <form method="post" action="{% url 'workouts:set_log_delete' session.pk s.pk %}" style="display:inline" onsubmit="return confirm('Supprimer cette série ?');">
+            {% csrf_token %}
+            <button type="submit" class="btn" style="padding:0.25rem 0.5rem;font-size:0.85rem;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:var(--danger)">
+              🗑️
+            </button>
+          </form>
+        </td>
       </tr>
     {% empty %}
-      <tr><td colspan="5">Aucune série pour le moment.</td></tr>
+      <tr><td colspan="6">Aucune série pour le moment.</td></tr>
     {% endfor %}
   </tbody>
 </table>
@@ -475,17 +483,20 @@ function updateFinishButton() {
   
   if (!finishBtn) return;
   
-  if (seconds < 30) {
-    // Moins de 30 secondes : mode Annuler (icône X)
+  // Vérifier s'il y a des logs (séries enregistrées)
+  const hasLogs = document.querySelectorAll('table tbody tr:not(:has(td[colspan]))').length > 0;
+  
+  // Si moins de 30 secondes ET aucun log : mode Annuler
+  if (seconds < 30 && !hasLogs) {
     finishIcon.innerHTML = '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2"/>';
     finishText.textContent = 'Annuler le workout';
     finishBtn.classList.add('btn-cancel');
     finishBtn.classList.remove('btn-finish');
     finishContainer.classList.add('cancel-mode');
     finishContainer.classList.remove('finish-mode');
-    finishHint.textContent = 'Le workout sera annulé (< 30 secondes)';
+    finishHint.textContent = 'Le workout sera annulé (< 30 secondes, aucune série)';
   } else {
-    // 30 secondes ou plus : mode Terminer (icône drapeau)
+    // 30 secondes ou plus, OU des logs existent : mode Terminer
     finishIcon.innerHTML = '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" fill="currentColor"/>';
     finishText.textContent = 'Terminer la séance';
     finishBtn.classList.add('btn-finish');

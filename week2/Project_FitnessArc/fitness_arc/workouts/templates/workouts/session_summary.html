@@ -51,8 +51,14 @@
   </table>
 </div>
 
-<div style="text-align:center;margin-top:2rem">
+<div style="text-align:center;margin-top:2rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
   <a href="{% url 'dashboard:index' %}" class="btn">Voir le Dashboard →</a>
-  <a href="{% url 'workouts:template_list' %}" class="btn" style="background:#6c757d;margin-left:0.5rem">Mes Templates →</a>
+  <a href="{% url 'workouts:template_list' %}" class="btn" style="background:#6c757d">Mes Templates →</a>
+  <form method="post" action="{% url 'workouts:session_delete' session.pk %}" style="display:inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette séance ? Toutes les données (calories, volume, PRs) seront mises à jour.');">
+    {% csrf_token %}
+    <button type="submit" class="btn" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:var(--danger)">
+      🗑️ Supprimer cette séance
+    </button>
+  </form>
 </div>
 {% endblock %}
