@@ -12,7 +12,7 @@ import calendar
 from django.db.models import F, FloatField, ExpressionWrapper
 
 def get_dashboard_data(user, ref_date=None):
-    """Calcule toutes les données du dashboard pour un utilisateur"""
+    """Calculate all dashboard data for a user including calories, volume, PRs, and workout history."""
     today = timezone.now().date()
     week_ago = today - timedelta(days=7)
     month_ago = today - timedelta(days=30)
@@ -25,10 +25,11 @@ def get_dashboard_data(user, ref_date=None):
     month_start = focus_date.replace(day=1)
     last_day = calendar.monthrange(focus_date.year, today.month)[1]
     month_end = today.replace(day=last_day)
-    # --- Navigation de mois pour le calendrier ---
+    
+    # Month navigation for calendar
     current_month = month_start  
 
-    # Mois précédent
+    # Previous month
     if current_month.month == 1:
         prev_month_year = current_month.year - 1
         prev_month_month = 12
@@ -36,7 +37,7 @@ def get_dashboard_data(user, ref_date=None):
         prev_month_year = current_month.year
         prev_month_month = current_month.month - 1
 
-    # Mois suivant
+    # Next month
     if current_month.month == 12:
         next_month_year = current_month.year + 1
         next_month_month = 1
@@ -44,28 +45,28 @@ def get_dashboard_data(user, ref_date=None):
         next_month_year = current_month.year
         next_month_month = current_month.month + 1
 
-    # Nom mois
+    # Month name
     current_month_label = current_month.strftime("%B %Y")
 
     
-    # Calories nutrition (aujourd'hui)
+    # Nutrition calories (today)
     today_food_logs = FoodLog.objects.filter(owner=user, date=today)
     calories_consumed = float(sum(log.kcal for log in today_food_logs))
     protein_consumed = float(sum(log.protein for log in today_food_logs))
     
-    # Calories workout (aujourd'hui)
+    # Workout calories (today)
     today_workouts = WorkoutSession.objects.filter(owner=user, date=today)
     calories_burned = float(sum(session.estimated_calories_burned for session in today_workouts))
     
-    # Calories running (aujourd'hui)
+    # Running calories (today)
     if Run is not None:
         today_runs = Run.objects.filter(user=user, start_date__date=today)
         calories_burned += float(sum(run.calories_burned or 0 for run in today_runs))
     
-    # Balance calorique
+    # Calorie balance
     calorie_balance = calories_consumed - calories_burned
     
-    # Volume d'entraînement (7 derniers jours)
+    # Training volume (last 7 days)
     recent_sessions = WorkoutSession.objects.filter(
         owner=user,
         date__gte=week_ago
@@ -73,11 +74,11 @@ def get_dashboard_data(user, ref_date=None):
     
     weekly_volume = sum(session.total_volume for session in recent_sessions)
     
-    # Comparaison avec la semaine précédente
+    # Comparison with previous week
     prev_week_end = week_ago - timedelta(days=1)
     prev_week_start = prev_week_end - timedelta(days=6)
 
-    # Séances complétées la semaine précédente
+    # Previous week completed sessions
     prev_week_sessions = WorkoutSession.objects.filter(
         owner=user,
         is_completed=True,
@@ -85,24 +86,24 @@ def get_dashboard_data(user, ref_date=None):
         date__lte=prev_week_end,
     ).prefetch_related('set_logs')
 
-    # Nombre de séances semaine précédente
+    # Previous week session count
     prev_sessions_count = prev_week_sessions.count()
 
-    # Volume semaine précédente
+    # Previous week volume
     prev_week_volume = sum(sess.total_volume for sess in prev_week_sessions)
 
-    # Temps d’entraînement semaine précédente (en minutes)
+    # Previous week training time (in minutes)
     prev_week_training_time = 0
     for sess in prev_week_sessions:
         if sess.duration_minutes:
             prev_week_training_time += sess.duration_minutes
 
-    # Calories brûlées semaine précédente
+    # Previous week calories burned
     prev_week_calories_burned = sum(
         sess.estimated_calories_burned for sess in prev_week_sessions
     )
     
-    # Ajouter les calories de running pour la semaine précédente
+    # Add running calories for previous week
     if Run is not None:
         prev_week_runs = Run.objects.filter(
             user=user,
@@ -111,7 +112,7 @@ def get_dashboard_data(user, ref_date=None):
         )
         prev_week_calories_burned += sum(run.calories_burned or 0 for run in prev_week_runs)
 
-    # PRs récents (5 derniers)
+    # Recent PRs (last 5)
     recent_prs = PR.objects.filter(owner=user).order_by('-date')[:5]
     all_prs = PR.objects.filter(owner=user).select_related('exercise').order_by(
         'exercise__name', 'metric', '-value'
@@ -120,12 +121,12 @@ def get_dashboard_data(user, ref_date=None):
     best_prs_dict = {}
     for pr in all_prs:
         key = (pr.exercise_id, pr.metric)
-        if key not in best_prs_dict:   # on garde le PR avec la plus grande valeur
+        if key not in best_prs_dict:   # keep the PR with highest value
             best_prs_dict[key] = pr
 
     best_prs = list(best_prs_dict.values())
 
-    # Groupement par exercice pour l'affichage "onglet PR"
+    # Group by exercise for PR tab display
     grouped = defaultdict(list)
     for pr in best_prs:
         grouped[pr.exercise.name].append({
@@ -141,10 +142,10 @@ def get_dashboard_data(user, ref_date=None):
             'prs': prs_list,
         })
 
-    # Nombre de séances cette semaine
+    # This week session count
     sessions_count = recent_sessions.count()
 
-    #Durée des séances
+    # Session duration
     weekly_training_time = 0
     for session in recent_sessions:
         if session.duration_minutes:
@@ -152,20 +153,20 @@ def get_dashboard_data(user, ref_date=None):
     weekly_training_hours = weekly_training_time // 60   
     weekly_training_min = weekly_training_time % 60
     
-    # Historique des séances (30 derniers jours, complétées uniquement)
+    # Workout history (last 30 days, completed only)
     workout_history = WorkoutSession.objects.filter(
         owner=user,
         date__gte=month_ago,
         is_completed=True
     ).prefetch_related('set_logs__exercise').order_by('-date')[:10]
     
-    # Calculer les détails pour chaque workout
+    # Calculate details for each workout
     workout_details = []
     for session in workout_history:
-        # PRs détectés pendant cette séance
+        # PRs detected during this session
         session_prs = PR.objects.filter(owner=user, date=session.date)
         
-        # Exercices uniques
+        # Unique exercises
         exercises = {}
         for log in session.set_logs.all():
             ex_name = log.exercise.name
@@ -181,7 +182,7 @@ def get_dashboard_data(user, ref_date=None):
             'total_sets': session.set_logs.count(),
         })
 
-    # Calendrier du mois
+    # Month calendar
     month_sessions = WorkoutSession.objects.filter(
         owner=user,
         date__gte=month_start,

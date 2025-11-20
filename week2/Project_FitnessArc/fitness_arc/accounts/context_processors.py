@@ -1,7 +1,7 @@
 from .models import Friendship
 
 def friends_requests_count(request):
-    """Compteur de demandes d'amis en attente"""
+    """Returns the count of pending friend requests for the current user."""
     if request.user.is_authenticated:
         count = Friendship.objects.filter(to_user=request.user, status='pending').count()
         return {'pending_requests_count': count}
@@ -9,7 +9,7 @@ def friends_requests_count(request):
 
 
 def user_features(request):
-    """Fonctionnalités activées pour l'utilisateur"""
+    """Returns which features are enabled for the current user."""
     if request.user.is_authenticated and hasattr(request.user, 'profile'):
         profile = request.user.profile
         return {
@@ -18,7 +18,7 @@ def user_features(request):
             'feature_running': profile.feature_running,
             'feature_leaderboard': profile.feature_leaderboard,
         }
-    # Pour les utilisateurs non connectés, afficher toutes les fonctionnalités
+    # Show all features for anonymous users
     return {
         'feature_workouts': True,
         'feature_nutrition': True,

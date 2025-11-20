@@ -3,20 +3,20 @@ from django.db import models
 
 User = settings.AUTH_USER_MODEL
 
-# Create your models here.
+
 class SportCategory(models.Model):
-    """Catégories de sports : Musculation, Sports collectifs, Natation, etc."""
-    name = models.CharField(max_length=100, unique=True, help_text="Nom de la catégorie (ex: Musculation, Football)")
+    """Sport categories like Weightlifting, Team Sports, Swimming, etc."""
+    name = models.CharField(max_length=100, unique=True, help_text="Category name (e.g. Weightlifting, Football)")
     slug = models.SlugField(unique=True)
-    icon = models.CharField(max_length=50, blank=True, help_text="Emoji ou classe d'icône (ex: 🏋️, ⚽)")
+    icon = models.CharField(max_length=50, blank=True, help_text="Emoji or icon class (e.g. 🏋️, ⚽)")
     description = models.TextField(blank=True)
-    has_specific_exercises = models.BooleanField(default=True, help_text="True si ce sport a ses propres exercices spécifiques")
-    order = models.PositiveIntegerField(default=0, help_text="Ordre d'affichage")
+    has_specific_exercises = models.BooleanField(default=True, help_text="True if this sport has its own specific exercises")
+    order = models.PositiveIntegerField(default=0, help_text="Display order")
     
     class Meta:
         ordering = ['order', 'name']
-        verbose_name = "Catégorie de sport"
-        verbose_name_plural = "Catégories de sports"
+        verbose_name = "Sport Category"
+        verbose_name_plural = "Sport Categories"
     
     def __str__(self):
         return f"{self.icon} {self.name}" if self.icon else self.name
@@ -31,14 +31,13 @@ class Exercise(models.Model):
              ("machine","Machine"),("cable","Poulie"),("bodyweight","Poids du corps"),
              ("ball","Ballon"),("racket","Raquette"),("water","Eau"),("none","Aucun")]
     
-    # Catégorie de sport (Musculation, Football, Natation, etc.)
     sport_category = models.ForeignKey(
         SportCategory, 
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True,
         related_name="exercises",
-        help_text="Catégorie de sport de cet exercice"
+        help_text="Sport category for this exercise"
     )
     
     name = models.CharField(max_length=200, unique=True)
@@ -47,8 +46,8 @@ class Exercise(models.Model):
     equipment = models.CharField(max_length=20, choices=EQUIP)
     difficulty = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='exercises/', blank=True, null=True, help_text="Image de démonstration")
-    is_time_based = models.BooleanField(default=False, help_text="Si True, l'exercice se mesure en temps (secondes) plutôt qu'en répétitions")
+    image = models.ImageField(upload_to='exercises/', blank=True, null=True, help_text="Demo image")
+    is_time_based = models.BooleanField(default=False, help_text="If True, measured in time (seconds) instead of reps")
     
     def __str__(self): return self.name
 
@@ -73,8 +72,8 @@ class WorkoutSession(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="workout_sessions")
     date = models.DateField(auto_now_add=True)
     from_template = models.ForeignKey(WorkoutTemplate, on_delete=models.SET_NULL, null=True, blank=True)
-    duration_minutes = models.PositiveIntegerField(default=0, help_text="Durée de la séance en minutes")
-    is_completed = models.BooleanField(default=False, help_text="Séance terminée")
+    duration_minutes = models.PositiveIntegerField(default=0, help_text="Session duration in minutes")
+    is_completed = models.BooleanField(default=False, help_text="Session completed")
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -86,12 +85,7 @@ class WorkoutSession(models.Model):
     
     @property
     def estimated_calories_burned(self):
-        """
-        Estimation des calories brûlées selon :
-        - Musculation intense : ~6 kcal/min
-        - Musculation modérée : ~4 kcal/min
-        - Moyenne : 5 kcal/min
-        """
+        """Estimated calories burned (avg 5 kcal/min)."""
         if self.duration_minutes == 0:
             return 0
         return self.duration_minutes * 5
@@ -100,8 +94,8 @@ class SetLog(models.Model):
     session = models.ForeignKey(WorkoutSession, on_delete=models.CASCADE, related_name="set_logs")
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     set_number = models.PositiveIntegerField()
-    reps = models.PositiveIntegerField(null=True, blank=True, help_text="Nombre de répétitions (pour exercices non basés sur le temps)")
-    duration_seconds = models.PositiveIntegerField(null=True, blank=True, help_text="Durée en secondes (pour exercices basés sur le temps)")
+    reps = models.PositiveIntegerField(null=True, blank=True, help_text="Number of reps (for non time-based exercises)")
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True, help_text="Duration in seconds (for time-based exercises)")
     weight_kg = models.DecimalField(max_digits=6, decimal_places=2)
     rpe = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.TextField(blank=True)
@@ -110,11 +104,11 @@ class SetLog(models.Model):
     def volume(self):
         if self.reps:
             return float(self.weight_kg) * self.reps
-        return float(self.weight_kg)  # Pour les exercices basés sur le temps
+        return float(self.weight_kg)  # For time-based exercises
     
     @property
     def display_performance(self):
-        """Retourne l'affichage de la performance (reps ou temps)"""
+        """Returns the performance display (reps or time)."""
         if self.exercise.is_time_based and self.duration_seconds:
             mins, secs = divmod(self.duration_seconds, 60)
             if mins > 0:

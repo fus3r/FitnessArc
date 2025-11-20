@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from decimal import Decimal
+
 
 class Food(models.Model):
     UNIT_TYPES = [
@@ -11,11 +11,11 @@ class Food(models.Model):
     
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    kcal_per_100g = models.DecimalField(max_digits=6, decimal_places=2, help_text="Calories (kcal) pour 100g/100ml/unité")
-    protein_per_100g = models.DecimalField(max_digits=5, decimal_places=2, help_text="Protéines (g) pour 100g/100ml/unité")
-    carbs_per_100g = models.DecimalField(max_digits=5, decimal_places=2, help_text="Glucides (g) pour 100g/100ml/unité")
-    fat_per_100g = models.DecimalField(max_digits=5, decimal_places=2, help_text="Lipides (g) pour 100g/100ml/unité")
-    unit_type = models.CharField(max_length=10, choices=UNIT_TYPES, default='g', help_text="Type d'unité de mesure")
+    kcal_per_100g = models.DecimalField(max_digits=6, decimal_places=2, help_text="Calories (kcal) per 100g/100ml/unit")
+    protein_per_100g = models.DecimalField(max_digits=5, decimal_places=2, help_text="Protein (g) per 100g/100ml/unit")
+    carbs_per_100g = models.DecimalField(max_digits=5, decimal_places=2, help_text="Carbs (g) per 100g/100ml/unit")
+    fat_per_100g = models.DecimalField(max_digits=5, decimal_places=2, help_text="Fat (g) per 100g/100ml/unit")
+    unit_type = models.CharField(max_length=10, choices=UNIT_TYPES, default='g', help_text="Unit type")
     is_public = models.BooleanField(default=True)
 
     def __str__(self):
@@ -35,7 +35,7 @@ class FoodLog(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='food_logs')
     date = models.DateField()
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=6, decimal_places=2, default=100, help_text="Quantité (en grammes, ml ou unités)")
+    quantity = models.DecimalField(max_digits=6, decimal_places=2, default=100, help_text="Quantity (in grams, ml or units)")
     meal_type = models.CharField(max_length=20, choices=MEAL_TYPES, default='snack')
     
     class Meta:
@@ -64,7 +64,7 @@ class FoodLog(models.Model):
 
 
 class Recipe(models.Model):
-    """Recette avec ingrédients et valeurs nutritionnelles calculées"""
+    """Recipe with ingredients and calculated nutritional values."""
     DIFFICULTY_CHOICES = [
         ('easy', 'Facile'),
         ('medium', 'Moyen'),
@@ -81,10 +81,10 @@ class Recipe(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
-    instructions = models.TextField(help_text="Instructions de préparation")
-    prep_time_minutes = models.PositiveIntegerField(help_text="Temps de préparation en minutes")
-    cook_time_minutes = models.PositiveIntegerField(default=0, help_text="Temps de cuisson en minutes")
-    servings = models.PositiveIntegerField(default=1, help_text="Nombre de portions")
+    instructions = models.TextField(help_text="Preparation instructions")
+    prep_time_minutes = models.PositiveIntegerField(help_text="Prep time in minutes")
+    cook_time_minutes = models.PositiveIntegerField(default=0, help_text="Cooking time in minutes")
+    servings = models.PositiveIntegerField(default=1, help_text="Number of servings")
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, default='medium')
     meal_type = models.CharField(max_length=20, choices=MEAL_TYPE_CHOICES, default='lunch')
     image_url = models.URLField(blank=True, null=True)

@@ -4,9 +4,7 @@ from django.conf import settings
 
 class StravaAuth(models.Model):
     """
-    Stocke l'autorisation Strava d'un utilisateur :
-    - access_token / refresh_token
-    - date d'expiration du token
+    Stores a user's Strava authorization with access/refresh tokens and expiration.
     """
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -27,20 +25,20 @@ class StravaAuth(models.Model):
 
 class GarminAuth(models.Model):
     """
-    Stocke les identifiants Garmin Connect d'un utilisateur.
-    Utilise python-garminconnect qui nécessite email/password.
+    Stores a user's Garmin Connect credentials.
+    Uses python-garminconnect which requires email/password.
     """
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="garmin_auth",
     )
-    email = models.EmailField(help_text="Email Garmin Connect")
-    # Note: Stockage du mot de passe chiffré recommandé en production
-    password = models.CharField(max_length=255, help_text="Mot de passe Garmin Connect (chiffré)")
+    email = models.EmailField(help_text="Garmin Connect email")
+    # Note: encrypted password storage recommended in production
+    password = models.CharField(max_length=255, help_text="Garmin Connect password (encrypted)")
     
-    is_active = models.BooleanField(default=True, help_text="Connexion active")
-    last_sync = models.DateTimeField(null=True, blank=True, help_text="Dernière synchronisation")
+    is_active = models.BooleanField(default=True, help_text="Active connection")
+    last_sync = models.DateTimeField(null=True, blank=True, help_text="Last sync")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -51,7 +49,7 @@ class GarminAuth(models.Model):
 
 class Run(models.Model):
     """
-    Une sortie running (activité depuis Strava ou Garmin Connect).
+    A running activity from Strava or Garmin Connect.
     """
     SOURCE_CHOICES = [
         ('strava', 'Strava'),
@@ -63,9 +61,9 @@ class Run(models.Model):
         on_delete=models.CASCADE,
         related_name="runs",
     )
-    source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default='strava', help_text="Source de l'activité")
+    source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default='strava', help_text="Activity source")
     strava_id = models.BigIntegerField(null=True, blank=True, unique=True)
-    garmin_id = models.BigIntegerField(null=True, blank=True, help_text="ID activité Garmin")  
+    garmin_id = models.BigIntegerField(null=True, blank=True, help_text="Garmin activity ID")  
 
     name = models.CharField(max_length=255)
     distance_m = models.FloatField()          
@@ -76,22 +74,22 @@ class Run(models.Model):
     average_speed = models.FloatField(
         null=True,
         blank=True,
-        help_text="Vitesse moyenne en m/s",
+        help_text="Average speed in m/s",
     )
     average_pace_s_per_km = models.FloatField(
         null=True,
         blank=True,
-        help_text="Allure moyenne en secondes / km",
+        help_text="Average pace in seconds per km",
     )
     elevation_gain_m = models.FloatField(
         null=True,
         blank=True,
-        help_text="D+ en mètres",
+        help_text="Elevation gain in meters",
     )
     calories_burned = models.FloatField(
         null=True,
         blank=True,
-        help_text="Calories brûlées (kcal)",
+        help_text="Calories burned (kcal)",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

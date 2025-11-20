@@ -12,12 +12,13 @@ User = get_user_model()
 
 def compute_user_stats(user):
     """
-    Calcule les stats de base d'un utilisateur pour le leaderboard.
+    Calculate basic stats for a user for the leaderboard.
+    Returns XP, level, and league based on sessions, volume, and PRs.
     """
     today = timezone.now().date()
     month_ago = today - timedelta(days=30)
 
-    # Séances complétées sur 30 jours
+    # Completed sessions in last 30 days
     sessions = WorkoutSession.objects.filter(
         owner=user,
         is_completed=True,
@@ -26,26 +27,26 @@ def compute_user_stats(user):
 
     sessions_count = sessions.count()
 
-    # Volume total sur 30 jours
+    # Total volume over 30 days
     total_volume = sum(sess.total_volume for sess in sessions)
 
-    # Nombre de PR enregistrés (tous temps)
+    # Number of PRs recorded (all time)
     prs_count = PR.objects.filter(owner=user).count()
 
-    # "XP" simplifié
-    #  - 10 XP par séance
-    #  - 1 XP par 100 kg de volume (30 derniers jours)
-    #  - 5 XP par PR
+    # XP calculation:
+    #  - 10 XP per session
+    #  - 1 XP per 100 kg of volume (last 30 days)
+    #  - 5 XP per PR
     xp = (
         sessions_count * 10
         + (total_volume / 100.0)
         + prs_count * 5
     )
 
-    # Niveau = XP // 50 (par exemple)
+    # Level = XP // 50
     level = int(xp // 50)
 
-    # Ligue en fonction du niveau
+    # League based on level
     if level >= 20:
         league = "Master"
     elif level >= 15:
@@ -72,11 +73,10 @@ def compute_user_stats(user):
 
 def get_leaderboard(current_user):
     """
-    Construit la liste complète du leaderboard + la position de l'utilisateur courant.
-    Pour l'instant on prend *tous* les utilisateurs actifs.
-    Plus tard on pourra filtrer sur "amis".
+    Build the full leaderboard list + current user's rank.
+    Currently includes all active users. Could be filtered to friends in the future.
     """
-    # Que les comptes actifs
+    # Only active accounts
     users = User.objects.filter(is_superuser=False)
 
     rows = []
@@ -84,10 +84,10 @@ def get_leaderboard(current_user):
         stats = compute_user_stats(u)
         rows.append(stats)
 
-    # Tri décroissant par XP
+    # Sort by XP descending
     rows.sort(key=lambda r: r["xp"], reverse=True)
 
-    # Rang de l'utilisateur courant
+    # Current user's rank
     current_rank = None
     for idx, row in enumerate(rows, start=1):
         if row["user"].id == current_user.id:

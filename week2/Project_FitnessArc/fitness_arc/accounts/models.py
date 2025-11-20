@@ -6,6 +6,8 @@ User = get_user_model()
 
 
 class Profile(models.Model):
+    """User profile with fitness goals, physical stats, and feature preferences."""
+    
     RUNNING_DATA_SOURCE_CHOICES = [
         ('manual', 'Saisie manuelle'),
         ('strava', 'Strava'),
@@ -38,7 +40,7 @@ class Profile(models.Model):
         help_text="Source des données de running pour ce profil."
     )
     
-    # Feature toggles - allow users to enable/disable specific modules
+    # Users can choose which features they want to use
     feature_workouts = models.BooleanField(default=True, help_text="Activer le module Exercices & Workouts")
     feature_nutrition = models.BooleanField(default=True, help_text="Activer le module Nutrition")
     feature_running = models.BooleanField(default=True, help_text="Activer le module Running")
@@ -52,7 +54,8 @@ class Profile(models.Model):
 
 
 class Friendship(models.Model):
-    """Relation d'amitié entre deux utilisateurs"""
+    """Friendship between two users with pending/accepted/rejected status."""
+    
     STATUS_CHOICES = [
         ('pending', 'En attente'),
         ('accepted', 'Acceptée'),

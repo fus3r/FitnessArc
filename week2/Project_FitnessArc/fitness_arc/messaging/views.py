@@ -1,10 +1,7 @@
-from django.shortcuts import render
-
-# Create your views here.
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Max
-from django.shortcuts import get_object_or_404, redirect
 
 from .models import Conversation, Message
 
