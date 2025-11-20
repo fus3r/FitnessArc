@@ -219,16 +219,18 @@ def complete_session(request, pk):
     if request.method == "POST":
         duration_minutes = request.POST.get("duration_minutes", 0)
         try:
-            sess.duration_minutes = int(duration_minutes)
+            duration_minutes = int(duration_minutes)
         except ValueError:
-            pass
+            duration_minutes = 0
         
-        # Si la séance dure moins de 30 secondes (0 minutes), on l'annule (supprime)
-        if sess.duration_minutes == 0 and sess.set_logs.count() == 0:
+        # Si la séance dure moins d'1 minute et n'a aucun log, on l'annule (supprime)
+        if duration_minutes == 0 and sess.set_logs.count() == 0:
             sess.delete()
-            messages.info(request, "Séance annulée.")
+            messages.info(request, "Séance annulée (aucune série effectuée).")
             return redirect("workouts:template_list")
         
+        # Sinon, on termine normalement la séance
+        sess.duration_minutes = max(1, duration_minutes)  # Minimum 1 minute
         sess.is_completed = True
         sess.save()
         update_prs_for_session(sess)
@@ -263,3 +265,128 @@ def session_summary(request, pk):
         'exercises_data': exercises_data,
     }
     return render(request, "workouts/session_summary.html", context)
+
+@login_required
+def session_delete(request, pk):
+    """Supprimer une séance terminée"""
+    sess = get_object_or_404(WorkoutSession, pk=pk, owner=request.user)
+    
+    if request.method == "POST":
+        # Récupérer tous les exercices concernés avant suppression
+        exercise_ids = set(sess.set_logs.values_list('exercise_id', flat=True))
+        
+        # Supprimer la séance (les SetLogs seront supprimés en cascade)
+        sess.delete()
+        
+        # Recalculer les PRs pour tous les exercices concernés
+        for ex_id in exercise_ids:
+            # Recalculer max_weight
+            agg_weight = SetLog.objects.filter(
+                session__owner=request.user,
+                exercise_id=ex_id
+            ).aggregate(max_w=Max("weight_kg"))
+            max_weight = agg_weight["max_w"]
+            
+            if max_weight is not None:
+                pr, _ = PR.objects.get_or_create(
+                    owner=request.user,
+                    exercise_id=ex_id,
+                    metric="max_weight",
+                    defaults={"value": max_weight}
+                )
+                pr.value = max_weight
+                pr.save()
+            else:
+                # Plus aucun log pour cet exercice, supprimer le PR
+                PR.objects.filter(
+                    owner=request.user,
+                    exercise_id=ex_id,
+                    metric="max_weight"
+                ).delete()
+            
+            # Recalculer max_reps
+            agg_reps = SetLog.objects.filter(
+                session__owner=request.user,
+                exercise_id=ex_id
+            ).aggregate(max_r=Max("reps"))
+            max_reps = agg_reps["max_r"]
+            
+            if max_reps is not None:
+                pr, _ = PR.objects.get_or_create(
+                    owner=request.user,
+                    exercise_id=ex_id,
+                    metric="max_reps",
+                    defaults={"value": max_reps}
+                )
+                pr.value = max_reps
+                pr.save()
+            else:
+                PR.objects.filter(
+                    owner=request.user,
+                    exercise_id=ex_id,
+                    metric="max_reps"
+                ).delete()
+        
+        messages.success(request, "Séance supprimée. Les statistiques ont été mises à jour.")
+        return redirect("dashboard:index")
+    
+    return redirect("workouts:session_summary", pk=pk)
+
+@login_required
+def set_log_delete(request, session_pk, log_pk):
+    """Supprimer un log de série individuel"""
+    sess = get_object_or_404(WorkoutSession, pk=session_pk, owner=request.user)
+    log = get_object_or_404(SetLog, pk=log_pk, session=sess)
+    
+    if request.method == "POST":
+        exercise_id = log.exercise_id
+        log.delete()
+        
+        # Recalculer les PRs pour cet exercice
+        agg_weight = SetLog.objects.filter(
+            session__owner=request.user,
+            exercise_id=exercise_id
+        ).aggregate(max_w=Max("weight_kg"))
+        max_weight = agg_weight["max_w"]
+        
+        if max_weight is not None:
+            pr, _ = PR.objects.get_or_create(
+                owner=request.user,
+                exercise_id=exercise_id,
+                metric="max_weight",
+                defaults={"value": max_weight}
+            )
+            pr.value = max_weight
+            pr.save()
+        else:
+            PR.objects.filter(
+                owner=request.user,
+                exercise_id=exercise_id,
+                metric="max_weight"
+            ).delete()
+        
+        agg_reps = SetLog.objects.filter(
+            session__owner=request.user,
+            exercise_id=exercise_id
+        ).aggregate(max_r=Max("reps"))
+        max_reps = agg_reps["max_r"]
+        
+        if max_reps is not None:
+            pr, _ = PR.objects.get_or_create(
+                owner=request.user,
+                exercise_id=exercise_id,
+                metric="max_reps",
+                defaults={"value": max_reps}
+            )
+            pr.value = max_reps
+            pr.save()
+        else:
+            PR.objects.filter(
+                owner=request.user,
+                exercise_id=exercise_id,
+                metric="max_reps"
+            ).delete()
+        
+        messages.success(request, "Série supprimée.")
+    
+    return redirect("workouts:session_detail", pk=session_pk)
