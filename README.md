@@ -25,12 +25,9 @@ Application web complète de suivi fitness permettant la gestion d'entraînement
 3. [Installation et Configuration](#-installation-et-configuration)
 4. [Structure du Code](#-structure-du-code)
 5. [Modèle de Données](#-modèle-de-données)
-6. [Jalons et Méthodologie](#-jalons-et-méthodologie)
-7. [Répartition du Travail](#-répartition-du-travail)
-8. [Utilisation de Git](#-utilisation-de-git)
-9. [Utilisation de l'IA](#-utilisation-de-lia)
-10. [Tests](#-tests)
-11. [Déploiement](#-déploiement)
+6. [Utilisation de Git](#-utilisation-de-git)
+7. [Tests](#-tests)
+8. [Déploiement](#-déploiement)
 
 ---
 
