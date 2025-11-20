@@ -314,7 +314,7 @@ class PRModelTests(TestCase):
             value=Decimal('150.00')
         )
         
-        # Tenter de créer un doublon devrait échouer
+        # Attempting to create a duplicate should fail
         from django.db import IntegrityError
         with self.assertRaises(IntegrityError):
             PR.objects.create(
@@ -392,7 +392,7 @@ class UpdatePRsFunctionTests(TestCase):
     
     def test_update_prs_improvement(self):
         """Test de l'amélioration d'un PR existant"""
-        # Créer un PR initial
+        # Create an initial PR
         PR.objects.create(
             owner=self.user,
             exercise=self.exercise,
@@ -400,7 +400,7 @@ class UpdatePRsFunctionTests(TestCase):
             value=Decimal('100.00')
         )
         
-        # Nouvelle séance avec poids supérieur
+        # New session with higher weight
         SetLog.objects.create(
             session=self.session,
             exercise=self.exercise,
@@ -590,7 +590,7 @@ class WorkoutViewTests(TestCase):
             'duration_minutes': 0
         })
         
-        # La session devrait être supprimée
+        # The session should be deleted
         self.assertFalse(
             WorkoutSession.objects.filter(pk=session_id).exists()
         )
@@ -611,7 +611,7 @@ class WorkoutViewTests(TestCase):
             weight_kg=Decimal('80.00')
         )
         
-        # Créer un PR
+        # Create a PR
         update_prs_for_session(session)
         
         session_id = session.pk
@@ -619,7 +619,7 @@ class WorkoutViewTests(TestCase):
         url = reverse('workouts:session_delete', args=[session.pk])
         response = self.client.post(url)
         
-        # La session devrait être supprimée
+        # The session should be deleted
         self.assertFalse(
             WorkoutSession.objects.filter(pk=session_id).exists()
         )
@@ -706,6 +706,6 @@ class WorkoutViewTests(TestCase):
             'rest_seconds': 90
         })
         
-        # Devrait être redirigé et aucun item ajouté
+        # Should be redirected and no item added
         self.assertEqual(response.status_code, 302)
         self.assertEqual(other_template.items.count(), 0)

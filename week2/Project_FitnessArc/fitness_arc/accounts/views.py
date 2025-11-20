@@ -96,7 +96,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 
 @login_required
 def friends_list(request):
-    """Liste des amis + demandes en attente"""
+    """List of friends and pending requests."""
     friends = User.objects.filter(
         Q(friendships_received__from_user=request.user, friendships_received__status='accepted') |
         Q(friendships_sent__to_user=request.user, friendships_sent__status='accepted')
@@ -106,7 +106,7 @@ def friends_list(request):
     
     sent_requests = Friendship.objects.filter(from_user=request.user, status='pending')
     
-    # Exclure l'utilisateur actuel ET les comptes admin/staff
+    # Exclude current user and admin/staff accounts
     all_users = User.objects.exclude(pk=request.user.pk).exclude(is_superuser=True).exclude(is_staff=True).order_by('username')
     
     context = {
@@ -119,14 +119,14 @@ def friends_list(request):
 
 @login_required
 def send_friend_request(request, user_id):
-    """Envoyer une demande d'ami"""
+    """Send friend request to another user"""
     to_user = get_object_or_404(User, pk=user_id)
     
     if to_user == request.user:
         messages.error(request, "Vous ne pouvez pas vous ajouter vous-même !")
         return redirect('accounts:friends_list')
     
-    # Vérifier d'abord si une relation existe déjà (dans les deux sens)
+    # Check if a relationship already exists (in both directions)
     existing = Friendship.objects.filter(
         Q(from_user=request.user, to_user=to_user) |
         Q(from_user=to_user, to_user=request.user)
@@ -139,7 +139,7 @@ def send_friend_request(request, user_id):
             messages.info(request, f"Demande déjà envoyée à {to_user.username}")
         return redirect('accounts:friends_list')
     
-    # Utiliser get_or_create pour éviter les doublons en cas de double-clic
+    # Use get_or_create to avoid duplicates on double-click
     friendship, created = Friendship.objects.get_or_create(
         from_user=request.user,
         to_user=to_user,
@@ -155,7 +155,7 @@ def send_friend_request(request, user_id):
 
 @login_required
 def accept_friend_request(request, friendship_id):
-    """Accepter une demande d'ami"""
+    """Accept a friend request"""
     friendship = get_object_or_404(Friendship, pk=friendship_id, to_user=request.user, status='pending')
     friendship.status = 'accepted'
     friendship.save()
@@ -164,7 +164,7 @@ def accept_friend_request(request, friendship_id):
 
 @login_required
 def reject_friend_request(request, friendship_id):
-    """Refuser une demande d'ami"""
+    """Reject a friend request"""
     friendship = get_object_or_404(Friendship, pk=friendship_id, to_user=request.user, status='pending')
     friendship.status = 'rejected'
     friendship.save()
@@ -173,7 +173,7 @@ def reject_friend_request(request, friendship_id):
 
 @login_required
 def remove_friend(request, user_id):
-    """Retirer un ami"""
+    """Remove a friend"""
     friend = get_object_or_404(User, pk=user_id)
     Friendship.objects.filter(
         Q(from_user=request.user, to_user=friend) |
@@ -184,7 +184,7 @@ def remove_friend(request, user_id):
 
 @login_required
 def friend_dashboard(request, user_id):
-    """Voir le dashboard d'un ami"""
+    """View a friend's dashboard"""
     friend = get_object_or_404(User, pk=user_id)
     
     is_friend = Friendship.objects.filter(
@@ -205,7 +205,7 @@ def friend_dashboard(request, user_id):
 
 
 class PasswordChangeProfileView(LoginRequiredMixin, PasswordChangeView):
-    template_name = "accounts/password_change.html"  # ton fichier existe déjà
+    template_name = "accounts/password_change.html" 
     success_url = reverse_lazy("accounts:profile")
     form_class = PasswordChangeFormFR
     login_url = "accounts:login"

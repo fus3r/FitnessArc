@@ -210,7 +210,7 @@ def get_dashboard_data(user, ref_date=None):
         )
         month_total_calories_burned += sum(run.calories_burned or 0 for run in month_runs)
 
-    # Nombre de PR créés ce mois-ci
+    # Number of PRs created this month
     month_prs_count = PR.objects.filter(
         owner=user,
         date__gte=month_start,
@@ -240,7 +240,7 @@ def get_dashboard_data(user, ref_date=None):
 
         # --- Streak et constance mensuelle ---
 
-    # Toutes les dates de séances complétées (sur 1 an par ex)
+    # All completed session dates (e.g., over 1 year)
     one_year_ago = today - timedelta(days=365)
     all_dates_qs = WorkoutSession.objects.filter(
         owner=user,
@@ -249,10 +249,10 @@ def get_dashboard_data(user, ref_date=None):
         date__lte=today,
     ).values_list('date', flat=True).distinct()
 
-    # Met dans un set pour accès O(1)
+    # Put in a set for O(1) access
     all_dates = set(all_dates_qs)
 
-    # Streak actuel (en remontant à partir d'aujourd'hui)
+    # Current streak (counting back from today)
     current_streak = 0
     cursor = today
     while cursor in all_dates:
@@ -261,7 +261,7 @@ def get_dashboard_data(user, ref_date=None):
 
     # Meilleur streak historique (sur 1 an)
     best_streak = 0
-    # On parcourt les dates triées
+    # Iterate through sorted dates
     sorted_dates = sorted(all_dates)
     if sorted_dates:
         streak = 1
@@ -275,7 +275,7 @@ def get_dashboard_data(user, ref_date=None):
                 streak = 1
         best_streak = max(best_streak, streak)
 
-    # Constance mensuelle : nb de jours avec séance / nb de jours écoulés
+    # Monthly consistency: days with session / elapsed days
     days_passed_in_month = (today - month_start).days + 1
     active_days_this_month = WorkoutSession.objects.filter(
         owner=user,
@@ -319,12 +319,12 @@ def get_dashboard_data(user, ref_date=None):
         date = today - timedelta(days=i)
         daily_calories_labels.append(date.strftime('%d/%m'))
         
-        # Calories consommées
+        # Calories consumed
         food_logs = FoodLog.objects.filter(owner=user, date=date)
         consumed = sum(log.kcal for log in food_logs)
         daily_calories_consumed.append(round(float(consumed or 0), 1))
         
-        # Calories brûlées
+        # Calories burned
         workouts = WorkoutSession.objects.filter(owner=user, date=date, is_completed=True)
         burned = sum(w.estimated_calories_burned for w in workouts)
         
@@ -387,7 +387,7 @@ def get_dashboard_data(user, ref_date=None):
     week_training_time_diff = weekly_training_time - prev_week_training_time
     week_calories_diff = calories_burned - prev_week_calories_burned
 
-    # Répartition par groupe musculaire (dernier mois) ---
+    # Muscle group distribution (last month)
 
     muscle_volume = defaultdict(float)
 

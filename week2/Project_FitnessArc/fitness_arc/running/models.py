@@ -136,18 +136,18 @@ class Run(models.Model):
         Si le poids de l'utilisateur est disponible, on l'utilise.
         Sinon, on utilise une valeur par défaut de 70 kg.
         """
-        weight_kg = 70  # Valeur par défaut
+        weight_kg = 70  # Default value
         if hasattr(self.user, 'profile') and self.user.profile.weight_kg:
             weight_kg = float(self.user.profile.weight_kg)
         
         distance_km = self.distance_km
         # Formule : calories ≈ poids (kg) × distance (km) × 1.036
-        # Le facteur 1.036 est une moyenne pour la course à pied
+        # Factor 1.036 is an average for running
         calories = weight_kg * distance_km * 1.036
         return round(calories, 1)
 
     def save(self, *args, **kwargs):
-        # Calcule automatiquement les calories si non définies
+        # Automatically calculate calories if not defined
         if self.calories_burned is None:
             self.calories_burned = self.estimate_calories()
         

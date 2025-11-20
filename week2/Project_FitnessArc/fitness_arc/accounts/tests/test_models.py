@@ -8,7 +8,7 @@ class ProfileModelTests(TestCase):
         User = get_user_model()
         u = User.objects.create_user(username="bob", password="x")
         self.assertTrue(Profile.objects.filter(user=u).exists())
-        # accès relation inverse sans erreur
+        # access inverse relation without error
         self.assertIsNotNone(u.profile.pk)
 
     def test_profile_str(self):

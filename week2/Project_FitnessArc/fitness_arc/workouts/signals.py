@@ -12,7 +12,7 @@ def create_default_templates_for_new_user(sender, instance, created, **kwargs):
     Ignore les superusers et staff (comptes admin).
     """
     if not created:
-        # L'utilisateur existe déjà, ne rien faire
+        # User already exists, do nothing
         return
     
     # Ignorer les superusers et staff

@@ -24,7 +24,7 @@ class AccountsViewsTests(TestCase):
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, reverse("accounts:activation_sent"))
 
-        # Utilisateur + profil créés
+        # User + profile created
         User = get_user_model()
         self.assertTrue(User.objects.filter(username="john").exists())
         u = User.objects.get(username="john")
@@ -45,7 +45,7 @@ class AccountsViewsTests(TestCase):
         self.assertEqual(resp.url, expected_login)
 
     def test_profile_edit_updates_profile_when_logged_in(self):
-        # créer & connecter un user
+        # create & login a user
         User = get_user_model()
         u = User.objects.create_user(username="maria", password="pass12345")
         logged = self.client.login(username="maria", password="pass12345")
@@ -62,7 +62,7 @@ class AccountsViewsTests(TestCase):
                 "running_data_source": "manual",
             },
         )
-        # redirection vers la page profil après succès
+        # redirect to profile page after success
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, reverse("accounts:profile"))
 

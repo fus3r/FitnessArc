@@ -13,7 +13,7 @@ from decimal import Decimal
 import unicodedata
 
 def normalize_string(s):
-    """Supprime les accents et caractères spéciaux"""
+    """Remove accents and special characters."""
     nfkd_form = unicodedata.normalize('NFKD', s)
     return ''.join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
@@ -90,26 +90,26 @@ def delete_food_log(request, pk):
 
 @login_required
 def recipe_list(request):
-    """Liste des recettes filtrées selon le profil utilisateur"""
+    """List of recipes filtered by user profile."""
     from .models import Recipe
     
     user_profile = request.user.profile
     recipes = Recipe.objects.filter(is_public=True).prefetch_related('ingredients__food')
     
-    # Filtrage par type de repas (optionnel)
+    # Filter by meal type (optional)
     meal_filter = request.GET.get('meal_type')
     if meal_filter:
         recipes = recipes.filter(meal_type=meal_filter)
     
-    # Filtrage par difficulté (optionnel)
+    # Filter by difficulty (optional)
     difficulty_filter = request.GET.get('difficulty')
     if difficulty_filter:
         recipes = recipes.filter(difficulty=difficulty_filter)
     
-    # Calcul des objectifs caloriques de l'utilisateur
+    # Calculate user's caloric goals
     daily_goal = calculate_daily_goal(user_profile)
     
-    # Récupération de la consommation actuelle du jour
+    # Get current day's intake
     today = timezone.now().date()
     logs = FoodLog.objects.filter(owner=request.user, date=today)
     current_intake = {
@@ -182,10 +182,10 @@ def recipe_detail(request, slug):
 
 
 def calculate_daily_goal(profile):
-    """Calcule les objectifs journaliers selon le profil"""
-    # Formule simplifiée basée sur le poids et l'objectif
+    """Calculate daily goals based on profile."""
+    # Simplified formula based on weight and goal
     if not profile.weight_kg:
-        # Valeurs par défaut si pas de poids renseigné
+        # Default values if no weight specified
         return {
             'kcal': 2000,
             'protein': 150,
@@ -196,19 +196,19 @@ def calculate_daily_goal(profile):
     weight = float(profile.weight_kg)
     
     if profile.goal == 'bulk':
-        # Prise de masse: surplus calorique
+        # Bulking: caloric surplus
         kcal = weight * 35
         protein = weight * 2.2
         carbs = weight * 5
         fat = weight * 1
     elif profile.goal == 'cut':
-        # Perte de poids: déficit calorique
+        # Cutting: caloric deficit
         kcal = weight * 25
         protein = weight * 2.5
         carbs = weight * 2
         fat = weight * 0.8
     else:  # maintain
-        # Maintien
+        # Maintenance
         kcal = weight * 30
         protein = weight * 2
         carbs = weight * 3.5

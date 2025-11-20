@@ -44,7 +44,7 @@ class StravaAuthModelTests(TestCase):
             token_expires_at=expires_at
         )
         
-        # Vérifier qu'on peut accéder via user.strava_auth
+        # Verify we can access via user.strava_auth
         self.assertTrue(hasattr(self.user, 'strava_auth'))
         self.assertEqual(self.user.strava_auth.athlete_id, 12345678)
 
@@ -77,7 +77,7 @@ class GarminAuthModelTests(TestCase):
             password="encrypted_password"
         )
         
-        # Vérifier qu'on peut accéder via user.garmin_auth
+        # Verify we can access via user.garmin_auth
         self.assertTrue(hasattr(self.user, 'garmin_auth'))
         self.assertEqual(self.user.garmin_auth.email, "test@garmin.com")
 
@@ -235,7 +235,7 @@ class RunModelTests(TestCase):
             start_date=timezone.now()
         )
         
-        # 70 kg (défaut) × 5 km × 1.036 = 362.6 kcal
+        # 70 kg (default) × 5 km × 1.036 = 362.6 kcal
         calories = run.estimate_calories()
         self.assertAlmostEqual(calories, 362.6, places=0)
     
@@ -269,7 +269,7 @@ class RunModelTests(TestCase):
             start_date=timezone.now()
         )
         
-        # Devrait avoir calculé automatiquement les calories
+        # Should have automatically calculated calories
         self.assertIsNotNone(run.calories_burned)
         self.assertGreater(run.calories_burned, 0)
     
@@ -296,7 +296,7 @@ class RunModelTests(TestCase):
         )
         
         runs = list(Run.objects.all())
-        self.assertEqual(runs[0], run3)  # Plus récent en premier
+        self.assertEqual(runs[0], run3)  # Most recent first
         self.assertEqual(runs[1], run2)
         self.assertEqual(runs[2], run1)
     
@@ -489,7 +489,7 @@ class RunningViewTests(TestCase):
         
         form_data = {
             'name': '',  # Nom vide (invalide)
-            'distance_m': -100,  # Distance négative (invalide)
+            'distance_m': -100,  # Negative distance (invalid)
             'moving_time': 'invalid',
             'elapsed_time': 'invalid'
         }

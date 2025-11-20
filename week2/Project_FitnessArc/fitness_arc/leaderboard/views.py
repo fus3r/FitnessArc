@@ -16,7 +16,7 @@ def index(request):
     # Top 10 global
     top_10 = rows[:10]
 
-    # Stats perso (ou None si pas trouvé, très peu probable)
+    # Personal stats (or None if not found, unlikely)
     me = None
     for r in rows:
         if r["user"] == request.user:

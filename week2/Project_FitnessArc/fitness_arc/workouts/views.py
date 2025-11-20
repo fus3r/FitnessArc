@@ -13,7 +13,7 @@ from .models import WorkoutSession, SetLog, PR
 def exercise_list(request):
     exercises = Exercise.objects.all().select_related('sport_category')
     
-    # Récupérer uniquement les catégories qui ont des exercices
+    # Only get categories that have exercises
     sport_categories = SportCategory.objects.filter(
         exercises__isnull=False
     ).distinct().order_by('order')
@@ -60,7 +60,7 @@ def exercise_list(request):
 @feature_required('workouts')
 def template_list(request):
     my_templates = WorkoutTemplate.objects.filter(owner=request.user, is_public=False)
-    # Templates publics par défaut de l'utilisateur (Push/Pull/Legs)
+    # User's default public templates (Push/Pull/Legs)
     public_templates = WorkoutTemplate.objects.filter(owner=request.user, is_public=True)
     
     return render(request, "workouts/template_list.html", {
@@ -80,7 +80,7 @@ def template_create(request):
 def start_session(request, pk):
     tpl = get_object_or_404(WorkoutTemplate, pk=pk)
     
-    # Vérifier que l'utilisateur a le droit d'utiliser ce template
+    # Check if user has permission to use this template
     if not (tpl.owner == request.user or tpl.is_public):
         messages.error(request, "Vous n'avez pas accès à ce template.")
         return redirect("workouts:template_list")
@@ -99,7 +99,7 @@ def session_detail(request, pk):
         except ValueError:
             pass
         
-        # Déterminer si c'est un exercice basé sur le temps ou sur les reps
+        # Determine if it's a time-based or reps-based exercise
         exercise_id = int(request.POST["exercise_id"])
         exercise = Exercise.objects.get(id=exercise_id)
         
@@ -111,12 +111,12 @@ def session_detail(request, pk):
         }
         
         if exercise.is_time_based:
-            # Exercice basé sur le temps
+            # Time-based exercise
             duration_seconds = request.POST.get("duration_seconds")
             if duration_seconds:
                 set_log_data["duration_seconds"] = int(duration_seconds)
         else:
-            # Exercice basé sur les reps
+            # Reps-based exercise
             reps = request.POST.get("reps")
             if reps:
                 set_log_data["reps"] = int(reps)
@@ -183,7 +183,7 @@ def update_prs_for_session(session):
     """
     user = session.owner
 
-    # Tous les exercices utilisés dans cette séance
+    # All exercises used in this session
     exercise_ids = (
         session.set_logs
         .values_list('exercise_id', flat=True)
@@ -242,13 +242,13 @@ def complete_session(request, pk):
         except ValueError:
             duration_minutes = 0
         
-        # Si la séance dure moins d'1 minute et n'a aucun log, on l'annule (supprime)
+        # If session lasted less than 1 minute and has no logs, cancel it
         if duration_minutes == 0 and sess.set_logs.count() == 0:
             sess.delete()
             messages.info(request, "Séance annulée (aucune série effectuée).")
             return redirect("workouts:template_list")
         
-        # Sinon, on termine normalement la séance
+        # Otherwise, finish the session normally
         sess.duration_minutes = max(1, duration_minutes)  # Minimum 1 minute
         sess.is_completed = True
         sess.save()
@@ -287,7 +287,7 @@ def session_summary(request, pk):
             exercises_data[ex_name]['total_duration'] += log.duration_seconds
         exercises_data[ex_name]['total_volume'] += log.volume
     
-    # Formater la durée totale pour l'affichage
+    # Format total duration for display
     for ex_name, data in exercises_data.items():
         if data['is_time_based'] and data['total_duration'] > 0:
             mins, secs = divmod(data['total_duration'], 60)
@@ -310,13 +310,13 @@ def session_delete(request, pk):
     sess = get_object_or_404(WorkoutSession, pk=pk, owner=request.user)
     
     if request.method == "POST":
-        # Récupérer tous les exercices concernés avant suppression
+        # Get all affected exercises before deletion
         exercise_ids = set(sess.set_logs.values_list('exercise_id', flat=True))
         
-        # Supprimer la séance (les SetLogs seront supprimés en cascade)
+        # Delete session (SetLogs will be deleted by cascade)
         sess.delete()
         
-        # Recalculer les PRs pour tous les exercices concernés
+        # Recalculate PRs for all affected exercises
         for ex_id in exercise_ids:
             # Recalculer max_weight
             agg_weight = SetLog.objects.filter(

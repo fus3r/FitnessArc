@@ -4,13 +4,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Affiche le journal du jour et permet l'ajout
+    # Display today's journal and allow adding entries
     path('today/', views.nutrition_today, name='nutrition_today'),
     
-    # NOUVEAU : Route pour supprimer un FoodLog spécifique (identifié par sa PK)
+    # Route to delete a specific FoodLog by ID
     path('delete/<int:pk>/', views.delete_food_log, name='delete_food_log'),
     
-    # Recettes
+    # Recipes
     path('recipes/', views.recipe_list, name='recipe_list'),
     path('recipes/<slug:slug>/', views.recipe_detail, name='recipe_detail'),
 ]

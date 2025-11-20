@@ -227,7 +227,7 @@ class RecipeModelTests(TestCase):
         expected_kcal = Decimal('342.30')
         self.assertEqual(self.recipe.total_kcal, expected_kcal)
         
-        # Protéines: (13 * 1.5) + (29 * 0.3) = 28.2g
+        # Protein: (13 * 1.5) + (29 * 0.3) = 28.2g
         expected_protein = Decimal('28.20')
         self.assertEqual(self.recipe.total_protein, expected_protein)
     
@@ -377,7 +377,7 @@ class DeleteFoodLogViewTests(TestCase):
         url = reverse('delete_food_log', args=[other_log.pk])
         response = self.client.post(url)
         
-        # Devrait retourner 404 car le log n'appartient pas à l'utilisateur
+        # Should return 404 as the log doesn't belong to the user
         self.assertEqual(response.status_code, 404)
 
 
@@ -540,6 +540,6 @@ class UtilityFunctionsTests(TestCase):
         
         goals = calculate_daily_goal(profile)
         
-        # Valeurs par défaut
+        # Default values
         self.assertEqual(goals['kcal'], 2000)
         self.assertEqual(goals['protein'], 150)
