@@ -11,6 +11,9 @@ class SignupFormTests(TestCase):
                 "username": "newuser",
                 "email": "new@example.com",
                 "goal": "bulk",
+                "sex": "M",
+                "height_cm": 180,
+                "weight_kg": 75,
                 "password1": "StrongPass123",
                 "password2": "StrongPass123",
             }

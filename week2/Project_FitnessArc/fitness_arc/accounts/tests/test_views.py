@@ -13,13 +13,16 @@ class AccountsViewsTests(TestCase):
                 "username": "john",
                 "email": "john@example.com",
                 "goal": "maintain",
+                "sex": "M",
+                "height_cm": 175,
+                "weight_kg": 70,
                 "password1": "StrongPass123",
                 "password2": "StrongPass123",
             },
         )
-        # Redirige vers /accounts/profile/
+        # Redirige vers /accounts/signup/done/ (activation_sent)
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, reverse("accounts:profile"))
+        self.assertEqual(resp.url, reverse("accounts:activation_sent"))
 
         # Utilisateur + profil créés
         User = get_user_model()
@@ -56,6 +59,7 @@ class AccountsViewsTests(TestCase):
                 "height_cm": 170,
                 "weight_kg": "60.0",
                 "goal": "cut",
+                "running_data_source": "manual",
             },
         )
         # redirection vers la page profil après succès

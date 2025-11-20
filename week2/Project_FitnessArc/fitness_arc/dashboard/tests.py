@@ -3,6 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 from datetime import date, timedelta
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from workouts.models import WorkoutSession
 from dashboard.services import get_dashboard_data
 from dashboard.templatetags.time_format import duration_hm
