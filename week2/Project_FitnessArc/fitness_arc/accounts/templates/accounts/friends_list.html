@@ -40,15 +40,36 @@
       </div>
       <h4 style="margin:0 0 0.5rem">{{ friend.username }}</h4>
       <p style="color:var(--text-dim);font-size:0.85rem;margin:0 0 1rem">Objectif: {{ friend.profile.get_goal_display }}</p>
-      <div style="display:flex;gap:0.5rem;justify-content:center">
-        <a href="{% url 'accounts:friend_dashboard' friend.pk %}" class="btn" style="padding:0.5rem 1rem;font-size:0.85rem">Voir Dashboard</a>
-        <form method="post" action="{% url 'accounts:remove_friend' friend.pk %}" style="margin:0">
-          {% csrf_token %}
-          <button class="btn btn-danger" type="submit" style="padding:0.5rem 1rem;font-size:0.85rem">Retirer</button>
-        </form>
-        <a href="{% url 'messaging:conversation_with' friend.username %}" class="btn btn-secondary">
-          Message
+      <div style="
+      display:flex;
+      gap:0.75rem;
+      justify-content:center;
+      flex-wrap:wrap;
+      width:100%;
+      ">
+      
+        <a href="{% url 'accounts:friend_dashboard' friend.pk %}"
+          class="btn"
+          style="padding:0.6rem 1.2rem; font-size:0.9rem; white-space:nowrap;">
+          Voir Dashboard
         </a>
+        
+        <form method="post"
+              action="{% url 'accounts:remove_friend' friend.pk %}"
+              style="margin:0">
+            {% csrf_token %}
+            <button class="btn btn-danger"
+                    type="submit"
+                    style="padding:0.6rem 1.2rem; font-size:0.9rem; white-space:nowrap;">
+                    Retirer
+            </button>
+        </form>
+        
+          <a href="{% url 'messaging:conversation_with' friend.username %}"
+            class="btn"
+            style="padding:0.6rem 1.2rem; font-size:0.9rem; white-space:nowrap;">
+            Message
+          </a>
       </div>
     </div>
     {% endfor %}
