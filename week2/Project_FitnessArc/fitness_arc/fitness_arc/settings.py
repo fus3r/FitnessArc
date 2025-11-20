@@ -174,6 +174,7 @@ DEFAULT_FROM_EMAIL = "Fitness Arc <tototest024@gmail.com>"
 
 
 
-STRAVA_CLIENT_ID = "186178"
-STRAVA_CLIENT_SECRET = "ffd65e914ee76ed53d45f65b82eaba879feed3c9"
+
+STRAVA_CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID") 
+STRAVA_CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET")
 STRAVA_REDIRECT_URI = "http://127.0.0.1:8000/running/strava/callback/"
