@@ -1112,14 +1112,18 @@ if (weeklyVolumeCtx) {
 // 4. Répartition Macros
 const macrosCtx = document.getElementById('macrosChart');
 if (macrosCtx) {
-  console.log("macros =", {{ protein_consumed|default:0 }}, {{ carbs_consumed|default:0 }}, {{ fat_consumed|default:0 }});
+  const protein = Number("{{ protein_consumed_chart|default:0 }}");
+  const carbs   = Number("{{ carbs_consumed|default:0 }}");
+  const fat     = Number("{{ fat_consumed|default:0 }}");
+
+  console.log("macros =", protein, carbs, fat);
 
   new Chart(macrosCtx, {
     type: 'doughnut',
     data: {
       labels: ['Protéines', 'Glucides', 'Lipides'],
       datasets: [{
-        data: [{{ protein_consumed|default:0 }}, {{ carbs_consumed|default:0 }}, {{ fat_consumed|default:0 }}],
+        data: [protein, carbs, fat],
         backgroundColor: [
           'rgba(16,185,129,0.6)',
           'rgba(245,158,11,0.6)',
