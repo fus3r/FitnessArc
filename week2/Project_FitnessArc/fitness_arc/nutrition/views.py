@@ -2,6 +2,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import feature_required
 from django.contrib import messages
 from django.db.models import Sum
 from django.utils import timezone
@@ -17,6 +18,7 @@ def normalize_string(s):
     return ''.join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
 @login_required
+@feature_required('nutrition')
 def nutrition_today(request):
     today = timezone.now().date()
     

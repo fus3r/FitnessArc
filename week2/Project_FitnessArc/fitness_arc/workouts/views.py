@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import feature_required
 from .models import Exercise, WorkoutTemplate, TemplateItem, WorkoutSession, SetLog, SportCategory
 from django.contrib import messages
 from django.db.models import Max
@@ -8,6 +9,7 @@ import json
 from django.db.models import Max
 from .models import WorkoutSession, SetLog, PR 
 
+@feature_required('workouts')
 def exercise_list(request):
     exercises = Exercise.objects.all().select_related('sport_category')
     
@@ -55,6 +57,7 @@ def exercise_list(request):
     })
 
 @login_required
+@feature_required('workouts')
 def template_list(request):
     my_templates = WorkoutTemplate.objects.filter(owner=request.user, is_public=False)
     # Templates publics par défaut de l'utilisateur (Push/Pull/Legs)
