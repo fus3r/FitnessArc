@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',    
     'common.apps.CommonConfig',
     'leaderboard.apps.LeaderboardConfig',
+    "running", 
 ]
 
 MIDDLEWARE = [
@@ -170,3 +171,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = "Fitness Arc <tototest024@gmail.com>"
+
+
+
+STRAVA_CLIENT_ID = "186178"
+STRAVA_CLIENT_SECRET = "ffd65e914ee76ed53d45f65b82eaba879feed3c9"
+STRAVA_REDIRECT_URI = "http://127.0.0.1:8000/running/strava/callback/"
