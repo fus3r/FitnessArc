@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load time_format %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h1>Tableau de bord</h1>
@@ -488,16 +489,20 @@
   <div class="card">
     <h3 style="margin:0 0 .5rem;font-size:.9rem;color:var(--text-dim)">Temps d'entraînement (7 jours)</h3>
     <p style="margin:0;font-size:1.6rem;font-weight:700;color:var(--text)">
-      {{ week_training_time_current }} min
+      {{ week_training_time_current|duration_hm }}
     </p>
     <p style="margin:.3rem 0 0;font-size:.85rem;color:var(--text-dim)">
-      Semaine précédente : {{ week_training_time_previous }} min
+      Semaine précédente : {{ week_training_time_previous|duration_hm }}
       {% if week_training_time_diff > 0 %}
-        <span style="color:var(--success)">(+{{ week_training_time_diff }} min)</span>
+      <span style="color:var(--success)">
+        (+{{ week_training_time_diff|duration_hm }})
+      </span>
       {% elif week_training_time_diff < 0 %}
-        <span style="color:var(--danger)">({{ week_training_time_diff }} min)</span>
+      <span style="color:var(--danger)">
+        ({{ week_training_time_diff|duration_hm }})
+      </span>
       {% else %}
-        <span>(inchangé)</span>
+      <span>(inchangé)</span>
       {% endif %}
     </p>
   </div>
@@ -858,7 +863,7 @@
     <div>
       <div style="color:var(--text-dim);margin-bottom:.2rem">Temps total</div>
       <div style="font-size:1.5rem;font-weight:700">
-        {{ month_total_duration }} min
+        {{ month_total_duration|duration_hm }}
       </div>
     </div>
     <div>
