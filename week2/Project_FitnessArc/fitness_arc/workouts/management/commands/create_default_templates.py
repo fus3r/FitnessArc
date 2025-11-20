@@ -39,17 +39,17 @@ class Command(BaseCommand):
             {
                 'name': '🔙 Pull (Dos/Biceps)',
                 'exercises': [
-                    {'exercise_id': 3, 'order': 1, 'sets': 4, 'reps': 8, 'rest': 120, 'notes': 'Tractions'},
-                    {'exercise_id': 9, 'order': 2, 'sets': 4, 'reps': 10, 'rest': 90, 'notes': 'Rowing barre'},
-                    {'exercise_id': 6, 'order': 3, 'sets': 3, 'reps': 12, 'rest': 60, 'notes': 'Curl biceps'},
+                    {'exercise_id': 60, 'order': 1, 'sets': 4, 'reps': 8, 'rest': 120, 'notes': 'Tractions'},
+                    {'exercise_id': 54, 'order': 2, 'sets': 4, 'reps': 10, 'rest': 90, 'notes': 'Rowing barre'},
+                    {'exercise_id': 80, 'order': 3, 'sets': 3, 'reps': 12, 'rest': 60, 'notes': 'Curl biceps'},
                 ]
             },
             {
                 'name': '🦵 Legs (Jambes/Abdos)',
                 'exercises': [
-                    {'exercise_id': 2, 'order': 1, 'sets': 4, 'reps': 8, 'rest': 180, 'notes': 'Squat'},
-                    {'exercise_id': 8, 'order': 2, 'sets': 3, 'reps': 12, 'rest': 90, 'notes': 'Presse à cuisses'},
-                    {'exercise_id': 10, 'order': 3, 'sets': 3, 'reps': 15, 'rest': 45, 'notes': 'Crunchs'},
+                    {'exercise_id': 150, 'order': 1, 'sets': 4, 'reps': 8, 'rest': 180, 'notes': 'Squat'},
+                    {'exercise_id': 151, 'order': 2, 'sets': 3, 'reps': 12, 'rest': 90, 'notes': 'Presse à cuisses'},
+                    {'exercise_id': 100, 'order': 3, 'sets': 3, 'reps': 15, 'rest': 45, 'notes': 'Crunchs'},
                 ]
             },
         ]
