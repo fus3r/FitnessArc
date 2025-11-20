@@ -45,14 +45,17 @@
       <label>
         Aliment
         <div class="custom-select" data-searchable>
-          <select v-model="newLog.food" required>
+          <select v-model="newLog.food" required id="foodSelect" @change="onFoodChange">
             <option value="">Choisir un aliment...</option>
             <option v-for="food in foods" :key="food.id" :value="food.id" v-text="food.name"></option>
           </select>
         </div>
       </label>
       <label>
-        Quantité
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+          <span>Quantité (g,mL,unités) </span>
+          <span v-if="newLog.food" style="color:#6366f1;font-weight:600;font-size:0.9rem">{{ selectedFoodUnit }}</span>
+        </div>
         <input type="number" v-model="newLog.quantity" step="0.1" min="0.1" placeholder="100" required>
       </label>
       <label>
@@ -129,9 +132,23 @@ createApp({
         if (groups[key]) sorted[key] = groups[key];
       });
       return sorted;
+    },
+    selectedFoodUnit() {
+      if (!this.newLog.food) return '';
+      const food = this.foods.find(f => f.id == this.newLog.food);
+      if (!food) return '';
+      const unitLabels = {
+        'g': 'Grammes (g)',
+        'ml': 'Millilitres (ml)',
+        'unit': 'Unité(s)'
+      };
+      return unitLabels[food.unit_type] || 'g';
     }
   },
   methods: {
+    onFoodChange(event) {
+      this.newLog.food = event.target.value;
+    },
     async addFood() {
       const formData = new FormData();
       formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -183,7 +200,15 @@ createApp({
     this.$nextTick(() => {
       document.querySelectorAll('#nutritionApp .custom-select').forEach(element => {
         const searchable = element.hasAttribute('data-searchable');
-        new CustomSelect(element, { searchable });
+        const customSelect = new CustomSelect(element, { searchable });
+        
+        // Synchroniser le custom select avec Vue
+        const select = element.querySelector('select');
+        if (select && select.id === 'foodSelect') {
+          select.addEventListener('change', (e) => {
+            this.newLog.food = e.target.value;
+          });
+        }
       });
     });
   }
