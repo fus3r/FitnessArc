@@ -6,6 +6,11 @@ User = get_user_model()
 
 
 class Profile(models.Model):
+    RUNNING_DATA_SOURCE_CHOICES = [
+        ('manual', 'Saisie manuelle'),
+        ('strava', 'Strava'),
+        ('garmin', 'Garmin'),
+    ]
     GOAL_CHOICES = [
         ('bulk', 'Prise de masse'),
         ('cut', 'Perte de poids'),
@@ -25,6 +30,13 @@ class Profile(models.Model):
     weight_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     sex = models.CharField(max_length=1, choices=SEX_CHOICES, blank=True)
     goal = models.CharField(max_length=8, choices=GOAL_CHOICES, default='maintain')
+
+    running_data_source = models.CharField(
+        max_length=10,
+        choices=RUNNING_DATA_SOURCE_CHOICES,
+        default='manual',
+        help_text="Source des données de running pour ce profil."
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

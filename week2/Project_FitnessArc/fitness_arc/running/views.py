@@ -1,5 +1,38 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.contrib import messages
 from datetime import datetime, timezone as dt_timezone
+import requests
+from django.conf import settings
+from django.utils import timezone
+from urllib.parse import urlencode
 
+from .forms_manual import ManualRunForm
+from .models import Run, StravaAuth
+
+@login_required
+def manual_run_add(request):
+    """
+    Permet à l'utilisateur d'ajouter une sortie manuelle si son profil est configuré sur 'manual'.
+    """
+    if getattr(request.user.profile, "running_data_source", "manual") != "manual":
+        messages.error(request, "Tu dois choisir 'Entrer manuellement' dans ton profil pour ajouter une sortie manuelle.")
+        return redirect("running:my_runs")
+
+    if request.method == "POST":
+        form = ManualRunForm(request.POST)
+        if form.is_valid():
+            run = form.save(commit=False)
+            run.user = request.user
+            run.source = "manual"
+            run.save()
+            messages.success(request, "Sortie ajoutée avec succès !")
+            return redirect("running:my_runs")
+    else:
+        form = ManualRunForm()
+    return render(request, "running/manual_run_form.html", {"form": form})
+
+from datetime import datetime, timezone as dt_timezone
 import requests
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -15,14 +48,22 @@ from .models import Run, StravaAuth
 def my_runs(request):
     """
     Page principale : liste des runs de l'utilisateur.
-    Affiche aussi un bouton pour connecter/synchroniser Strava.
+    Affiche le bon module selon le choix de l'utilisateur (manuel, Strava, Garmin).
     """
     runs = Run.objects.filter(user=request.user).order_by("-start_date")
     strava_connected = StravaAuth.objects.filter(user=request.user).exists()
+    try:
+        garmin_connected = hasattr(request.user, "garmin_auth") and request.user.garmin_auth.is_active
+    except Exception:
+        garmin_connected = False
+
+    running_data_source = getattr(request.user.profile, "running_data_source", "manual")
 
     context = {
         "runs": runs,
         "strava_connected": strava_connected,
+        "garmin_connected": garmin_connected,
+        "running_data_source": running_data_source,
     }
     return render(request, "running/run_list.html", context)
 

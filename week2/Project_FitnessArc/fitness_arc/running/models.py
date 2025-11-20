@@ -88,6 +88,11 @@ class Run(models.Model):
         blank=True,
         help_text="D+ en mètres",
     )
+    calories_burned = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Calories brûlées (kcal)",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -125,3 +130,37 @@ class Run(models.Model):
         minutes = total_sec // 60
         seconds = total_sec % 60
         return f"{minutes}:{seconds:02d} /km"
+
+    def estimate_calories(self):
+        """
+        Estime les calories brûlées pour cette course.
+        Formule simplifiée : ~1 kcal/kg/km pour la course à pied.
+        Si le poids de l'utilisateur est disponible, on l'utilise.
+        Sinon, on utilise une valeur par défaut de 70 kg.
+        """
+        weight_kg = 70  # Valeur par défaut
+        if hasattr(self.user, 'profile') and self.user.profile.weight_kg:
+            weight_kg = float(self.user.profile.weight_kg)
+        
+        distance_km = self.distance_km
+        # Formule : calories ≈ poids (kg) × distance (km) × 1.036
+        # Le facteur 1.036 est une moyenne pour la course à pied
+        calories = weight_kg * distance_km * 1.036
+        return round(calories, 1)
+
+    def save(self, *args, **kwargs):
+        # Calcule automatiquement les calories si non définies
+        if self.calories_burned is None:
+            self.calories_burned = self.estimate_calories()
+        
+        # Calcule la vitesse et l'allure moyennes
+        if self.distance_m and self.moving_time_s:
+            # Vitesse moyenne en m/s
+            self.average_speed = self.distance_m / self.moving_time_s
+            
+            # Allure moyenne en secondes par km
+            distance_km = self.distance_m / 1000
+            if distance_km > 0:
+                self.average_pace_s_per_km = self.moving_time_s / distance_km
+        
+        super().save(*args, **kwargs)
