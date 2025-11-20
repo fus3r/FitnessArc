@@ -86,7 +86,7 @@
     "model": "nutrition.food",
     "pk": 7,
     "fields": {
-      "name": "Bœuf haché (15% MG) cuit",
+      "name": "Boeuf hache (15% MG) cuit",
       "slug": "boeuf-hache-15mg-cuit",
       "kcal_per_100g": "250.00",
       "protein_per_100g": "26.00",
