@@ -130,6 +130,12 @@ class SignupForm(UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        profile.running_data_source = self.cleaned_data["running_data_source"]
+        if commit:
+            profile.save()
+        return profile
     height_cm = forms.IntegerField(
         required=True,
         min_value=50,
@@ -159,13 +165,21 @@ class ProfileForm(forms.ModelForm):
         },
     )
 
+    running_data_source = forms.ChoiceField(
+        choices=Profile.RUNNING_DATA_SOURCE_CHOICES,
+        label=_("Source des données de running"),
+        help_text=_("Choisis comment tu veux enregistrer tes activités running."),
+        required=True,
+    )
+
     class Meta:
         model = Profile
-        fields = ("sex", "height_cm", "weight_kg", "goal")
-        labels = {"sex": _("Sexe"), "goal": _("Objectif")}
+        fields = ("sex", "height_cm", "weight_kg", "goal", "running_data_source")
+        labels = {"sex": _("Sexe"), "goal": _("Objectif"), "running_data_source": _("Source running")}
         help_texts = {
             "sex": _("Sélectionne ton sexe."),
             "goal": _("Choisis l’objectif qui te correspond."),
+            "running_data_source": _("Choisis comment tu veux enregistrer tes activités running."),
         }
 
     def clean_height_cm(self):

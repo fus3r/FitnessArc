@@ -9,6 +9,7 @@
   <p><strong>Taille (cm) :</strong> {{ profile.height_cm|default:"—" }}</p>
   <p><strong>Poids (kg) :</strong> {{ profile.weight_kg|default:"—" }}</p>
   <p><strong>Objectif :</strong> {{ profile.get_goal_display }}</p>
+  <p><strong>Source des données de running :</strong> {{ profile.get_running_data_source_display|default:"—" }}</p>
   
   <div style="margin-top:1.5rem">
     <a href="{% url 'accounts:profile_edit' %}" class="btn">Modifier mon profil</a>
