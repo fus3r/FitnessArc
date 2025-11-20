@@ -9,6 +9,12 @@ from .models import Food, FoodLog
 from .forms import FoodLogForm
 import json
 from decimal import Decimal
+import unicodedata
+
+def normalize_string(s):
+    """Supprime les accents et caractères spéciaux"""
+    nfkd_form = unicodedata.normalize('NFKD', s)
+    return ''.join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
 @login_required
 def nutrition_today(request):
@@ -57,6 +63,7 @@ def nutrition_today(request):
     foods_json = json.dumps([{
         'id': f.id,
         'name': f.name,
+        'name_normalized': normalize_string(f.name),
         'unit_type': f.unit_type
     } for f in Food.objects.filter(is_public=True).order_by('name')])
     

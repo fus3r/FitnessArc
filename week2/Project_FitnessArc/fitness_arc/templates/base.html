@@ -714,13 +714,24 @@
       this.close();
     }
 
+    normalizeString(str) {
+      // Supprime les accents et caractères spéciaux pour la recherche
+      return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/œ/g, 'oe')
+        .replace(/æ/g, 'ae');
+    }
+
     filterOptions(query) {
       const options = this.optionsContainer.querySelectorAll('.custom-select-option');
-      const lowerQuery = query.toLowerCase();
+      const normalizedQuery = this.normalizeString(query);
       
       options.forEach(opt => {
-        const text = opt.textContent.toLowerCase();
-        if (text.includes(lowerQuery)) {
+        const text = opt.textContent;
+        const normalizedText = this.normalizeString(text);
+        if (normalizedText.includes(normalizedQuery)) {
           opt.style.display = '';
         } else {
           opt.style.display = 'none';
