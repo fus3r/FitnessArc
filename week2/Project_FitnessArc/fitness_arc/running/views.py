@@ -1,0 +1,139 @@
+from datetime import datetime, timezone as dt_timezone
+
+import requests
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.utils import timezone
+from urllib.parse import urlencode
+
+from .models import Run, StravaAuth
+
+
+@login_required
+def my_runs(request):
+    """
+    Page principale : liste des runs de l'utilisateur.
+    Affiche aussi un bouton pour connecter/synchroniser Strava.
+    """
+    runs = Run.objects.filter(user=request.user).order_by("-start_date")
+    strava_connected = StravaAuth.objects.filter(user=request.user).exists()
+
+    context = {
+        "runs": runs,
+        "strava_connected": strava_connected,
+    }
+    return render(request, "running/run_list.html", context)
+
+
+@login_required
+def strava_connect(request):
+    """
+    Redirige l'utilisateur vers la page d'autorisation Strava.
+    """
+    client_id = settings.STRAVA_CLIENT_ID
+    redirect_uri = settings.STRAVA_REDIRECT_URI
+
+    params = {
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+        "response_type": "code",
+        "scope": "activity:read_all",
+        "approval_prompt": "auto",
+    }
+    auth_url = "https://www.strava.com/oauth/authorize?" + urlencode(params)
+    return redirect(auth_url)
+
+
+@login_required
+def strava_callback(request):
+    """
+    Strava redirige ici après l'autorisation.
+    On reçoit un "code" qu'on échange contre des tokens,
+    puis on importe les dernières activités running.
+    """
+    error = request.GET.get("error")
+    if error:
+        
+        return redirect("running:my_runs")
+
+    code = request.GET.get("code")
+    if not code:
+        return redirect("running:my_runs")
+
+    
+    token_url = "https://www.strava.com/oauth/token"
+    data = {
+        "client_id": settings.STRAVA_CLIENT_ID,
+        "client_secret": settings.STRAVA_CLIENT_SECRET,
+        "code": code,
+        "grant_type": "authorization_code",
+    }
+    resp = requests.post(token_url, data=data)
+    resp.raise_for_status()
+    token_data = resp.json()
+
+    access_token = token_data["access_token"]
+    refresh_token = token_data["refresh_token"]
+    expires_at_epoch = token_data["expires_at"]
+    athlete_id = token_data["athlete"]["id"]
+
+    expires_at = datetime.fromtimestamp(token_data["expires_at"], tz=dt_timezone.utc)
+
+
+    
+    StravaAuth.objects.update_or_create(
+        user=request.user,
+        defaults={
+            "athlete_id": athlete_id,
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_expires_at": expires_at,
+        },
+    )
+
+    
+    activities_url = "https://www.strava.com/api/v3/athlete/activities"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"per_page": 30, "page": 1}
+    act_resp = requests.get(activities_url, headers=headers, params=params)
+    act_resp.raise_for_status()
+    activities = act_resp.json()
+
+    
+    for act in activities:
+        if act.get("type") != "Run":
+            continue
+
+        strava_id = act["id"]
+        name = act.get("name", "Sortie Strava")
+        distance = act.get("distance", 0.0)  
+        moving_time = act.get("moving_time", 0)
+        elapsed_time = act.get("elapsed_time", moving_time)
+        start_date_str = act.get("start_date")  
+        start_date = datetime.fromisoformat(start_date_str.replace("Z", "+00:00"))
+
+        elevation_gain = act.get("total_elevation_gain", 0.0)
+        avg_speed = act.get("average_speed")  
+
+        avg_pace_s_per_km = None
+        if distance > 0 and moving_time > 0:
+            
+            avg_pace_s_per_km = moving_time / (distance / 1000)
+
+        Run.objects.update_or_create(
+            user=request.user,
+            strava_id=strava_id,
+            defaults={
+                "name": name,
+                "distance_m": distance,
+                "moving_time_s": moving_time,
+                "elapsed_time_s": elapsed_time,
+                "start_date": start_date,
+                "elevation_gain_m": elevation_gain,
+                "average_speed": avg_speed,
+                "average_pace_s_per_km": avg_pace_s_per_km,
+            },
+        )
+
+    return redirect("running:my_runs")
