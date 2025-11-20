@@ -40,10 +40,10 @@
   <input type="hidden" name="duration_minutes" id="duration_minutes" value="0">
   <label>Exercice :
     <div class="custom-select">
-      <select name="exercise_id" required>
+      <select name="exercise_id" required id="exerciseSelect">
         {% if session.from_template %}
           {% for item in session.from_template.items.all %}
-            <option value="{{ item.exercise.id }}">{{ item.exercise.name }}</option>
+            <option value="{{ item.exercise.id }}" data-is-time-based="{{ item.exercise.is_time_based|yesno:'true,false' }}">{{ item.exercise.name }}</option>
           {% endfor %}
         {% endif %}
       </select>
@@ -52,8 +52,11 @@
   <label>Série # :
     <input type="number" name="set_number" min="1" value="{{ session.set_logs.count|add:'1' }}">
   </label>
-  <label>Reps :
-    <input type="number" name="reps" min="1" required>
+  <label id="repsLabel">Reps :
+    <input type="number" name="reps" min="1" id="repsInput">
+  </label>
+  <label id="durationLabel" style="display:none;">Durée (secondes) :
+    <input type="number" name="duration_seconds" min="1" id="durationInput">
   </label>
   <label>Poids (kg) :
     <input type="number" name="weight_kg" step="0.5" min="0" required>
@@ -67,19 +70,54 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sessionSelect) {
     new CustomSelect(sessionSelect);
   }
+  
+  // Gérer le changement d'exercice pour afficher reps ou durée
+  const exerciseSelect = document.getElementById('exerciseSelect');
+  const repsLabel = document.getElementById('repsLabel');
+  const repsInput = document.getElementById('repsInput');
+  const durationLabel = document.getElementById('durationLabel');
+  const durationInput = document.getElementById('durationInput');
+  
+  function updateInputFields() {
+    const selectedOption = exerciseSelect.options[exerciseSelect.selectedIndex];
+    const isTimeBased = selectedOption.getAttribute('data-is-time-based') === 'true';
+    
+    if (isTimeBased) {
+      repsLabel.style.display = 'none';
+      repsInput.removeAttribute('required');
+      repsInput.value = '';
+      durationLabel.style.display = 'block';
+      durationInput.setAttribute('required', 'required');
+    } else {
+      repsLabel.style.display = 'block';
+      repsInput.setAttribute('required', 'required');
+      durationLabel.style.display = 'none';
+      durationInput.removeAttribute('required');
+      durationInput.value = '';
+    }
+  }
+  
+  exerciseSelect.addEventListener('change', updateInputFields);
+  updateInputFields(); // Initialiser au chargement
 });
 </script>
 {% endif %}
 
 <h3>Logs</h3>
 <table>
-  <thead><tr><th>#</th><th>Exercice</th><th>Reps</th><th>Poids</th><th>Volume</th><th>Actions</th></tr></thead>
+  <thead><tr><th>#</th><th>Exercice</th><th>Performance</th><th>Poids</th><th>Volume</th><th>Actions</th></tr></thead>
   <tbody>
     {% for s in session.set_logs.all %}
       <tr>
         <td>{{ s.set_number }}</td>
         <td>{{ s.exercise.name }}</td>
-        <td>{{ s.reps }}</td>
+        <td>
+          {% if s.exercise.is_time_based %}
+            {{ s.display_performance }}
+          {% else %}
+            {{ s.reps }} reps
+          {% endif %}
+        </td>
         <td>{{ s.weight_kg }} kg</td>
         <td>{{ s.volume }}</td>
         <td>

@@ -48,6 +48,7 @@ class Exercise(models.Model):
     difficulty = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='exercises/', blank=True, null=True, help_text="Image de démonstration")
+    is_time_based = models.BooleanField(default=False, help_text="Si True, l'exercice se mesure en temps (secondes) plutôt qu'en répétitions")
     
     def __str__(self): return self.name
 
@@ -99,12 +100,27 @@ class SetLog(models.Model):
     session = models.ForeignKey(WorkoutSession, on_delete=models.CASCADE, related_name="set_logs")
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     set_number = models.PositiveIntegerField()
-    reps = models.PositiveIntegerField()
+    reps = models.PositiveIntegerField(null=True, blank=True, help_text="Nombre de répétitions (pour exercices non basés sur le temps)")
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True, help_text="Durée en secondes (pour exercices basés sur le temps)")
     weight_kg = models.DecimalField(max_digits=6, decimal_places=2)
     rpe = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.TextField(blank=True)
+    
     @property
-    def volume(self): return float(self.weight_kg) * self.reps
+    def volume(self):
+        if self.reps:
+            return float(self.weight_kg) * self.reps
+        return float(self.weight_kg)  # Pour les exercices basés sur le temps
+    
+    @property
+    def display_performance(self):
+        """Retourne l'affichage de la performance (reps ou temps)"""
+        if self.exercise.is_time_based and self.duration_seconds:
+            mins, secs = divmod(self.duration_seconds, 60)
+            if mins > 0:
+                return f"{mins}:{secs:02d}"
+            return f"{secs}s"
+        return str(self.reps) if self.reps else "0"
 
 class PR(models.Model):
     METRIC = [("max_weight","Charge max"),("max_reps","Reps max"),("est_1rm","1RM estimé")]
