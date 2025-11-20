@@ -22,17 +22,18 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('common.urls')),  # ← Ajouter cette ligne AVANT les autres
+    path('', include('common.urls')),  
     path("accounts/", include("accounts.urls")),
     path('workouts/', include('workouts.urls')),
     path('nutrition/', include('nutrition.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('leaderboard/', include('leaderboard.urls')),
+    path("running/", include("running.urls")),
     
     # Test page for dropdowns
     path('test-dropdown/', TemplateView.as_view(template_name='test_dropdown.html'), name='test_dropdown'),
 ]
 
-# Servir les fichiers media en développement
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
