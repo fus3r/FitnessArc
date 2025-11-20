@@ -246,7 +246,8 @@
         <div class="profile-info-value">{{ profile.get_goal_display }}</div>
       </div>
       
-      <div class="profile-info-card" style="grid-column: 1 / -1;">
+      {% if feature_running %}
+      <div class="profile-info-item">
         <div class="profile-info-label">
           <span class="profile-info-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,6 +258,7 @@
         </div>
         <div class="profile-info-value">{{ profile.get_running_data_source_display|default:"—" }}</div>
       </div>
+      {% endif %}
     </div>
     
     <div class="profile-actions">

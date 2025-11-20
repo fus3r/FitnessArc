@@ -1,30 +1,337 @@
 {% extends "base.html" %}
 {% block title %}Inscription{% endblock %}
 {% block content %}
-<div class="card">
-  <h1>Créer un compte</h1>
+<style>
+  .signup-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .signup-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .signup-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .signup-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .signup-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .feature-card {
+    background: rgba(99, 102, 241, 0.05);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .feature-card:hover {
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .feature-card input[type="checkbox"] {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .feature-card label {
+    cursor: pointer;
+    display: block;
+    padding-right: 2rem;
+  }
+  
+  .feature-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+  
+  .feature-desc {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-field {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-field label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  
+  .form-field input,
+  .form-field select {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 1rem;
+  }
+  
+  .form-field .helptext {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+    margin-top: 0.25rem;
+  }
+  
+  .form-field .errorlist {
+    color: #ef4444;
+    font-size: 0.875rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.25rem 0 0 0;
+  }
+  
+  .error-banner {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .error-banner h3 {
+    color: #ef4444;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .submit-section {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+  
+  .auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+
+<div class="signup-container">
+  <div class="signup-header">
+    <h1>Créer un compte</h1>
+    <p class="text-dim">Rejoins Fitness Arc et commence ton parcours fitness</p>
+  </div>
+
   <form method="post">
     {% csrf_token %}
+    
     {% if form.errors %}
-      <div class="card" style="border-color: rgba(239,68,68,.4);">
-        <h3 style="color:#ef4444;margin-bottom:.5rem">Erreur</h3>
-        <p class="text-dim" style="margin-bottom:.75rem">Corrige les éléments ci-dessous.</p>
+      <div class="error-banner">
+        <h3>Erreur dans le formulaire</h3>
+        <p class="text-dim">Vérifie et corrige les champs ci-dessous.</p>
       </div>
     {% endif %}
 
     {% if form.non_field_errors %}
-      <ul class="errorlist">
-        {% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}
-      </ul>
+      <div class="error-banner">
+        {% for err in form.non_field_errors %}<p>{{ err }}</p>{% endfor %}
+      </div>
     {% endif %}
 
-    {{ form.as_p }}
-    <button type="submit">S'inscrire</button>
+    <!-- Account Information -->
+    <div class="signup-section">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Informations de connexion
+      </h2>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+          {{ form.username }}
+          {% if form.username.help_text %}<span class="helptext">{{ form.username.help_text }}</span>{% endif %}
+          {{ form.username.errors }}
+        </div>
+        
+        <div class="form-field">
+          <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+          {{ form.email }}
+          {% if form.email.help_text %}<span class="helptext">{{ form.email.help_text }}</span>{% endif %}
+          {{ form.email.errors }}
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+          {{ form.password1 }}
+          {% if form.password1.help_text %}<div class="helptext">{{ form.password1.help_text }}</div>{% endif %}
+          {{ form.password1.errors }}
+        </div>
+        
+        <div class="form-field">
+          <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+          {{ form.password2 }}
+          {% if form.password2.help_text %}<span class="helptext">{{ form.password2.help_text }}</span>{% endif %}
+          {{ form.password2.errors }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Information -->
+    <div class="signup-section">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M2 12h20"/>
+        </svg>
+        Informations personnelles
+      </h2>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.sex.id_for_label }}">{{ form.sex.label }}</label>
+          {{ form.sex }}
+          {{ form.sex.errors }}
+        </div>
+        
+        <div class="form-field">
+          <label for="{{ form.height_cm.id_for_label }}">{{ form.height_cm.label }}</label>
+          {{ form.height_cm }}
+          {% if form.height_cm.help_text %}<span class="helptext">{{ form.height_cm.help_text }}</span>{% endif %}
+          {{ form.height_cm.errors }}
+        </div>
+        
+        <div class="form-field">
+          <label for="{{ form.weight_kg.id_for_label }}">{{ form.weight_kg.label }}</label>
+          {{ form.weight_kg }}
+          {% if form.weight_kg.help_text %}<span class="helptext">{{ form.weight_kg.help_text }}</span>{% endif %}
+          {{ form.weight_kg.errors }}
+        </div>
+        
+        <div class="form-field">
+          <label for="{{ form.goal.id_for_label }}">{{ form.goal.label }}</label>
+          {{ form.goal }}
+          {% if form.goal.help_text %}<span class="helptext">{{ form.goal.help_text }}</span>{% endif %}
+          {{ form.goal.errors }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Selection -->
+    <div class="signup-section">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 11 12 14 22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        Choisis tes fonctionnalités
+      </h2>
+      <p class="text-dim" style="margin-bottom: 1rem;">Sélectionne les modules que tu souhaites utiliser. Tu pourras modifier ce choix plus tard.</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          {{ form.feature_workouts }}
+          <label for="{{ form.feature_workouts.id_for_label }}">
+            <div class="feature-title">{{ form.feature_workouts.label }}</div>
+            <div class="feature-desc">{{ form.feature_workouts.help_text }}</div>
+          </label>
+        </div>
+        
+        <div class="feature-card">
+          {{ form.feature_nutrition }}
+          <label for="{{ form.feature_nutrition.id_for_label }}">
+            <div class="feature-title">{{ form.feature_nutrition.label }}</div>
+            <div class="feature-desc">{{ form.feature_nutrition.help_text }}</div>
+          </label>
+        </div>
+        
+        <div class="feature-card">
+          {{ form.feature_running }}
+          <label for="{{ form.feature_running.id_for_label }}">
+            <div class="feature-title">{{ form.feature_running.label }}</div>
+            <div class="feature-desc">{{ form.feature_running.help_text }}</div>
+          </label>
+        </div>
+        
+        <div class="feature-card">
+          {{ form.feature_leaderboard }}
+          <label for="{{ form.feature_leaderboard.id_for_label }}">
+            <div class="feature-title">{{ form.feature_leaderboard.label }}</div>
+            <div class="feature-desc">{{ form.feature_leaderboard.help_text }}</div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button type="submit" class="btn-primary">S'inscrire</button>
+    </div>
   </form>
+
   <div class="auth-footer">
     <span class="text-dim">Déjà un compte ?</span>
     <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Se connecter</a>
   </div>
-
 </div>
 {% endblock %}
