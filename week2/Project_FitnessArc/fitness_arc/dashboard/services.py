@@ -9,6 +9,8 @@ try:
 except ImportError:
     Run = None
 import calendar 
+from django.db.models import F, FloatField, ExpressionWrapper
+
 def get_dashboard_data(user, ref_date=None):
     """Calcule toutes les données du dashboard pour un utilisateur"""
     today = timezone.now().date()
@@ -350,8 +352,34 @@ def get_dashboard_data(user, ref_date=None):
     
     # 4. Macros du jour
     today_food_logs = FoodLog.objects.filter(owner=user, date=today)
-    carbs_consumed = sum(log.carbs for log in today_food_logs)
-    fat_consumed = sum(log.fat for log in today_food_logs)
+   # quantity is in grams, food macros are per 100g
+    cal_expr = ExpressionWrapper(
+        F('food__kcal_per_100g') * F('quantity') / 100.0,
+        output_field=FloatField()
+        )
+    prot_expr = ExpressionWrapper(
+        F('food__protein_per_100g') * F('quantity') / 100.0,
+        output_field=FloatField()
+        )
+    carb_expr = ExpressionWrapper(
+        F('food__carbs_per_100g') * F('quantity') / 100.0,
+        output_field=FloatField()
+        )
+    fat_expr = ExpressionWrapper(
+        F('food__fat_per_100g') * F('quantity') / 100.0,
+        output_field=FloatField()
+        )
+    
+    totals = today_food_logs.aggregate(
+        total_calories = Sum(cal_expr),
+        total_protein  = Sum(prot_expr),
+        total_carbs    = Sum(carb_expr),
+        total_fat      = Sum(fat_expr),
+        )
+    calories_consumed = totals['total_calories'] or 0
+    protein_consumed_chart  = totals['total_protein']  or 0
+    carbs_consumed    = totals['total_carbs']    or 0
+    fat_consumed      = totals['total_fat']      or 0
     
     week_sessions_diff = sessions_count - prev_sessions_count
     week_volume_diff = weekly_volume - prev_week_volume
@@ -397,6 +425,7 @@ def get_dashboard_data(user, ref_date=None):
         'today': today,
         'carbs_consumed': round(carbs_consumed, 1),
         'fat_consumed': round(fat_consumed, 1),
+        'protein_consumed_chart': round(protein_consumed_chart,1),
         'weekly_workouts_labels': weekly_workouts_labels,
         'weekly_workouts_data': weekly_workouts_data,
         'weekly_training_time': weekly_training_time,
