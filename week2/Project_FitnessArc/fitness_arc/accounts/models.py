@@ -37,6 +37,12 @@ class Profile(models.Model):
         default='manual',
         help_text="Source des données de running pour ce profil."
     )
+    
+    # Feature toggles - allow users to enable/disable specific modules
+    feature_workouts = models.BooleanField(default=True, help_text="Activer le module Exercices & Workouts")
+    feature_nutrition = models.BooleanField(default=True, help_text="Activer le module Nutrition")
+    feature_running = models.BooleanField(default=True, help_text="Activer le module Running")
+    feature_leaderboard = models.BooleanField(default=True, help_text="Activer le module Classement")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

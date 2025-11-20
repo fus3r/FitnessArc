@@ -19,6 +19,7 @@
     </a>
     {% endif %}
     
+    {% if feature_workouts %}
     <div class="card non-clickable-card" style="text-align:left">
       <h3 style="margin:0 0 0.75rem">Entraînements</h3>
       <p style="color:var(--text-dim);margin:0 0 1.25rem">Gérez vos exercices, créez des templates et loggez vos séances</p>
@@ -31,7 +32,9 @@
         </a>
       </div>
     </div>
+    {% endif %}
     
+    {% if feature_nutrition %}
     <a href="{% url 'nutrition_today' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
       <div class="card-content">
         <h3 style="margin:0 0 0.75rem">Nutrition</h3>
@@ -39,7 +42,9 @@
       </div>
       <span class="hover-indicator">Ouvrir →</span>
     </a>
+    {% endif %}
     
+    {% if feature_running %}
     <a href="{% url 'running:my_runs' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
       <div class="card-content">
         <h3 style="margin:0 0 0.75rem">Running</h3>
@@ -47,7 +52,9 @@
       </div>
       <span class="hover-indicator">Ouvrir →</span>
     </a>
+    {% endif %}
     
+    {% if feature_leaderboard %}
     <a href="{% url 'leaderboard:index' %}" class="card clickable-card" style="text-align:left;text-decoration:none">
       <div class="card-content">
         <h3 style="margin:0 0 0.75rem">Leaderboard</h3>
@@ -55,6 +62,7 @@
       </div>
       <span class="hover-indicator">Ouvrir →</span>
     </a>
+    {% endif %}
     
     {% if user.is_authenticated %}
     <a href="{% url 'accounts:profile' %}" class="card clickable-card" style="text-align:left;text-decoration:none">

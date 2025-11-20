@@ -755,14 +755,22 @@
       {% if user.is_authenticated %}
         <a href="{% url 'dashboard:index' %}" {% if request.resolver_match.namespace == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
       {% endif %}
+      {% if feature_workouts %}
       <a href="{% url 'workouts:exercise_list' %}" {% if request.resolver_match.url_name == 'exercise_list' %}class="active"{% endif %}>Exercices</a>
       <a href="{% url 'workouts:template_list' %}" {% if request.resolver_match.url_name == 'template_list' or request.resolver_match.url_name == 'template_detail' %}class="active"{% endif %}>Workouts</a>
+      {% endif %}
+      {% if feature_nutrition %}
       <a href="{% url 'nutrition_today' %}" {% if 'nutrition' in request.path %}class="active"{% endif %}>Nutrition</a>
+      {% endif %}
+      {% if feature_running %}
       <a href="{% url 'running:my_runs' %}"
           {% if request.resolver_match.namespace == 'running' %}class="active"{% endif %}>
         Running
       </a>
+      {% endif %}
+      {% if feature_leaderboard %}
        <a href="{% url 'leaderboard:index' %}" {% if request.resolver_match.namespace == 'leaderboard' %}class="active"{% endif %}>Leaderboard</a>
+      {% endif %}
     </div>
     
     <div class="nav-right">

@@ -7,10 +7,12 @@ from django.conf import settings
 from django.utils import timezone
 from urllib.parse import urlencode
 
+from accounts.decorators import feature_required
 from .forms_manual import ManualRunForm
 from .models import Run, StravaAuth
 
 @login_required
+@feature_required('running')
 def manual_run_add(request):
     """
     Permet à l'utilisateur d'ajouter une sortie manuelle si son profil est configuré sur 'manual'.
@@ -45,6 +47,7 @@ from .models import Run, StravaAuth
 
 
 @login_required
+@feature_required('running')
 def my_runs(request):
     """
     Page principale : liste des runs de l'utilisateur.
@@ -81,6 +84,7 @@ class GarminLoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, label="Mot de passe")
 
 @login_required
+@feature_required('running')
 def garmin_connect(request):
     message = None
     if request.method == "POST":
@@ -104,6 +108,7 @@ def garmin_connect(request):
     return render(request, "running/garmin_connect.html", {"form": form, "message": message})
 
 @login_required
+@feature_required('running')
 def garmin_sync(request):
     """
     Stub: Synchronisation Garmin (à remplacer par logique réelle)
@@ -112,6 +117,7 @@ def garmin_sync(request):
 
 
 @login_required
+@feature_required('running')
 def strava_connect(request):
     """
     Redirige l'utilisateur vers la page d'autorisation Strava.
@@ -131,6 +137,7 @@ def strava_connect(request):
 
 
 @login_required
+@feature_required('running')
 def strava_callback(request):
     """
     Strava redirige ici après l'autorisation.

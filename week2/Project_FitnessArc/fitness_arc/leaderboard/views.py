@@ -1,12 +1,14 @@
 # Create your views here.
 
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import feature_required
 from django.shortcuts import render
 
 from .services import get_leaderboard
 
 
 @login_required
+@feature_required('leaderboard')
 def index(request):
     """
     Page principale du leaderboard.

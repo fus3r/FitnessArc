@@ -97,6 +97,32 @@ class SignupForm(UserCreationForm):
         label=_("Objectif"),
         help_text=_("Choisis ton objectif principal."),
     )
+    
+    # Feature selection fields
+    feature_workouts = forms.BooleanField(
+        required=False,
+        initial=True,
+        label=_("Exercices & Workouts"),
+        help_text=_("Gérer et suivre tes séances d'entraînement."),
+    )
+    feature_nutrition = forms.BooleanField(
+        required=False,
+        initial=True,
+        label=_("Nutrition"),
+        help_text=_("Suivre ton alimentation et tes calories."),
+    )
+    feature_running = forms.BooleanField(
+        required=False,
+        initial=True,
+        label=_("Running"),
+        help_text=_("Tracker tes activités de course à pied."),
+    )
+    feature_leaderboard = forms.BooleanField(
+        required=False,
+        initial=True,
+        label=_("Classement"),
+        help_text=_("Voir ton classement et celui de tes amis."),
+    )
 
     class Meta(UserCreationForm.Meta):
         model = User
@@ -118,6 +144,10 @@ class SignupForm(UserCreationForm):
             profile.sex = self.cleaned_data["sex"]
             profile.height_cm = self.cleaned_data["height_cm"]
             profile.weight_kg = self.cleaned_data["weight_kg"]
+            profile.feature_workouts = self.cleaned_data.get("feature_workouts", True)
+            profile.feature_nutrition = self.cleaned_data.get("feature_nutrition", True)
+            profile.feature_running = self.cleaned_data.get("feature_running", True)
+            profile.feature_leaderboard = self.cleaned_data.get("feature_leaderboard", True)
             profile.save()
         else:
             self._pending_profile = {
@@ -125,17 +155,15 @@ class SignupForm(UserCreationForm):
                 "sex": self.cleaned_data["sex"],
                 "height_cm": self.cleaned_data["height_cm"],
                 "weight_kg": self.cleaned_data["weight_kg"],
+                "feature_workouts": self.cleaned_data.get("feature_workouts", True),
+                "feature_nutrition": self.cleaned_data.get("feature_nutrition", True),
+                "feature_running": self.cleaned_data.get("feature_running", True),
+                "feature_leaderboard": self.cleaned_data.get("feature_leaderboard", True),
             }
         return user
 
 
 class ProfileForm(forms.ModelForm):
-    def save(self, commit=True):
-        profile = super().save(commit=False)
-        profile.running_data_source = self.cleaned_data["running_data_source"]
-        if commit:
-            profile.save()
-        return profile
     height_cm = forms.IntegerField(
         required=True,
         min_value=50,
@@ -169,17 +197,30 @@ class ProfileForm(forms.ModelForm):
         choices=Profile.RUNNING_DATA_SOURCE_CHOICES,
         label=_("Source des données de running"),
         help_text=_("Choisis comment tu veux enregistrer tes activités running."),
-        required=True,
+        required=False,  # Made optional, will be required conditionally based on feature_running
     )
 
     class Meta:
         model = Profile
-        fields = ("sex", "height_cm", "weight_kg", "goal", "running_data_source")
-        labels = {"sex": _("Sexe"), "goal": _("Objectif"), "running_data_source": _("Source running")}
+        fields = ("sex", "height_cm", "weight_kg", "goal", "running_data_source", 
+                  "feature_workouts", "feature_nutrition", "feature_running", "feature_leaderboard")
+        labels = {
+            "sex": _("Sexe"), 
+            "goal": _("Objectif"), 
+            "running_data_source": _("Source running"),
+            "feature_workouts": _("Exercices & Workouts"),
+            "feature_nutrition": _("Nutrition"),
+            "feature_running": _("Running"),
+            "feature_leaderboard": _("Classement"),
+        }
         help_texts = {
             "sex": _("Sélectionne ton sexe."),
-            "goal": _("Choisis l’objectif qui te correspond."),
+            "goal": _("Choisis l'objectif qui te correspond."),
             "running_data_source": _("Choisis comment tu veux enregistrer tes activités running."),
+            "feature_workouts": _("Gérer et suivre tes séances d'entraînement."),
+            "feature_nutrition": _("Suivre ton alimentation et tes calories."),
+            "feature_running": _("Tracker tes activités de course à pied."),
+            "feature_leaderboard": _("Voir ton classement et celui de tes amis."),
         }
 
     def clean_height_cm(self):
@@ -193,6 +234,28 @@ class ProfileForm(forms.ModelForm):
         if w is None or w <= 0:
             raise forms.ValidationError(_("Le poids doit être strictement positif."))
         return w
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        feature_running = cleaned_data.get("feature_running")
+        running_data_source = cleaned_data.get("running_data_source")
+        
+        # If running feature is enabled, running_data_source is required
+        if feature_running and not running_data_source:
+            self.add_error("running_data_source", _("La source de données running est obligatoire si tu actives le running."))
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        # Explicitly set boolean fields (unchecked checkboxes don't appear in POST data)
+        profile.feature_workouts = self.cleaned_data.get("feature_workouts", False)
+        profile.feature_nutrition = self.cleaned_data.get("feature_nutrition", False)
+        profile.feature_running = self.cleaned_data.get("feature_running", False)
+        profile.feature_leaderboard = self.cleaned_data.get("feature_leaderboard", False)
+        if commit:
+            profile.save()
+        return profile
 
 
 class PasswordChangeFormFR(PasswordChangeForm):
