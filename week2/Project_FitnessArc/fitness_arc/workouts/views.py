@@ -96,13 +96,29 @@ def session_detail(request, pk):
         except ValueError:
             pass
         
-        SetLog.objects.create(
-            session=sess,
-            exercise_id=int(request.POST["exercise_id"]),
-            set_number=int(request.POST["set_number"]),
-            reps=int(request.POST["reps"]),
-            weight_kg=request.POST["weight_kg"],
-        )
+        # Déterminer si c'est un exercice basé sur le temps ou sur les reps
+        exercise_id = int(request.POST["exercise_id"])
+        exercise = Exercise.objects.get(id=exercise_id)
+        
+        set_log_data = {
+            "session": sess,
+            "exercise_id": exercise_id,
+            "set_number": int(request.POST["set_number"]),
+            "weight_kg": request.POST["weight_kg"],
+        }
+        
+        if exercise.is_time_based:
+            # Exercice basé sur le temps
+            duration_seconds = request.POST.get("duration_seconds")
+            if duration_seconds:
+                set_log_data["duration_seconds"] = int(duration_seconds)
+        else:
+            # Exercice basé sur les reps
+            reps = request.POST.get("reps")
+            if reps:
+                set_log_data["reps"] = int(reps)
+        
+        SetLog.objects.create(**set_log_data)
         return redirect("workouts:session_detail", pk=pk)
     return render(request, "workouts/session_detail.html", {"session": sess})
 
@@ -246,17 +262,36 @@ def session_summary(request, pk):
     
     # Calculer les statistiques
     total_sets = sess.set_logs.count()
-    total_reps = sum(log.reps for log in sess.set_logs.all())
+    total_reps = sum(log.reps if log.reps else 0 for log in sess.set_logs.all())
     
     # Grouper les logs par exercice
     exercises_data = {}
     for log in sess.set_logs.select_related('exercise'):
         ex_name = log.exercise.name
         if ex_name not in exercises_data:
-            exercises_data[ex_name] = {'sets': 0, 'total_reps': 0, 'total_volume': 0}
+            exercises_data[ex_name] = {
+                'sets': 0,
+                'total_reps': 0,
+                'total_duration': 0,
+                'total_volume': 0,
+                'is_time_based': log.exercise.is_time_based,
+                'display_duration': ''
+            }
         exercises_data[ex_name]['sets'] += 1
-        exercises_data[ex_name]['total_reps'] += log.reps
+        if log.reps:
+            exercises_data[ex_name]['total_reps'] += log.reps
+        if log.duration_seconds:
+            exercises_data[ex_name]['total_duration'] += log.duration_seconds
         exercises_data[ex_name]['total_volume'] += log.volume
+    
+    # Formater la durée totale pour l'affichage
+    for ex_name, data in exercises_data.items():
+        if data['is_time_based'] and data['total_duration'] > 0:
+            mins, secs = divmod(data['total_duration'], 60)
+            if mins > 0:
+                data['display_duration'] = f"{mins}:{secs:02d}"
+            else:
+                data['display_duration'] = f"{secs}s"
     
     context = {
         'session': sess,

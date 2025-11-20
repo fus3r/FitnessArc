@@ -36,14 +36,20 @@
   <h3>📊 Détail par Exercice</h3>
   <table>
     <thead>
-      <tr><th>Exercice</th><th>Séries</th><th>Reps Totales</th><th>Volume</th></tr>
+      <tr><th>Exercice</th><th>Séries</th><th>Performance</th><th>Volume</th></tr>
     </thead>
     <tbody>
       {% for ex_name, data in exercises_data.items %}
       <tr>
         <td><strong>{{ ex_name }}</strong></td>
         <td>{{ data.sets }}</td>
-        <td>{{ data.total_reps }}</td>
+        <td>
+          {% if data.is_time_based %}
+            {{ data.display_duration }}
+          {% else %}
+            {{ data.total_reps }} reps
+          {% endif %}
+        </td>
         <td>{{ data.total_volume|floatformat:0 }} kg</td>
       </tr>
       {% endfor %}
