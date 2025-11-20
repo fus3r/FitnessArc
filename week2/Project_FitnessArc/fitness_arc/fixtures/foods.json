@@ -782,6 +782,300 @@
       "unit_type": "unit",
       "is_public": true
     }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 60,
+    "fields": {
+      "name": "Filet de truite",
+      "slug": "filet-truite",
+      "kcal_per_100g": "105.00",
+      "protein_per_100g": "19.20",
+      "carbs_per_100g": "0.00",
+      "fat_per_100g": "2.90",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 61,
+    "fields": {
+      "name": "Pêche",
+      "slug": "peche",
+      "kcal_per_100g": "39.00",
+      "protein_per_100g": "0.90",
+      "carbs_per_100g": "9.50",
+      "fat_per_100g": "0.30",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 62,
+    "fields": {
+      "name": "Mangue",
+      "slug": "mangue",
+      "kcal_per_100g": "60.00",
+      "protein_per_100g": "0.82",
+      "carbs_per_100g": "14.98",
+      "fat_per_100g": "0.38",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 63,
+    "fields": {
+      "name": "Kiwi",
+      "slug": "kiwi",
+      "kcal_per_100g": "61.00",
+      "protein_per_100g": "1.14",
+      "carbs_per_100g": "14.66",
+      "fat_per_100g": "0.52",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 64,
+    "fields": {
+      "name": "Poire",
+      "slug": "poire",
+      "kcal_per_100g": "57.00",
+      "protein_per_100g": "0.39",
+      "carbs_per_100g": "15.23",
+      "fat_per_100g": "0.12",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 65,
+    "fields": {
+      "name": "Chou-fleur cuit",
+      "slug": "chou-fleur-cuit",
+      "kcal_per_100g": "25.00",
+      "protein_per_100g": "1.90",
+      "carbs_per_100g": "4.97",
+      "fat_per_100g": "0.10",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 66,
+    "fields": {
+      "name": "Carotte cuite",
+      "slug": "carotte-cuite",
+      "kcal_per_100g": "32.00",
+      "protein_per_100g": "0.70",
+      "carbs_per_100g": "7.60",
+      "fat_per_100g": "0.20",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 67,
+    "fields": {
+      "name": "Champignons de Paris cuits",
+      "slug": "champignons-cuits",
+      "kcal_per_100g": "22.00",
+      "protein_per_100g": "2.70",
+      "carbs_per_100g": "0.90",
+      "fat_per_100g": "0.40",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 68,
+    "fields": {
+      "name": "Laitue",
+      "slug": "laitue",
+      "kcal_per_100g": "15.00",
+      "protein_per_100g": "1.35",
+      "carbs_per_100g": "2.87",
+      "fat_per_100g": "0.22",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 69,
+    "fields": {
+      "name": "Poivron rouge cuit",
+      "slug": "poivron-rouge-cuit",
+      "kcal_per_100g": "31.00",
+      "protein_per_100g": "1.00",
+      "carbs_per_100g": "7.30",
+      "fat_per_100g": "0.30",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 70,
+    "fields": {
+      "name": "Œufs de poisson",
+      "slug": "oeufs-poisson",
+      "kcal_per_100g": "140.00",
+      "protein_per_100g": "24.00",
+      "carbs_per_100g": "0.00",
+      "fat_per_100g": "5.00",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 71,
+    "fields": {
+      "name": "Steak haché 5% MG",
+      "slug": "steak-hache-5mg",
+      "kcal_per_100g": "176.00",
+      "protein_per_100g": "26.00",
+      "carbs_per_100g": "0.00",
+      "fat_per_100g": "8.00",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 72,
+    "fields": {
+      "name": "Homard",
+      "slug": "homard",
+      "kcal_per_100g": "90.00",
+      "protein_per_100g": "20.00",
+      "carbs_per_100g": "0.50",
+      "fat_per_100g": "0.90",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 73,
+    "fields": {
+      "name": "Moules cuites",
+      "slug": "moules-cuites",
+      "kcal_per_100g": "72.00",
+      "protein_per_100g": "12.00",
+      "carbs_per_100g": "3.00",
+      "fat_per_100g": "2.00",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 74,
+    "fields": {
+      "name": "Huîtres",
+      "slug": "huitres",
+      "kcal_per_100g": "68.00",
+      "protein_per_100g": "8.00",
+      "carbs_per_100g": "4.00",
+      "fat_per_100g": "2.00",
+      "unit_type": "unit",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 75,
+    "fields": {
+      "name": "Pois cassés cuits",
+      "slug": "pois-casses-cuits",
+      "kcal_per_100g": "118.00",
+      "protein_per_100g": "8.30",
+      "carbs_per_100g": "21.30",
+      "fat_per_100g": "0.40",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 76,
+    "fields": {
+      "name": "Fèves cuites",
+      "slug": "feves-cuites",
+      "kcal_per_100g": "110.00",
+      "protein_per_100g": "7.60",
+      "carbs_per_100g": "19.80",
+      "fat_per_100g": "0.50",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 77,
+    "fields": {
+      "name": "Soja cuit",
+      "slug": "soja-cuit",
+      "kcal_per_100g": "141.00",
+      "protein_per_100g": "11.20",
+      "carbs_per_100g": "11.30",
+      "fat_per_100g": "6.30",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 78,
+    "fields": {
+      "name": "Graine de courge",
+      "slug": "graine-courge",
+      "kcal_per_100g": "541.00",
+      "protein_per_100g": "23.00",
+      "carbs_per_100g": "25.00",
+      "fat_per_100g": "45.00",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 79,
+    "fields": {
+      "name": "Noisette",
+      "slug": "noisette",
+      "kcal_per_100g": "628.00",
+      "protein_per_100g": "14.10",
+      "carbs_per_100g": "16.70",
+      "fat_per_100g": "60.80",
+      "unit_type": "g",
+      "is_public": true
+    }
+  },
+  {
+    "model": "nutrition.food",
+    "pk": 80,
+    "fields": {
+      "name": "Pistache",
+      "slug": "pistache",
+      "kcal_per_100g": "557.00",
+      "protein_per_100g": "20.27",
+      "carbs_per_100g": "27.17",
+      "fat_per_100g": "45.39",
+      "unit_type": "g",
+      "is_public": true
+    }
   }
 ]
 
