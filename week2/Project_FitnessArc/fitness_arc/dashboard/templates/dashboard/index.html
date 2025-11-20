@@ -11,7 +11,21 @@
     background: #0b0d10;
     border: 1px solid #1f2937;
     height: auto;                 
+    transition:transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
+    position:relative;
+    overflow:visible;
+    will-change: transform;  /* GPU hint */
   }
+  .card::before{
+    content:none;
+  }
+
+  .card:hover{
+    border-color:rgba(99,102,241,0.25);
+    box-shadow:0 10px 26px rgba(0,0,0,0.5);  /* smaller shadow */
+    transform:translateY(-2px);              /* smaller move */
+  }
+
 
   /* Affichage graphe */
   .chart-card {
@@ -29,6 +43,7 @@
     position: absolute;
     inset: 0;                    
   }
+  
 
   /* calendrier */
   .calendar-grid {
