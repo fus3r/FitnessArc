@@ -77,7 +77,7 @@ def get_leaderboard(current_user):
     Plus tard on pourra filtrer sur "amis".
     """
     # Que les comptes actifs
-    users = User.objects.filter(is_active=True)
+    users = User.objects.filter(is_superuser=False)
 
     rows = []
     for u in users:
