@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',    
     'common.apps.CommonConfig',
     'leaderboard.apps.LeaderboardConfig',
-    "running", 
+    "running",
+    "messaging.apps.MessagingConfig" 
 ]
 
 MIDDLEWARE = [

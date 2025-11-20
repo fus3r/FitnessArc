@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>📨 Messages</h2>
+  {% if conversations %}
+    <table>
+      <thead>
+        <tr>
+          <th>Conversation</th>
+          <th>Dernier message</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for conv in conversations %}
+          {% with other=conv.participants.exclude(id=request.user.id).first %}
+          <tr>
+            <td>
+              <a href="{% url 'messaging:conversation_with' other.username %}">
+                {{ other.username }}
+              </a>
+            </td>
+            <td>
+              {{ conv.messages.last.text|truncatechars:50 }}
+            </td>
+          </tr>
+          {% endwith %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:var(--text-dim);margin-top:.5rem;">
+      Aucun message pour le moment.
+    </p>
+  {% endif %}
+</div>
+{% endblock %}

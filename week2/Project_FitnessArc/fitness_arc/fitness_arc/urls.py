@@ -29,6 +29,7 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('leaderboard/', include('leaderboard.urls')),
     path("running/", include("running.urls")),
+    path('messaging/', include('messaging.urls')),
     
     # Test page for dropdowns
     path('test-dropdown/', TemplateView.as_view(template_name='test_dropdown.html'), name='test_dropdown'),

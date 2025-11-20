@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Discussion avec {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:900px;margin:0 auto;">
+  <h2 style="margin-bottom:1rem;">💬 Discussion avec {{ other_user.username }}</h2>
+
+  <div style="max-height:400px;overflow-y:auto;margin-bottom:1rem;
+              padding:1rem;border-radius:16px;
+              background:rgba(18,18,26,0.8);border:1px solid rgba(99,102,241,0.2);">
+    {% if messages %}
+      {% for m in messages %}
+        <div style="margin-bottom:.75rem;
+                    text-align:{% if m.sender == request.user %}right{% else %}left{% endif %};">
+          <div style="
+            display:inline-block;
+            padding:.5rem .9rem;
+            border-radius:14px;
+            background:{% if m.sender == request.user %}rgba(99,102,241,0.7){% else %}rgba(31,41,55,0.9){% endif %};
+            color:#fff;
+            font-size:.9rem;
+          ">
+            <strong>{{ m.sender.username }}</strong><br>
+            {{ m.text|linebreaksbr }}
+            <div style="font-size:.7rem;opacity:.7;margin-top:2px;">
+              {{ m.created_at|date:"d/m H:i" }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p style="color:var(--text-dim);">Aucun message pour l’instant. Commence la discussion 👋</p>
+    {% endif %}
+  </div>
+
+  <form method="post" style="display:flex;gap:.75rem;align-items:flex-start;">
+    {% csrf_token %}
+    <textarea name="text" rows="2" placeholder="Écrire un message..."
+              style="flex:1;resize:vertical;"></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+</div>
+{% endblock %}
