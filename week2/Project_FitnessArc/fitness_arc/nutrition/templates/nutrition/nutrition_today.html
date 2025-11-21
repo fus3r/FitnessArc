@@ -7,7 +7,7 @@
       <h1>Nutrition du jour</h1>
       <p style="color:var(--text-dim);margin-top:0.5rem">{{ current_date|date:"l d M Y" }}</p>
     </div>
-    <a href="{% url 'recipe_list' %}" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem">
+    <a href="{% url 'recipe_list' %}" class="btn-fancy">
       <i class="bi bi-book"></i>
       Voir les recettes
     </a>
@@ -41,7 +41,7 @@
 
   <div class="card" style="position:relative;z-index:2">
     <h3>Ajouter un aliment</h3>
-    <form @submit.prevent="addFood" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:1rem;align-items:end;margin-top:1.5rem">
+    <form @submit.prevent="addFood" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:1rem;margin-top:1.5rem">
       <label>
         Aliment
         <div class="custom-select" data-searchable>
@@ -51,11 +51,8 @@
           </select>
         </div>
       </label>
-      <label>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
-          <span>Quantité (g,mL,unités) </span>
-          <span v-if="newLog.food" style="color:#6366f1;font-weight:600;font-size:0.9rem">{{ selectedFoodUnit }}</span>
-        </div>
+      <label style="position:relative">
+        Quantité (g,mL,unités) <span v-if="newLog.food" style="color:#6366f1;font-weight:600;font-size:0.75rem">({{ selectedFoodUnit }})</span>
         <input type="number" v-model="newLog.quantity" step="0.1" min="0.1" placeholder="100" required>
       </label>
       <label>
@@ -69,7 +66,7 @@
           </select>
         </div>
       </label>
-      <button type="submit" class="btn">Ajouter</button>
+      <button type="submit" class="btn-add-food">Ajouter</button>
     </form>
   </div>
 

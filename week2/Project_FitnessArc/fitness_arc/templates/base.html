@@ -419,6 +419,52 @@
       background:rgba(255,255,255,.06);
       border-color:rgba(255,255,255,.35);
     }
+    
+    /* Fancy button for recipe list */
+    .btn-fancy{
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      padding:0.75rem 1.5rem;
+      background:rgba(26,26,36,0.6);
+      backdrop-filter:blur(20px);
+      border:1px solid rgba(99,102,241,0.3);
+      border-radius:10px;
+      color:#e5e7eb;
+      text-decoration:none;
+      font-size:0.9rem;
+      font-weight:600;
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow:0 4px 12px rgba(99,102,241,0.15);
+    }
+    .btn-fancy:hover{
+      background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(139,92,246,0.3));
+      border-color:rgba(99,102,241,0.5);
+      color:#fff;
+      transform:translateY(-2px);
+      box-shadow:0 8px 24px rgba(99,102,241,0.3);
+    }
+    
+    /* Add food button aligned with inputs */
+    .btn-add-food{
+      padding:0.75rem 1.25rem;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      font-weight:600;
+      font-size:0.9rem;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      box-shadow:0 2px 8px rgba(99,102,241,0.25);
+      height:42px;
+      margin-top:1.875rem;
+    }
+    .btn-add-food:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 16px rgba(99,102,241,0.4);
+      background:linear-gradient(135deg,#7c3aed,#a855f7);
+    }
 
     table{
       width:100%;border-collapse:separate;border-spacing:0;
