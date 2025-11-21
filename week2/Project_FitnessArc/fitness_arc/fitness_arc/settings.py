@@ -189,15 +189,13 @@ if DEBUG:
 
 import os
 
-# Email Configuration - Using Resend API
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
-# In test mode, Resend allows sending only to the email associated with the API key
-# For production, verify a domain at resend.com/domains
-DEFAULT_FROM_EMAIL = "FitnessArc <onboarding@resend.dev>"
+# Email Configuration - Using Brevo (Sendinblue) API
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+DEFAULT_FROM_EMAIL = "FitnessArc <fitnessarc.contact@gmail.com>"
 
-# Use Resend backend if API key is available
-if RESEND_API_KEY:
-    EMAIL_BACKEND = "accounts.email_backend.ResendEmailBackend"
+# Use Brevo backend if API key is available
+if BREVO_API_KEY:
+    EMAIL_BACKEND = "accounts.email_backend.BrevoEmailBackend"
 elif DEBUG:
     # Fallback to SMTP for local development
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -209,7 +207,7 @@ elif DEBUG:
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
     DEFAULT_FROM_EMAIL = "Fitness Arc <fitnessarc.contact@gmail.com>"
 else:
-    # Production without Resend: log emails to console
+    # Production without Brevo: log emails to console
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
