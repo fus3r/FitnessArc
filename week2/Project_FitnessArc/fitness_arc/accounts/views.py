@@ -25,6 +25,7 @@ from django.urls import reverse
 from .tokens import activation_token
 from .forms import SignupForm, ProfileForm
 from .models import Profile, Friendship
+from messaging.models import Message
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,7 +97,11 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 
 @login_required
 def friends_list(request):
+<<<<<<< HEAD
     """List of friends and pending requests."""
+=======
+    """Liste des amis + demandes en attente+messages non lus"""
+>>>>>>> ceb646a ([message] ajout d'une notification rouge sur le bouton messagerie associe a celui qui a envoye)
     friends = User.objects.filter(
         Q(friendships_received__from_user=request.user, friendships_received__status='accepted') |
         Q(friendships_sent__to_user=request.user, friendships_sent__status='accepted')
@@ -108,6 +113,22 @@ def friends_list(request):
     
     # Exclude current user and admin/staff accounts
     all_users = User.objects.exclude(pk=request.user.pk).exclude(is_superuser=True).exclude(is_staff=True).order_by('username')
+
+    # messages non lu par l'utilisateur
+    unread_qs = (
+        Message.objects
+        .filter(conversation__participants=request.user, is_read=False)
+        .exclude(sender=request.user)
+    )
+
+    # ID de qui a envoye message
+    unread_sender_ids = set(
+        unread_qs.values_list('sender_id', flat=True).distinct()
+    )
+    
+    for f in friends:
+        f.has_unread_messages = f.id in unread_sender_ids
+
     
     context = {
         'friends': friends,
