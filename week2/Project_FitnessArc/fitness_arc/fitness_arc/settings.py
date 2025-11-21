@@ -99,7 +99,11 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
                 'accounts.context_processors.friends_requests_count',
+<<<<<<< HEAD
                 'accounts.context_processors.user_features',
+=======
+                "messaging.context_processors.unread_messages",  
+>>>>>>> e4df113 ([message] ajout d'une notification (bouton rouge) sur le logo ami quand on recoit un message)
             ],
         },
     },

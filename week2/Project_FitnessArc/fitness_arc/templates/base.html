@@ -204,6 +204,31 @@
       display:flex;align-items:center;justify-content:center;
       box-shadow:0 2px 8px rgba(239,68,68,0.5);
     }
+
+    /* Small dot for unread messages on the friends icon */
+    .nav-friends-icon .message-notif-dot{
+      position:absolute;
+      bottom:-2px;
+      right:2px;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:var(--danger);
+      box-shadow:0 0 8px rgba(239,68,68,0.7);
+    }
+
+    /* Small inline dot for the Messages nav link */
+    .nav-link-notif-dot{
+      display:inline-block;
+      margin-left:6px;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--danger);
+      box-shadow:0 0 6px rgba(239,68,68,0.7);
+      vertical-align:middle;
+    }
+
     .nav-user-dropdown{
       position:relative;
     }
@@ -823,20 +848,28 @@
       {% if user.is_authenticated %}
         <!-- Friends Icon -->
         <div class="nav-friends-icon" style="position:relative">
-          <a href="{% url 'accounts:friends_list' %}" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(26,26,36,0.6);border:1px solid rgba(99,102,241,0.2);transition:all 0.2s;text-decoration:none">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary)">
+          <a href="{% url 'accounts:friends_list' %}"
+             style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(26,26,36,0.6);border:1px solid rgba(99,102,241,0.2);transition:all 0.2s;text-decoration:none">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" style="color:var(--primary)">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
               <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            {% if pending_requests_count > 0 %}
-            <span style="position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(239,68,68,0.5)">
-              {{ pending_requests_count }}
-            </span>
+
+            {% if pending_requests_count|default:0 > 0 %}
+              <span class="pending-requests-count">
+                {{ pending_requests_count }}
+              </span>
+            {% endif %}
+
+            {% if unread_messages_count|default:0 > 0 %}
+              <span class="message-notif-dot"></span>
             {% endif %}
           </a>
         </div>
+
         
         <div class="nav-user-dropdown">
           <div class="nav-user">
