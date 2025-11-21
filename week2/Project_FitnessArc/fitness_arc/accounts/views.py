@@ -97,11 +97,8 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 
 @login_required
 def friends_list(request):
-<<<<<<< HEAD
     """List of friends and pending requests."""
-=======
     """Liste des amis + demandes en attente+messages non lus"""
->>>>>>> ceb646a ([message] ajout d'une notification rouge sur le bouton messagerie associe a celui qui a envoye)
     friends = User.objects.filter(
         Q(friendships_received__from_user=request.user, friendships_received__status='accepted') |
         Q(friendships_sent__to_user=request.user, friendships_sent__status='accepted')
