@@ -20,4 +20,10 @@ requests==2.32.3         # HTTP library for API calls (Strava, etc.)
 # Production Server
 gunicorn==23.0.0         # WSGI HTTP Server for production
 whitenoise==6.8.2        # Serve static files efficiently
-garminconnect  # Garmin Connect API client
+
+# Email Service
+resend==2.19.0           # Resend API for email delivery
+
+# Garmin Integration
+garminconnect            # Garmin Connect API client
+>>>>>>> d01c785 (Feature: Integrate Resend API for email delivery to fix Railway SMTP timeout)
