@@ -69,6 +69,18 @@
             class="btn"
             style="padding:0.6rem 1.2rem; font-size:0.9rem; white-space:nowrap;">
             Message
+            {% if friend.has_unread_messages %}
+              <span style="
+                position:absolute;
+                top:4px;
+                right:6px;
+                width:8px;
+                height:8px;
+                border-radius:50%;
+                background:#ef4444;
+                box-shadow:0 0 6px rgba(239,68,68,0.8);
+              "></span>
+            {% endif %}
           </a>
       </div>
     </div>
