@@ -23,6 +23,10 @@ python-dotenv==1.0.1     # Load .env files
 # HTTP Library
 requests==2.32.3         # HTTP library for API calls (Strava, etc.)
 
+# Production Server
+gunicorn==23.0.0         # WSGI HTTP Server for production
+whitenoise==6.8.2        # Serve static files efficiently
+
 # Notes:
 # - Week 1 (Comptoir Local Saclay): Django e-commerce platform for local producers
 # - Week 2 (FitnessArc): Fitness tracking and workout management application
