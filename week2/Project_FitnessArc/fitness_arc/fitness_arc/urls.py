@@ -36,5 +36,7 @@ urlpatterns = [
 ]
 
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files (images uploaded by users)
+# In production, this should be handled by a CDN or cloud storage
+# For Railway deployment, we serve them through Django
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

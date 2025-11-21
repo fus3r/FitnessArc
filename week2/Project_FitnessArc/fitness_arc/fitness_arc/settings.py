@@ -185,6 +185,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Allow WhiteNoise to serve media files in production
+# Add media directory to WhiteNoise
+WHITENOISE_ROOT = MEDIA_ROOT
+
 if DEBUG:
     INTERNAL_IPS = ['127.0.0.1']
 

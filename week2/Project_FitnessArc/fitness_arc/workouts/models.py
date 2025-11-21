@@ -47,6 +47,7 @@ class Exercise(models.Model):
     difficulty = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='exercises/', blank=True, null=True, help_text="Demo image")
+    image_url = models.URLField(blank=True, null=True, help_text="External image URL (for production)")
     is_time_based = models.BooleanField(default=False, help_text="If True, measured in time (seconds) instead of reps")
     
     def __str__(self): return self.name
