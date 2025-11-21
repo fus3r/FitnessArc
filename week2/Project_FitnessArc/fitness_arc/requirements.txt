@@ -20,3 +20,4 @@ requests==2.32.3         # HTTP library for API calls (Strava, etc.)
 # Production Server
 gunicorn==23.0.0         # WSGI HTTP Server for production
 whitenoise==6.8.2        # Serve static files efficiently
+garminconnect==0.5.3  # Garmin Connect API client
