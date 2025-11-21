@@ -189,14 +189,26 @@ if DEBUG:
 
 import os
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_TIMEOUT = 10  # Timeout de 10 secondes pour éviter le blocage
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
-DEFAULT_FROM_EMAIL = "Fitness Arc <fitnessarc.contact@gmail.com>"
+# Email Configuration - Using Brevo (Sendinblue) API
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+DEFAULT_FROM_EMAIL = "FitnessArc <fitnessarc.contact@gmail.com>"
+
+# Use Brevo backend if API key is available
+if BREVO_API_KEY:
+    EMAIL_BACKEND = "accounts.email_backend.BrevoEmailBackend"
+elif DEBUG:
+    # Fallback to SMTP for local development
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_TIMEOUT = 10
+    EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+    DEFAULT_FROM_EMAIL = "Fitness Arc <fitnessarc.contact@gmail.com>"
+else:
+    # Production without Brevo: log emails to console
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
 

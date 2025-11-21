@@ -20,4 +20,9 @@ requests==2.32.3         # HTTP library for API calls (Strava, etc.)
 # Production Server
 gunicorn==23.0.0         # WSGI HTTP Server for production
 whitenoise==6.8.2        # Serve static files efficiently
-garminconnect  # Garmin Connect API client
+
+# Email Service
+sib-api-v3-sdk==7.6.0    # Brevo (Sendinblue) API for email delivery
+
+# Garmin Integration
+garminconnect            # Garmin Connect API client
