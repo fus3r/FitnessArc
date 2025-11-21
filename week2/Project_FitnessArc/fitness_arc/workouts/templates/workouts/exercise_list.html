@@ -111,8 +111,8 @@
          class="item-card" 
          :style="{animationDelay: (index * 0.05) + 's'}"
          style="cursor:pointer;padding:1.5rem">
-      <div v-if="ex.image" style="width:100%;height:180px;border-radius:12px;overflow:hidden;margin-bottom:1rem;background:rgba(99,102,241,0.1)">
-        <img :src="'/media/' + ex.image" :alt="ex.name" 
+      <div v-if="ex.image_url || ex.image" style="width:100%;height:180px;border-radius:12px;overflow:hidden;margin-bottom:1rem;background:rgba(99,102,241,0.1)">
+        <img :src="ex.image_url || ('/media/' + ex.image)" :alt="ex.name" 
              style="width:100%;height:100%;object-fit:cover"
              @error="handleImageError">
       </div>

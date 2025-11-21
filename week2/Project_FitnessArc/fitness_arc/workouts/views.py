@@ -40,6 +40,7 @@ def exercise_list(request):
             'difficulty': ex.difficulty,
             'description': ex.description,
             'image': ex.image.name if ex.image else '',
+            'image_url': ex.image_url if ex.image_url else '',
             'sport_category': {
                 'id': ex.sport_category.id,
                 'name': ex.sport_category.name,
