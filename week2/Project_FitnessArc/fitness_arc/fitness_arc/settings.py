@@ -202,4 +202,14 @@ DEFAULT_FROM_EMAIL = "Fitness Arc <tototest024@gmail.com>"
 
 STRAVA_CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID") 
 STRAVA_CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET")
-STRAVA_REDIRECT_URI = "http://127.0.0.1:8000/running/strava/callback/"
+# Use environment variable for redirect URI (for production)
+STRAVA_REDIRECT_URI = os.environ.get("STRAVA_REDIRECT_URI", "http://127.0.0.1:8000/running/strava/callback/")
+
+# Security settings for production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'

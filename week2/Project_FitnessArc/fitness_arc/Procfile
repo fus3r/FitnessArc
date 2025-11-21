@@ -1,2 +1,2 @@
-web: cd fitness_arc && gunicorn fitness_arc.wsgi --log-file -
-release: cd fitness_arc && python manage.py migrate --noinput
+web: gunicorn fitness_arc.wsgi --log-file -
+release: python manage.py migrate --noinput
